@@ -1,24 +1,40 @@
-import logo from './logo.svg';
-import './App.css';
+import "./App.css";
+import CustomAppShell from "./Components/CustomAppShell";
+import { useState } from "react";
+import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { SignIn } from "./Screens/SignIn";
+import { SignUp } from "./Screens/SignUp";
+import { ProtectedRoute } from "./Components/ProtectedRoute";
+
 
 function App() {
+  const [colorScheme, setColorScheme] = useState("light");
+
+  const toggleColorScheme = (value) =>
+    setColorScheme(value || (colorScheme === "dark" ? "light" : "dark"));
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <ColorSchemeProvider
+      colorScheme={colorScheme}
+      toggleColorScheme={toggleColorScheme}
+    >
+      <MantineProvider
+        theme={{ colorScheme }}
+        withGlobalStyles
+        withNormalizeCSS
+      >
+        <BrowserRouter>
+          <Routes>
+            <Route exact path="/" element={<SignIn />} />
+            <Route exact path="/signUp" element={<SignUp />} />
+            <ProtectedRoute>
+              <Route exact path="/menu/*" element={<CustomAppShell />} />
+            </ProtectedRoute>
+          </Routes>
+        </BrowserRouter>
+      </MantineProvider>
+    </ColorSchemeProvider>
   );
 }
 
