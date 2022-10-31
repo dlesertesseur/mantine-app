@@ -65,6 +65,7 @@ export function SignIn() {
           />
           <PasswordInput
             label="Password"
+            autoComplete="off"
             placeholder="Your password"
             mt="md"
             onChange={(event) =>
@@ -74,7 +75,7 @@ export function SignIn() {
           />
 
           <Group position="apart" mt="md">
-            <Checkbox label="I accept terms and conditions" />
+            <Checkbox label="Keep me connected" />
             <Anchor
               onClick={(event) => event.preventDefault()}
               href="#"

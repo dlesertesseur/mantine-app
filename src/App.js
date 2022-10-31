@@ -5,8 +5,8 @@ import { MantineProvider, ColorSchemeProvider } from "@mantine/core";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { SignIn } from "./Screens/SignIn";
 import { SignUp } from "./Screens/SignUp";
+import { NotFound } from "./Screens/NotFound";
 import { ProtectedRoute } from "./Components/ProtectedRoute";
-
 
 function App() {
   const [colorScheme, setColorScheme] = useState("light");
@@ -26,11 +26,23 @@ function App() {
       >
         <BrowserRouter>
           <Routes>
+            <Route path="*" element={<NotFound />} />
             <Route exact path="/" element={<SignIn />} />
             <Route exact path="/signUp" element={<SignUp />} />
-            <ProtectedRoute>
-              <Route exact path="/menu/*" element={<CustomAppShell />} />
-            </ProtectedRoute>
+
+            <Route
+              path="/menu/*"
+              element={
+                <ProtectedRoute>
+                  <CustomAppShell />
+                </ProtectedRoute>
+              }
+            />
+
+            {/* <Route path="/dashboard" element={<ProtectedLayout />}>
+              <Route path="profile" element={<ProfilePage />} />
+              <Route path="settings" element={<SettingsPage />} />
+            </Route> */}
           </Routes>
         </BrowserRouter>
       </MantineProvider>

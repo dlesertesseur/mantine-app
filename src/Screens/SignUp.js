@@ -17,8 +17,8 @@ export function SignUp() {
   const navigate = useNavigate();
   const form = useForm({
     initialValues: {
-      firstName:"",
-      lastName:"",
+      firstName: "",
+      lastName: "",
       email: "",
       password: "",
     },
@@ -31,6 +31,7 @@ export function SignUp() {
         val.length <= 6
           ? "Password should include at least 6 characters"
           : null,
+      terms: (val) => (val ? null : "You have to accept the terms and conditions")
     },
   });
 
@@ -88,6 +89,7 @@ export function SignUp() {
           />
           <PasswordInput
             label="Password"
+            autoComplete="off"
             placeholder="Your password"
             mt="md"
             onChange={(event) =>
@@ -97,11 +99,23 @@ export function SignUp() {
           />
 
           <Group position="apart" mt="md">
-            <Checkbox label="I accept terms and conditions" />
+            <Checkbox label="I accept terms and conditions" 
+            onChange={(event) =>
+              form.setFieldValue("terms", event.currentTarget.value)
+            }
+            error={form.errors.terms}/>
           </Group>
+
           <Button type="submit" fullWidth mt="xl">
             Sign in
           </Button>
+
+          <Text color="dimmed" size="sm" align="center" mt={5}>
+            {"Already have an account? "}
+            <Anchor href="#" size="sm" onClick={(event) => navigate("/")}>
+              {"Log in"}
+            </Anchor>
+          </Text>
         </form>
       </Paper>
     </Container>
