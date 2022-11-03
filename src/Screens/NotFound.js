@@ -53,7 +53,7 @@ export function NotFound() {
       </Text>
       <Group position="center">
         <Button variant="subtle" size="md" onClick={(event) => {
-            navigate("/");
+            navigate("/menu");
           }}>
           Take me back to home page
         </Button>

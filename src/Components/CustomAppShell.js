@@ -1,10 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   AppShell,
   Navbar,
   Header,
-  // Footer,
-  //Aside,
   MediaQuery,
   Burger,
   useMantineTheme,
@@ -13,8 +11,24 @@ import CustomHeader from "./CustomHeader";
 import CustomNavbar from "./CustomNavbar";
 // import CustomFooter from "./CustomFooter";
 import CustomBody from "./CustomBody";
+import { useDispatch, useSelector } from "react-redux";
+import { byUserId } from "../Features/Auth";
 
 export default function CustomAppShell() {
+  const { user } = useSelector((state) => state.auth.value);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user?.id) {
+      const obj = {
+        id: user.id,
+        token: user.token,
+      };
+  
+      dispatch(byUserId(obj));
+    } 
+  }, [dispatch, user]);
+
   const theme = useMantineTheme();
   const [opened, setOpened] = useState(false);
   return (
@@ -34,7 +48,7 @@ export default function CustomAppShell() {
           p="md"
           hiddenBreakpoint="sm"
           hidden={!opened}
-          width={{ sm: 200, lg: 300 }}
+          width={{ sm: 300, lg: 300 }}
         >
           <CustomNavbar />
         </Navbar>

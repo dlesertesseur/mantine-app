@@ -1,0 +1,329 @@
+{
+  "main":{
+    "title":"CONNEXA",
+    "subtitle":"Retail platform"
+  },
+  
+  "signIn": "Sign In",
+  "forgotPassword": "Forgot Password",
+
+  "auth": {
+    "title":"Welcome back!",
+    "forgotPassword": "Forgot password?",
+    "doNotHaveAccount": "Do not have an account yet?",
+    "haveAccount": "Already have an account?",
+    "createAccount":"Create account"
+  },
+
+  "signUp":{
+    "title":"Create an account",
+    "message":"We are very glad that you are here, connexa is a platform that has many tools to help you with management and planning."
+  },
+
+  "button": {
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "resetPassword": "Reset Password",
+    "back": "Back",
+    "accept": "Accept",
+    "cancel": "Cancel",
+    "dashboard": "Dashboard",
+    "refresh": "Refresh",
+    "seeMore": "See more",
+    "close": "Close",
+    "uploadImage": "Upload image",
+    "upload": "Upload products",
+    "download": "Dowload products",
+    "detailBysite": "Detail by site",
+    "logout": "Logout",
+    "save": "Save"
+  },
+
+  "label": {
+    "firstName": "First Name",
+    "lastName": "Last Name",
+    "email": "Email address",
+    "password": "Password",
+    "enterprise": "Enterprise",
+    "receiveInfo": "I want to receive marketing promotions and updates via email.",
+    "name": "Name",
+    "value": "Value",
+    "principalMenu": "Main menu",
+    "crud": {
+      "create": "New",
+      "update": "Update",
+      "delete": "Delete",
+      "filter": "Filter"
+    },
+    "applications": "Applications",
+    "description": "Description",
+    "icon": "Icon",
+    "path": "Path",
+    "parameter": "Parameter",
+    "organization": "Origanization",
+    "project": "Project",
+    "creationDate": "Created",
+    "inRole": "Added to role",
+    "phone": "Phone",
+    "address": "Address",
+    "sku": "SKU",
+    "ean": "EAN",
+    "brand": "Brand",
+    "price": "Price",
+    "currency": "Currency",
+    "countryOfOrigin": "Origin",
+    "status": "Status",
+    "translations": "Translations",
+    "measureType": "Measure type",
+    "measureUnit": "Measure unit",
+    "measurementTypeForContentText": "Measurement type for content",
+    "measurementUnitForContentText": "Measurement unit for content",
+    "measurementTypeForSaleText": "Measurement type for sale",
+    "measurementUnitForSaleText": "Measurement unit for sale",
+    "measurementTypeForPriceText": "Measurement type for price",
+    "measurementUnitForPriceText": "Measurement unit for price",
+    "context": "Context",
+    "roles": "Roles",
+    "id": "Id",
+    "authorizations": "Authorizations",
+    "role": "Role",
+    "day": "Day",
+    "week": "Week",
+    "month": "Month",
+    "active": "Active",
+    "inactive": "Inactive",
+    "keepMeConnected":"Keep me connected",
+    "conditions":"I accept terms and conditions",
+    "selectedSite":"You are working on",
+    "noData":"Nothing found",
+    "site":"Site",
+    "siteDesc":"Select a site to see the defined plants",
+    "floor":"Floor",
+    "floorDesc":"Select a floor to see the plan",
+    "select":"Please select one"
+  },
+
+  "placeholder":{
+    "email":"you@connexa.com",
+    "password":"Your password",
+    "firstName":"Your first name",
+    "lastName":"Your last name",
+    "search":"Search by any field"
+  },
+
+  "language": {
+    "es": "Spanish",
+    "en": "English"
+  },
+
+  "validation": {
+    "required": "Required field",
+    "numeric": "Numeric value",
+    "emailFormat": "Wrong email format",
+    "passwordFormat": "Password should include at least 6 characters",
+    "terms": "You have to accept the terms and conditions"
+  },
+
+  "errors": {
+    "title": "ERROR",
+    "notImplemented": "The application has not been implemented yet",
+    "loadApp":"Could not run application",
+    "1001": "Error trying to login",
+    "1002": "Registration error",
+    "404": "Invalid username or password"
+  },
+
+  "notification": {
+    "title": "Notification",
+    "signUpOK": "User was created successfully",
+    "delete": "Are you sure you want to delete the record?"
+  },
+
+  "app": {
+    "name": "zeeTrex - Platform",
+    "dashboard": {
+      "name": "DASHBOARD"
+    }
+  },
+
+  "userOptions": {
+    "profile": "Profile",
+    "account": "My account",
+    "logout": "Logout"
+  },
+
+  "crud": {
+    "application": {
+      "name": "APPLICATIONS",
+      "title": "APPLICATIONS CRUD",
+      "columns": ["Icon", "Name", "Description", "Path"],
+      "align": ["center", "left", "left", "left"],
+      "width": ["5%", "30%", "45%", "20%"],
+      "translation": {
+        "columns": ["Locale", "Language", "Name", "Description"],
+        "align": ["center", "left", "left", "left"],
+        "width": ["5%", "10%", "30%", "55%"]
+      }
+    },
+    "parameter": {
+      "name": "PARAMENTERS",
+      "title": "PARAMETERS CRUD",
+      "columns": ["Name", "Value"],
+      "align": ["left", "left"],
+      "width": ["30%", "70%"]
+    },
+
+    "organization": {
+      "name": "ORGANIZATION",
+      "title": "ORGANIZATION CRUD",
+      "columns": ["Name", "Description", "Creation date"],
+      "align": ["left", "left", "center"],
+      "width": ["30%", "50%", "20%"]
+    },
+
+    "project": {
+      "name": "PROJECTS",
+      "title": "CRUD PROJECTS",
+      "columns": ["Name", "Description", "Creation date"],
+      "align": ["left", "left", "center"],
+      "width": ["30%", "50%", "20%"]
+    },
+
+    "role": {
+      "name": "ROLES",
+      "title": "ROLES CRUD",
+      "columns": ["ID", "Name", "Context"],
+      "align": ["left", "left", "left"],
+      "width": ["5%", "30%", "65%"],
+      "selectApplications": "Select applications",
+      "translation": {
+        "columns": ["Locale", "Language", "Name"],
+        "align": ["center", "left", "left"],
+        "width": ["15%", "15%", "70%"]
+      }
+    },
+
+    "toolbar": {
+      "create": "Create",
+      "update": "Update",
+      "remove": "Remove",
+      "search": "Search",
+      "translation": "Translation"
+    },
+
+    "site": {
+      "name": "SITES",
+      "title": "CRUD SITES",
+      "columns": ["Name", "Phone", "Address", "Context"],
+      "align": ["left", "left", "left", "left"],
+      "width": ["35%", "20%", "35%", "10%"],
+      "check": {
+        "columns": ["Name", "Context"],
+        "align": ["left", "left"],
+        "width": ["70%", "30%"]
+      }
+    },
+
+    "brand": {
+      "name": "BRANDS",
+      "title": "CRUD BRANDS",
+      "columns": ["Name"],
+      "align": ["left"],
+      "width": ["100%"]
+    },
+
+    "category": {
+      "title": "CATEGORIES",
+      "name": "CRUD CATEGORIES",
+      "columns": ["Name", "Descrption", ""],
+      "align": ["left", "left", "center"],
+      "width": ["25%", "60%", "5%"],
+      "menu": {
+        "add": "Add category",
+        "remove": "Remove category"
+      }
+    },
+
+    "product": {
+      "name": "PRODUCTS",
+      "title": "CRUD PRODUCTS",
+      "columns": ["", "SKU", "EAN", "Description", "Brand", "Price", "Status"],
+      "align": ["center", "right", "right", "left", "left", "right", "left"],
+      "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
+      "tab1": "General information",
+      "tab2": "Measurement units",
+      "tab3": "Media",
+      "tab4": "3D"
+    },
+
+    "user": {
+      "name": "USER",
+      "title": "CRUD USER",
+      "columns": ["Last Name", "First Name", "Email", "Active"],
+      "align": ["left", "left", "left", "left"],
+      "width": ["30%", "30%", "35%", "5%"],
+      "selectRoles": "ROLES",
+      "selectSites": "SITES"
+    },
+
+    "context": {
+      "name": "CONTEXT",
+      "title": "CONTEXT CRUD",
+      "columns": ["ID", "Name", "Description"],
+      "align": ["right", "left", "left"],
+      "width": ["5%", "40%", "55%"]
+    },
+
+    "categorizer": {
+      "columns": ["", "", "SKU", "EAN", "Description", "Status"],
+      "align": ["center", "center", "right", "left", "left", "left"],
+      "width": ["5%", "5%", "10%", "15%", "50%", "15%"]
+    }
+  },
+
+  "title": {
+    "dialog": {
+      "alert": {
+        "delete": "Delete"
+      }
+    }
+  },
+
+  "dialog": {
+    "storageStructure": {
+      "title": "Storage Structure"
+    }
+  },
+
+  "constant": {
+    "category": {
+      "defaultName": "New category"
+    }
+  },
+
+  "view": {
+    "dashboard": {
+      "line1": {
+        "card": {
+          "totaSales": "Total sales",
+          "totalProductsSold": "Total products sold",
+          "totalOrders": "Total orders",
+          "averageTicket": "Average Ticket"
+        }
+      },
+      "line2": {
+        "card": {
+          "totalCustomer": "Total Customer",
+          "totalMoneyReturned": "Total Money Returned",
+          "totalReturnedProducts": "Total Returned Products",
+          "usersConnected": "Users Connected"
+        }
+      }
+    }
+  },
+
+  "tooltip":{
+    "operatorsStatus":"Shows the position and activity that operators are performing in real time",
+    "lockMove":"Blocks movement and rotation of storage structures"
+  }
+}

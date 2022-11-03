@@ -12,9 +12,12 @@ import {
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 
 export function SignUp() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
+
   const form = useForm({
     initialValues: {
       firstName: "",
@@ -24,14 +27,14 @@ export function SignUp() {
     },
 
     validate: {
-      firstName: (val) => (val ? null : "Invalid first name"),
-      lastName: (val) => (val ? null : "Invalid last name"),
-      email: (val) => (/^\S+@\S+$/.test(val) ? null : "Invalid email"),
+      firstName: (val) => (val ? null : t("validation.required")),
+      lastName: (val) => (val ? null :  t("validation.required")),
+      email: (val) => (/^\S+@\S+$/.test(val) ? null :  t("validation.emailFormat")),
       password: (val) =>
         val.length <= 6
-          ? "Password should include at least 6 characters"
+          ? t("validation.passwordFormat")
           : null,
-      terms: (val) => (val ? null : "You have to accept the terms and conditions")
+      terms: (val) => (val ? null : t("validation.terms"))
     },
   });
 
@@ -44,14 +47,12 @@ export function SignUp() {
           fontWeight: 900,
         })}
       >
-        Welcome back!
+        {t("signUp.title")}
       </Title>
-      {/* <Text color="dimmed" size="sm" align="center" mt={5}>
-        Do not have an account yet?
-        <Anchor href="#" size="sm" onClick={(event) => event.preventDefault()}>
-          Create account
-        </Anchor>
-      </Text> */}
+
+      <Text color="dimmed" size="sm" align="left" mt={5}>
+        {t("signUp.message")}
+      </Text>
 
       <Paper withBorder shadow="md" p={30} mt={30} radius="md">
         <form
@@ -60,8 +61,8 @@ export function SignUp() {
           })}
         >
           <TextInput
-            label="First Name"
-            placeholder="Your first name"
+            label={t("label.firstName")}
+            placeholder={t("placeholder.firstName")}
             onChange={(event) =>
               form.setFieldValue("firstName", event.currentTarget.value)
             }
@@ -69,8 +70,9 @@ export function SignUp() {
           />
 
           <TextInput
-            label="Last Name"
-            placeholder="Your last name"
+            label={t("label.lastName")}
+            placeholder={t("placeholder.lastName")}
+
             mt="md"
             onChange={(event) =>
               form.setFieldValue("lastName", event.currentTarget.value)
@@ -79,8 +81,8 @@ export function SignUp() {
           />
 
           <TextInput
-            label="Email"
-            placeholder="you@connexa.dev"
+            label={t("label.email")}
+            placeholder={t("placeholder.email")}
             mt="md"
             onChange={(event) =>
               form.setFieldValue("email", event.currentTarget.value)
@@ -88,9 +90,9 @@ export function SignUp() {
             error={form.errors.email}
           />
           <PasswordInput
-            label="Password"
+            label={t("label.password")}
+            placeholder={t("placeholder.password")}
             autoComplete="off"
-            placeholder="Your password"
             mt="md"
             onChange={(event) =>
               form.setFieldValue("password", event.currentTarget.value)
@@ -99,7 +101,7 @@ export function SignUp() {
           />
 
           <Group position="apart" mt="md">
-            <Checkbox label="I accept terms and conditions" 
+            <Checkbox label={t("label.conditions")}
             onChange={(event) =>
               form.setFieldValue("terms", event.currentTarget.value)
             }
@@ -111,9 +113,9 @@ export function SignUp() {
           </Button>
 
           <Text color="dimmed" size="sm" align="center" mt={5}>
-            {"Already have an account? "}
+            {t("auth.haveAccount") + " "}
             <Anchor href="#" size="sm" onClick={(event) => navigate("/")}>
-              {"Log in"}
+              {t("button.signIn")}
             </Anchor>
           </Text>
         </form>

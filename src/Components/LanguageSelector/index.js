@@ -1,49 +1,30 @@
-import { useState } from "react";
-import {
-  createStyles,
-  UnstyledButton,
-  Menu,
-  Image,
-  Group,
-} from "@mantine/core";
-import english from "./images/english.png";
-import french from "./images/french.png";
-import german from "./images/german.png";
-import italian from "./images/italian.png";
-import polish from "./images/polish.png";
+import { useEffect, useState } from "react";
+import { createStyles, UnstyledButton, Menu, Image, Group } from "@mantine/core";
+import en from "./images/en.png";
+import es from "./images/es.png";
+import br from "./images/br.png";
+import { useTranslation } from "react-i18next";
 
 const data = [
-  { label: "English", image: english },
-  { label: "German", image: german },
-  { label: "Italian", image: italian },
-  { label: "French", image: french },
-  { label: "Polish", image: polish },
+  { label: "English", image: en, locale: "en" },
+  { label: "Spain", image: es, locale: "es" },
+  { label: "Brazil", image: br, locale: "br" },
 ];
 
 const useStyles = createStyles((theme) => ({
   control: {
-    //width: 150,
     display: "flex",
     justifyContent: "space-evenly",
     alignItems: "center",
-    padding: "7px 15px",
-    borderRadius: theme.radius.md,
-    border: `1px solid ${
-      theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]
-    }`,
+    padding: "9px 15px",
+    borderRadius: theme.radius.sm,
+    border: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.gray[2]}`,
     transition: "background-color 150ms ease",
-    // backgroundColor:
-    //   theme.colorScheme === "dark"
-    //     ? theme.colors.dark[opened ? 5 : 6]
-    //     : opened
-    //     ? theme.colors.gray[0]
-    //     : theme.white,
+
+    backgroundColor: theme.colors.gray[1],
 
     "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[5]
-          : theme.colors.gray[0],
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[5] : theme.colors.gray[3],
     },
   },
 
@@ -54,7 +35,6 @@ const useStyles = createStyles((theme) => ({
 
   icon: {
     transition: "transform 150ms ease",
-    // transform: opened ? "rotate(0deg)" : "rotate(180deg)",
   },
 
   iconOpen: {
@@ -69,8 +49,13 @@ const useStyles = createStyles((theme) => ({
 }));
 
 export default function LanguageSelector() {
-  const [selected, setSelected] = useState(data[0]);
+  const { i18n } = useTranslation();
   const { classes } = useStyles();
+  const [selected, setSelected] = useState(data[0]);
+
+  useEffect(() => {
+    i18n.changeLanguage(selected.locale);
+  }, [i18n, selected]);
 
   const items = data.map((item) => (
     <Menu.Item
@@ -83,14 +68,13 @@ export default function LanguageSelector() {
   ));
 
   return (
-    <Menu onOpen={() => {}} onClose={() => {}} radius="md" width="target">
+    <Menu onOpen={() => {}} onClose={() => {}} radius="sm" width="target">
       <Menu.Target>
         <UnstyledButton className={classes.control}>
           <Group spacing="xs">
-            <Image src={selected.image} width={22} height={22} />
+            <Image src={selected.image} width={18} height={18} />
             <span className={classes.label}>{selected.label}</span>
           </Group>
-          {/* <IconChevronDown size={16} className={classes.icon} stroke={1.5} /> */}
         </UnstyledButton>
       </Menu.Target>
       <Menu.Dropdown>{items}</Menu.Dropdown>

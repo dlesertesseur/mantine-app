@@ -1,0 +1,329 @@
+{
+  "main":{
+    "title":"CONNEXA",
+    "subtitle":"Retail platform"
+  },
+  
+  "signIn": "Login",
+  "forgotPassword": "Restablecer contraseña",
+
+  "auth": {
+    "title": "¡Bienvenido!",
+    "forgotPassword": "Olvidé mi contraseña?",
+    "doNotHaveAccount": "¿No tienes una cuenta?",
+    "haveAccount": "¿Ya tienes una cuenta?",
+    "createAccount":"Crear una"
+  },
+
+  "signUp":{
+    "title":"Crear una cuenta",
+    "message":"Nos alegra mucho que este aqui, connexa es una plataforma que cuenta con muchas herramientas para ayudarlo en la gestion y planificacion."
+  },
+
+  "button": {
+    "signIn": "Iniciar sesión",
+    "signUp": "Únete",
+    "resetPassword": "Restablecer contraseña",
+    "back": "Volver",
+    "accept": "Aceptar",
+    "cancel": "Cancelar",
+    "dashboard": "Monitor",
+    "refresh": "Actualizar",
+    "seeMore": "Ver mas",
+    "close": "Cerrar",
+    "uploadImage": "Asignar imagen",
+    "upload": "Subir productos",
+    "download": "Bajar productos",
+    "detailBysite": "Detalle por sitio",
+    "logout": "Cerrar sesion",
+    "save": "Salvar"
+  },
+
+  "label": {
+    "firstName": "Nombre",
+    "lastName": "Apellido",
+    "email": "Correo electronico",
+    "password": "Clave",
+    "enterprise": "Empresa",
+    "receiveInfo": "Quiero recibir promociones de marketing y actualizaciones por correo electrónico.",
+    "name": "Nombre",
+    "value": "Valor",
+    "principalMenu": "Nemu principal",
+    "crud": {
+      "create": "Nuevo",
+      "update": "Modificar",
+      "delete": "Eliminar",
+      "filter": "Filtro"
+    },
+    "applications": "Aplicaciones",
+    "description": "Descripcion",
+    "icon": "Icono",
+    "path": "Ruta",
+    "parameter": "Parametro",
+    "organization": "Origanization",
+    "project": "Proyecto",
+    "creationDate": "Fecha de creacion",
+    "inRole": "Agregadas al rol",
+    "phone": "Telefono",
+    "address": "Direccion",
+    "sku": "SKU",
+    "ean": "EAN",
+    "brand": "Marca",
+    "price": "Precio",
+    "currency": "Moneda",
+    "countryOfOrigin": "Pais de origen",
+    "status": "Estado",
+    "translations": "Traducciones",
+    "measureType": "Tipo de medida",
+    "measureUnit": "Unidad de medida",
+    "measurementTypeForContentText": "Tipo de medida para el contenido",
+    "measurementUnitForContentText": "Unidad de medida del contenido",
+    "measurementTypeForSaleText": "Tipo de medida para la venta",
+    "measurementUnitForSaleText": "Unidad de medida para la venta",
+    "measurementTypeForPriceText": "Tipo de medida por precio",
+    "measurementUnitForPriceText": "Unidad de medida por precio",
+    "context": "Contexto",
+    "roles": "Roles",
+    "id": "Id",
+    "authorizations": "Autorizaciones",
+    "role": "Rol",
+    "day": "Dia",
+    "week": "Sem",
+    "month": "Mes",
+    "active": "Activo",
+    "inactive": "Inactivo",
+    "keepMeConnected":"Mantenerme contectado",
+    "conditions":"Acepto los términos y condiciones",
+    "selectedSite":"Usted esta trabajando en",
+    "noData":"Sin datos",
+    "site":"Sitio",
+    "siteDesc":"Seleccione un sitio para ver las plantas definidas",
+    "floor":"Planta",
+    "floorDesc":"Selecciona una planta para ver el plano",
+    "select":"Deleccionar uno, por favor"
+  },
+
+  "placeholder":{
+    "email":"you@connexa.com",
+    "password":"Su contraseña",
+    "firstName":"Su nombre",
+    "lastName":"Su apellido",
+    "search":"Buscar por cualquier campo"
+  },
+
+  "language": {
+    "es": "Español",
+    "en": "Ingles"
+  },
+
+  "validation": {
+    "required": "Campo requerido",
+    "numeric": "Valor numerico",
+    "emailFormat": "Formato de email incorrecto",
+    "passwordFormat": "La contraseña debe incluir al menos 6 caracteres",
+    "terms": "Tienes que aceptar los términos y condiciones"
+  },
+
+  "errors": {
+    "title": "ERROR",
+    "notImplemented": "La aplicacion aun no fue implenetada",
+    "loadApp":"No fue posible ejecutar aplicación",
+    "1001": "Error al intentar iniciar session",
+    "1002": "Error al registrarse",
+    "404": "Usuario o clave invalida"
+  },
+
+  "notification": {
+    "title": "Notificacion",
+    "signUpOK": "Usuario creado correctamente",
+    "delete": "¿Esta seguro de eliminar el registro?"
+  },
+
+  "app": {
+    "name": "zeeTrex - Platform",
+    "dashboard": {
+      "name": "PANEL DE CONTROL"
+    }
+  },
+
+  "userOptions": {
+    "profile": "Perfil",
+    "account": "Mi cuenta",
+    "logout": "Cerrar sesion"
+  },
+
+  "crud": {
+    "application": {
+      "name": "APLICACIONES",
+      "title": "ABM DE APLICACIONES",
+      "columns": ["Icono", "Nombre", "Descripcion", "Ruta"],
+      "align": ["center", "left", "left", "left"],
+      "width": ["5%", "30%", "45%", "20%"],
+      "translation": {
+        "columns": ["Localizacion", "Idioma", "Nombre", "Descripcion"],
+        "align": ["center", "left", "left", "left"],
+        "width": ["5%", "10%", "30%", "55%"]
+      }
+    },
+    "parameter": {
+      "name": "PARAMETROS",
+      "title": "ABM DE PARAMETROS",
+      "columns": ["Nombre", "Valor"],
+      "align": ["left", "left"],
+      "width": ["30%", "70%"]
+    },
+
+    "organization": {
+      "name": "ORGANIZACIONES",
+      "title": "ABM DE ORGANIZACIONES",
+      "columns": ["Nombre", "Descripcion", "Fecha de creacion"],
+      "align": ["left", "left", "center"],
+      "width": ["30%", "50%", "20%"]
+    },
+
+    "project": {
+      "name": "PROYECTOS",
+      "title": "ABM DE PROYECTOS",
+      "columns": ["Nombre", "Descripcion", "Fecha de creacion"],
+      "align": ["left", "left", "center"],
+      "width": ["30%", "50%", "20%"]
+    },
+
+    "role": {
+      "name": "ROLES",
+      "title": "ABM DE ROLES",
+      "columns": ["ID", "Nombre", "Contexto"],
+      "align": ["left", "left", "left"],
+      "width": ["5%", "30%", "65%"],
+      "selectApplications": "Seleccionar aplicaciones",
+      "translation": {
+        "columns": ["Localizacion", "Idioma", "Nombre"],
+        "align": ["center", "left", "left"],
+        "width": ["15%", "15%", "70%"]
+      }
+    },
+
+    "site": {
+      "name": "SUCURSALES",
+      "title": "ABM DE SUCURSALES",
+      "columns": ["Nombre", "Telefono", "Direccion", "Contexto"],
+      "align": ["left", "left", "left", "left"],
+      "width": ["35%", "20%", "35%", "10%"],
+      "check": {
+        "columns": ["Nombre", "Contexto"],
+        "align": ["left", "left"],
+        "width": ["70%", "30%"]
+      }
+    },
+
+    "brand": {
+      "name": "MARCAS",
+      "title": "ABM DE MARCAS",
+      "columns": ["Nombre"],
+      "align": ["left"],
+      "width": ["100%"]
+    },
+
+    "category": {
+      "title": "CATEGORIAS",
+      "name": "ABM DE CATEGORIAS",
+      "columns": ["Nombre", "Descripcion", ""],
+      "align": ["left", "left", "center"],
+      "width": ["25%", "60%", "5%"],
+      "menu": {
+        "add": "Agregar categoria",
+        "remove": "Eliminar categoria"
+      }
+    },
+
+    "toolbar": {
+      "create": "Crear",
+      "update": "Modificar",
+      "remove": "Eliminar",
+      "search": "Buscar",
+      "translation": "Traduccion"
+    },
+
+    "product": {
+      "name": "PRODUCTOS",
+      "title": "ABM DE PRODUCTOS",
+      "columns": ["", "SKU", "EAN", "Descripcion", "Marca", "Precio", "Estado"],
+      "align": ["center", "right", "right", "left", "left", "right", "left"],
+      "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
+      "tab1": "Informacion general",
+      "tab2": "Unidades de medida",
+      "tab3": "Media",
+      "tab4": "3D"
+    },
+    "user": {
+      "name": "USUARIOS",
+      "title": "ABM USUARIOS",
+      "columns": ["Apellido", "Nombre", "Email", "Activo"],
+      "align": ["left", "left", "left", "left"],
+      "width": ["30%", "30%", "35%", "5%"],
+      "selectRoles": "ROLES",
+      "selectSites": "SITIOS"
+    },
+
+    "context": {
+      "name": "CONTEXTO",
+      "title": "ABM CONTEXTO",
+      "columns": ["ID", "Nombre", "Descripcion"],
+      "align": ["right", "left", "left"],
+      "width": ["5%", "40%", "55%"]
+    },
+
+    "categorizer": {
+      "columns": ["", "", "SKU", "EAN", "Descripcion", "Estado"],
+      "align": ["center", "center", "right", "left", "left", "left"],
+      "width": ["5%", "5%", "10%", "15%", "50%", "15%"]
+    }
+  },
+
+  "title": {
+    "dialog": {
+      "alert": {
+        "delete": "Eliminar"
+      }
+    }
+  },
+
+  "dialog": {
+    "storageStructure": {
+      "title": "Estructura de almacenamiento"
+    }
+  },
+
+  "constant": {
+    "category": {
+      "defaultName": "Nueva categoria"
+    }
+  },
+
+  "view": {
+    "dashboard": {
+      "line1": {
+        "card": {
+          "totaSales": "Total de Ventas",
+          "totalProductsSold": "Total productos vendidos",
+          "totalOrders": "Total tickets",
+          "averageTicket": "Ticket promedio"
+        }
+      },
+      "line2": {
+        "card": {
+          "totalCustomer": "Total de clientes",
+          "totalMoneyReturned": "Total dinero retornado",
+          "totalReturnedProducts": "Total productos retornados",
+          "usersConnected": "Usuarios Connectados"
+        }
+      }
+    }
+  },
+
+  "tooltip":{
+    "operatorsStatus":"Muestra la posicion y actividad que estan realizando los operarios en tiempo real",
+    "lockMove":"Bloquea el movimiento y la rotación de las estructuras de almacenamiento"
+  }
+
+}
