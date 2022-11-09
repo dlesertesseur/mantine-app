@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { createStyles, Select } from "@mantine/core";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { selectSite } from "../Features/Auth";
 
 const useStyles = createStyles((theme) => ({
   root: {
@@ -25,6 +26,7 @@ const useStyles = createStyles((theme) => ({
 const SiteSelector = ({ label }) => {
   const { projectSelected, siteSelected } = useSelector((state) => state.auth.value);
   const [sites, setSites] = useState([]);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (projectSelected !== null) {
@@ -38,6 +40,11 @@ const SiteSelector = ({ label }) => {
 
   const { classes } = useStyles();
 
+  const onChange = (siteId) => {
+    const site = projectSelected?.sites.find((s) => s.id === siteId);
+    dispatch(selectSite(site));
+  };
+
   return (
     <Select
       style={{ zIndex: 2 }}
@@ -45,6 +52,7 @@ const SiteSelector = ({ label }) => {
       label={label}
       classNames={classes}
       value={siteSelected?.id}
+      onChange={onChange}
     />
   );
 };

@@ -1,30 +1,7 @@
 import { API } from "../Constants";
 
-const findAllFloorsBySiteId = async (parameters) => {
+const createRack = async (parameters) => {
   try {
-    const requestOptions = {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        token: parameters.token,
-      },
-    };
-    const url = API.floor.findAll + "/" + parameters.siteId;
-
-    const res = await fetch(url, requestOptions);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-};
-
-const createFloor = async (parameters) => {
-  try {
-    parameters.pixelmeterrelation=0;
-
     const body = JSON.stringify(parameters.data);
 
     const requestOptions = {
@@ -37,7 +14,7 @@ const createFloor = async (parameters) => {
       body: body,
     };
 
-    const url = API.floor.create + parameters.siteId;
+    const url = API.rack.create + parameters.siteId + "/floors/" + parameters.floorId + "/racks";
 
     const res = await fetch(url, requestOptions);
     const data = await res.json();
@@ -48,9 +25,7 @@ const createFloor = async (parameters) => {
   }
 };
 
-
-
-const findFloorById = async (parameters) => {
+const findAllRacksHeaders = async (parameters) => {
   try {
     const requestOptions = {
       method: "GET",
@@ -60,7 +35,7 @@ const findFloorById = async (parameters) => {
         token: parameters.token,
       },
     };
-    const url = API.floor.findById + "/" + parameters.floorId
+    const url = API.rack.findAllHeaders + "/" + parameters.siteId + "/floors/" + parameters.floorId +"/racks/headers";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -70,7 +45,27 @@ const findFloorById = async (parameters) => {
   }
 };
 
-const updateFloor = async (parameters) => {
+const findRackById = async (parameters) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
+    const url = API.rack.findById + "/" + parameters.siteId + "/floors/" + parameters.floorId +"/racks/" + parameters.rackId;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+const updateRack = async (parameters) => {
   try {
     const body = JSON.stringify(parameters.data);
 
@@ -84,7 +79,7 @@ const updateFloor = async (parameters) => {
       body: body,
     };
 
-    const url = API.floor.update;
+    const url = API.rack.update + parameters.siteId + "/floors/" + parameters.floorId + "/racks";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -94,29 +89,4 @@ const updateFloor = async (parameters) => {
   }
 };
 
-const deleteFloor = async (parameters) => {
-  try {
-    const body = JSON.stringify(parameters.data);
-
-    const requestOptions = {
-      method: "DELETE",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        token: parameters.token,
-      },
-      body: body,
-    };
-
-    const url = API.floor.delete + parameters.floorId;
-    const res = await fetch(url, requestOptions);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-};
-
-
-export { findAllFloorsBySiteId, createFloor, updateFloor, deleteFloor, findFloorById };
+export { createRack, findAllRacksHeaders, findRackById, updateRack };

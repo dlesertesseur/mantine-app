@@ -1,6 +1,6 @@
 import { API } from "../Constants";
 
-async function create(parameters) {
+async function createSite(parameters) {
   try {
     const body = JSON.stringify({
       name: parameters.name,
@@ -28,7 +28,7 @@ async function create(parameters) {
   }
 }
 
-async function update(parameters) {
+async function updateSite(parameters) {
   try {
     const body = JSON.stringify({
       id: parameters.id,
@@ -56,7 +56,7 @@ async function update(parameters) {
   }
 }
 
-async function remove(parameters) {
+async function deleteSite(parameters) {
   try {
     const body = JSON.stringify({
       id: parameters.id,
@@ -127,16 +127,33 @@ async function findAllSites(parameters) {
     const url = API.site.findAllSites;
     const res = await fetch(url, requestOptions);
     const data = await res.json();
-    
+
     data.map((s) => {
       s.contextName = s.context.name;
       return s;
-    })
+    });
     return data;
   } catch (error) {
     return error;
   }
 }
 
+async function findSiteById(parameters) {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: { "Content-Type": "application/json", token: parameters.token },
+    };
 
-export { create, update, remove, findAllSitesByPage, findAllSitesByProjectId, findAllSites };
+    const url = API.site.findSiteById + parameters.siteId;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
+export { createSite, updateSite, deleteSite, findAllSitesByPage, findAllSitesByProjectId, findAllSites, findSiteById};

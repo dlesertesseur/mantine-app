@@ -20,7 +20,7 @@ function App() {
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
         <Provider store={store}>
-          <BrowserRouter>
+          <BrowserRouter basename="/platform/">
             <Routes>
               <Route path="*" element={<NotFound />} />
               <Route exact path="/" element={<SignIn />} />
@@ -34,11 +34,6 @@ function App() {
                   </ProtectedRoute>
                 }
               />
-
-              {/* <Route path="/dashboard" element={<ProtectedLayout />}>
-              <Route path="profile" element={<ProfilePage />} />
-              <Route path="settings" element={<SettingsPage />} />
-            </Route> */}
             </Routes>
           </BrowserRouter>
         </Provider>

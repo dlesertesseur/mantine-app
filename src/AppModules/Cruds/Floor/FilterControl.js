@@ -1,15 +1,13 @@
-import { Popover, Button, Select, Space, Group } from "@mantine/core";
+import { Popover, Button, Select, Group } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { findAllFloorsBySiteId } from "../../../DataAccess/Floors";
 import { findAllSites } from "../../../DataAccess/Sites";
 
-function FilterControl({onFilter, site, setSite, floor, setFloor}) {
+function FilterControl({onFilter, site, setSite}) {
   const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
   const [sites, setSites] = useState([]);
-  const [floors, setFloors] = useState([]);
   const [opened, setOpened] = useState(false);
 
   useEffect(() => {
@@ -21,22 +19,9 @@ function FilterControl({onFilter, site, setSite, floor, setFloor}) {
     });
   }, [user]);
 
-  useEffect(() => {
-    if (site) {
-      const params = {
-        token: user.token,
-        siteId: site,
-      };
-
-      findAllFloorsBySiteId(params).then((ret) => {
-        setFloors(ret);
-      });
-    }
-  }, [user, site, setFloor]);
-
   const onLoadData = () => {
     setOpened(false);
-    onFilter(site, floor);
+    onFilter(site);
   };
 
   return (
@@ -57,18 +42,9 @@ function FilterControl({onFilter, site, setSite, floor, setFloor}) {
           value={site}
           onChange={setSite}
         />
-        <Space my={"md"} />
-        <Select
-          label={t("label.floor")}
-          description={t("label.floorDesc")}
-          placeholder={t("label.select")}
-          nothingFound={t("label.noData")}
-          value={floor}
-          onChange={setFloor}
-          data={floors?.map((s) => { return({value: s.id, label: s.name })})}
-        />
+
         <Group position="right" mt={"md"}>
-          <Button disabled={!(site && floor)} onClick={onLoadData}>{t("button.accept")}</Button>
+          <Button disabled={!site} onClick={onLoadData}>{t("button.accept")}</Button>
         </Group>
       </Popover.Dropdown>
     </Popover>

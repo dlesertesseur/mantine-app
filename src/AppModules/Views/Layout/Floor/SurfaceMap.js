@@ -3,6 +3,7 @@ import View2D from "../.././../../Components/View2D";
 import Zone from "../Model/Zone";
 import RackLabel from "../Model/RackLabel";
 import StaticLayout from "../Model/StaticLayout";
+import Toolbar from "./Toolbar";
 import { Group, Layer, Line } from "react-konva";
 import { useRef } from "react";
 import { useEffect } from "react";
@@ -10,17 +11,10 @@ import { useSelector } from "react-redux";
 import { PIXEL_METER_RELATION, TOOLBAR_HIGHT } from "../../../../Constants";
 import { Stack } from "@mantine/core";
 import { findOperator } from ".././../../../DataAccess/Operators";
-import Toolbar from "./Toolbar";
+import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
+import { FilterControl } from "../Controls/FilterControl";
 
-const SurfaceMap = ({
-  floor,
-  layout,
-  racks,
-  updateTime = 3000,
-  editingEnabled = false,
-  inspectRack,
-  drawCenter = false,
-}) => {
+const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCenter = false }) => {
   const [anchorPointIndex, setAnchorPointIndex] = useState(0);
   const [operatorsStatus, setOperatorsStatus] = useState(false);
   const [selectedRack, setSelectedRack] = useState(null);
@@ -28,10 +22,22 @@ const SurfaceMap = ({
   const [operatorList, setOperatorList] = useState([]);
   const [maxAnchorPoints, setMaxAnchorPoints] = useState(0);
   const [rendering, setRedering] = useState(false);
-  const [parts] = useState(layout.parts);
+  const [siteId, setSiteId] = useState(null);
+  const [floorId, setFloorId] = useState(null);
+  const [floor, setFloor] = useState(null);
+  const [layouts, setLayouts] = useState(null);
+  const [racks, setRacks] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const { user } = useSelector((state) => state.auth.value);
   const { bodyContainerWidth, bodyContainerHeight } = useSelector((state) => state.app.value);
+
+  const zoneRef = useRef();
+  useEffect(()=>{
+    const zone = zoneRef.current; 
+    zone.cache();
+    console.log("CACHE LAYER");
+  }, [racks])
 
   //DRAW OPERATORS STATUS
   useEffect(() => {
@@ -146,6 +152,24 @@ const SurfaceMap = ({
     }
   };
 
+  const loadData = (site, floor) => {
+    const params = {
+      token: user.token,
+      siteId: site.id,
+      floorId: floor.id,
+    };
+
+    setLoading(true);
+
+    findLayoutByFloorId(params).then((ret) => {
+      setLayouts(ret);
+      findRacksByZoneId(params).then((ret) => {
+        setRacks(ret);
+        setLoading(false);
+      });
+    });
+  };
+
   const trRef = useRef();
 
   return (
@@ -158,10 +182,25 @@ const SurfaceMap = ({
         border: "solid 1px" + theme.colors.gray[3],
       })}
     >
-      <Toolbar onOption={onOption} />
-      <View2D width={bodyContainerWidth} height={bodyContainerHeight - (TOOLBAR_HIGHT + 2)}>
-        <Layer id="structure">{layout ? <StaticLayout floor={floor} layout={layout} parts={parts} /> : null}</Layer>
-        <Layer id="zone">
+      <Toolbar onOption={onOption}>
+        <FilterControl
+          siteId={siteId}
+          setSiteId={setSiteId}
+          floorId={floorId}
+          setFloorId={setFloorId}
+          onFilter={loadData}
+          loading={loading}
+          setFloor={setFloor}
+        />
+      </Toolbar>
+      <View2D
+        width={bodyContainerWidth}
+        height={bodyContainerHeight - (TOOLBAR_HIGHT + 2)}
+      >
+        <Layer id="structure">
+          {layouts && floor ? <StaticLayout floor={floor} layout={layouts[0]} parts={layouts[0]?.parts} /> : null}
+        </Layer>
+        <Layer id="zone" ref={zoneRef}>
           <Zone
             name={""}
             racks={racks}

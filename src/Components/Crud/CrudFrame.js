@@ -1,11 +1,23 @@
 import React from "react";
 import SortedTable from "./SortedTable";
-import { Divider, Stack, Text} from "@mantine/core";
+import { Divider, Stack, Text } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import { findTranslatedField } from "../../Util";
 import { useTranslation } from "react-i18next";
 
-const CrudFrame = ({ app, data, columns, createPage, updatePage, deletePage, filterControl = null}) => {
+const CrudFrame = ({
+  app,
+  data,
+  columns,
+  rowSelected,
+  setRowSelected,
+  enableCreateButton,
+  createPage,
+  updatePage,
+  deletePage,
+  filterControl = null,
+  loading = false,
+}) => {
   const { i18n } = useTranslation();
 
   return (
@@ -26,10 +38,14 @@ const CrudFrame = ({ app, data, columns, createPage, updatePage, deletePage, fil
           height: "48px",
         })}
       >
-        <Text size="xl" weight={700}>{findTranslatedField(i18n.language, app, "name")}</Text>
-        <Text size="xs" color="dimmed">{findTranslatedField(i18n.language, app, "description")}</Text>
+        <Text size="xl" weight={700}>
+          {findTranslatedField(i18n.language, app, "name")}
+        </Text>
+        <Text size="xs" color="dimmed">
+          {findTranslatedField(i18n.language, app, "description")}
+        </Text>
       </Stack>
-      <Divider  />
+      <Divider />
       <Stack
         justify="flex-start"
         sx={(theme) => ({
@@ -38,7 +54,20 @@ const CrudFrame = ({ app, data, columns, createPage, updatePage, deletePage, fil
         })}
       >
         <Routes>
-          <Route path="/" element={<SortedTable data={data} columns={columns} filterControl={filterControl}/>} />
+          <Route
+            path="/"
+            element={
+              <SortedTable
+                data={data}
+                columns={columns}
+                filterControl={filterControl}
+                loading={loading}
+                enableCreateButton={enableCreateButton}
+                rowSelected={rowSelected}
+                setRowSelected={setRowSelected}
+              />
+            }
+          />
           <Route path="/create" element={createPage} />
           <Route path="/update" element={updatePage} />
           <Route path="/delete" element={deletePage} />

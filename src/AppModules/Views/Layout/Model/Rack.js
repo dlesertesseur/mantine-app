@@ -2,7 +2,7 @@ import React from "react";
 import Module from "./Module";
 import Frame from "./Frame";
 import { Circle, Group, Rect } from "react-konva";
-import { getRackSelectedColor } from "../../../../Util";
+import { getModulePartSelectedColor, getModulePartStrokeColor, getRackSelectedColor } from "../../../../Util";
 import { useRef } from "react";
 import { BLOCK_SNAP_SIZE } from "../.././../../Constants";
 import RackLabel from "./RackLabel";
@@ -26,7 +26,7 @@ const Rack = ({
   selected = false,
   userData = null,
   onPress = null,
-  showLabel= true
+  showLabel = true,
 }) => {
   const ref = useRef();
 
@@ -38,11 +38,6 @@ const Rack = ({
       rotation={rotation}
       name={name}
       draggable={draggable}
-      // onClick={(e) => {
-      //   if (onClick) {
-      //     onClick(ref, userData);
-      //   }
-      // }}
       onMouseDown={(e) => {
         if (onPress) {
           onPress(ref, userData);
@@ -108,7 +103,17 @@ const Rack = ({
             );
           })}
         </>
-      ) : null}
+      ) : (
+        <Group x={-(width / 2.0)} y={-(height / 2.0)}>
+          <Rect
+            perfectDrawEnabled={false}
+            width={width}
+            height={height}
+            strokeWidth={0.2}
+            fill={selected ? getModulePartSelectedColor(1) : getModulePartStrokeColor(2)}
+          />
+        </Group>
+      )}
 
       {boundingBox ? (
         <Group x={-(width / 2.0)} y={-(height / 2.0)}>
@@ -122,12 +127,9 @@ const Rack = ({
         </Group>
       ) : null}
 
-      {selected && draggable && showLabel? (
+      {selected && draggable && showLabel ? (
         <Group x={-(width / 2.0)} y={-(height / 2.0)}>
-          <RackLabel
-            text={name}
-            x={(width / 2.0)} y={(height / 2.0)}
-          />
+          <RackLabel text={name} x={width / 2.0} y={height / 2.0} />
         </Group>
       ) : null}
 

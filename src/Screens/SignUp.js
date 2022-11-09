@@ -13,6 +13,7 @@ import {
 import { useForm } from "@mantine/form";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import Logo from "../Components/Logo";
 
 export function SignUp() {
   const navigate = useNavigate();
@@ -28,18 +29,16 @@ export function SignUp() {
 
     validate: {
       firstName: (val) => (val ? null : t("validation.required")),
-      lastName: (val) => (val ? null :  t("validation.required")),
-      email: (val) => (/^\S+@\S+$/.test(val) ? null :  t("validation.emailFormat")),
-      password: (val) =>
-        val.length <= 6
-          ? t("validation.passwordFormat")
-          : null,
-      terms: (val) => (val ? null : t("validation.terms"))
+      lastName: (val) => (val ? null : t("validation.required")),
+      email: (val) => (/^\S+@\S+$/.test(val) ? null : t("validation.emailFormat")),
+      password: (val) => (val.length <= 6 ? t("validation.passwordFormat") : null),
+      terms: (val) => (val ? null : t("validation.terms")),
     },
   });
 
   return (
     <Container size={420} my={40}>
+      <Logo />
       <Title
         align="center"
         sx={(theme) => ({
@@ -63,20 +62,15 @@ export function SignUp() {
           <TextInput
             label={t("label.firstName")}
             placeholder={t("placeholder.firstName")}
-            onChange={(event) =>
-              form.setFieldValue("firstName", event.currentTarget.value)
-            }
+            onChange={(event) => form.setFieldValue("firstName", event.currentTarget.value)}
             error={form.errors.firstName}
           />
 
           <TextInput
             label={t("label.lastName")}
             placeholder={t("placeholder.lastName")}
-
             mt="md"
-            onChange={(event) =>
-              form.setFieldValue("lastName", event.currentTarget.value)
-            }
+            onChange={(event) => form.setFieldValue("lastName", event.currentTarget.value)}
             error={form.errors.lastName}
           />
 
@@ -84,9 +78,7 @@ export function SignUp() {
             label={t("label.email")}
             placeholder={t("placeholder.email")}
             mt="md"
-            onChange={(event) =>
-              form.setFieldValue("email", event.currentTarget.value)
-            }
+            onChange={(event) => form.setFieldValue("email", event.currentTarget.value)}
             error={form.errors.email}
           />
           <PasswordInput
@@ -94,18 +86,16 @@ export function SignUp() {
             placeholder={t("placeholder.password")}
             autoComplete="off"
             mt="md"
-            onChange={(event) =>
-              form.setFieldValue("password", event.currentTarget.value)
-            }
+            onChange={(event) => form.setFieldValue("password", event.currentTarget.value)}
             error={form.errors.password}
           />
 
           <Group position="apart" mt="md">
-            <Checkbox label={t("label.conditions")}
-            onChange={(event) =>
-              form.setFieldValue("terms", event.currentTarget.value)
-            }
-            error={form.errors.terms}/>
+            <Checkbox
+              label={t("label.conditions")}
+              onChange={(event) => form.setFieldValue("terms", event.currentTarget.value)}
+              error={form.errors.terms}
+            />
           </Group>
 
           <Button type="submit" fullWidth mt="xl">

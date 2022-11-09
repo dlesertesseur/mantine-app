@@ -20,10 +20,10 @@ const StructurePart = ({
   updatePart,
   selected,
   onSelect,
-  onEdit
+  onEdit,
 }) => {
   const drawRect = () => {
-    return <Rect x={x} y={y} name={name} width={width} height={height} fill={color} />;
+    return <Rect x={x} y={y} name={name} width={width} height={height} fill={color} perfectDrawEnabled={true} />;
   };
 
   const drawPolygon = (geometry) => {

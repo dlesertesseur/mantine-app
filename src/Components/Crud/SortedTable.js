@@ -10,6 +10,7 @@ import {
   TextInput,
   Button,
   Stack,
+  LoadingOverlay,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from "@tabler/icons";
@@ -95,22 +96,29 @@ function sortData(data, payload) {
   return filterData(
     [...data].sort((a, b) => {
       if (payload.reversed) {
-        return b[sortBy].localeCompare(a[sortBy]);
+        if (typeof a[sortBy] === "string" || a[sortBy] instanceof String) {
+          return a[sortBy].toString().localeCompare(b[sortBy].toString());
+        } else {
+          return b[sortBy] - a[sortBy];
+        }
+      } else {
+        if (typeof a[sortBy] === "string" || a[sortBy] instanceof String) {
+          return b[sortBy].toString().localeCompare(a[sortBy].toString());
+        } else {
+          return a[sortBy] - b[sortBy];
+        }
       }
-
-      return a[sortBy].localeCompare(b[sortBy]);
     }),
     payload.search
   );
 }
 
-export default function SortedTable({ data, columns, filterControl = null }) {
+export default function SortedTable({ data, columns, filterControl = null, loading = false, enableCreateButton, rowSelected, setRowSelected }) {
   const { classes, cx } = useStyles();
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
-  const [rowSelected, setRowSelected] = useState(null);
   const [scrolled, setScrolled] = useState(false);
   const navigate = useNavigate();
   const { t } = useTranslation();
@@ -133,6 +141,25 @@ export default function SortedTable({ data, columns, filterControl = null }) {
     setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
   };
 
+  const formatData = (data, format) => {
+    let ret = data;
+
+    if (format) {
+      switch (format) {
+        case "round":
+          ret = Math.round(data * 100) / 100;
+          break;
+        case "bool":
+          ret = data ? t("label.true") : t("label.false");
+          break;
+  
+        default:
+          break;
+      }
+    }
+    return ret;
+  };
+
   const rows = sortedData.map((row) => {
     const ret = (
       <tr
@@ -143,7 +170,9 @@ export default function SortedTable({ data, columns, filterControl = null }) {
         style={{ backgroundColor: row.id === rowSelected ? "#74C0FC" : "" }}
       >
         {columns.map((f) => (
-          <td key={f.fieldName}>{row[f.fieldName]}</td>
+          <td key={f.fieldName} align={f.align ? f.align : "center"}>
+            {formatData(row[f.fieldName], f.format)}
+          </td>
         ))}
       </tr>
     );
@@ -156,6 +185,7 @@ export default function SortedTable({ data, columns, filterControl = null }) {
       <Group position="apart">
         <Group spacing="xs">
           <Button
+            disabled={!enableCreateButton}
             onClick={() => {
               navigate("./create");
             }}
@@ -192,15 +222,9 @@ export default function SortedTable({ data, columns, filterControl = null }) {
       </Group>
 
       <ScrollArea sx={{ height: 700 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
-        <Table
-          horizontalSpacing="xs"
-          verticalSpacing="xs"
-          striped
-          highlightOnHover
-          withBorder
-          withColumnBorders
-          //sx={{ tableLayout: "fixed", minWidth: 700 }}
-        >
+        <LoadingOverlay visible={loading} overlayBlur={2} />
+
+        <Table horizontalSpacing="xs" verticalSpacing="xs" striped highlightOnHover withBorder withColumnBorders>
           <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
             <tr>
               {columns.map((h, index) => (

@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { IconAlertCircle } from "@tabler/icons";
+import Logo from "../Components/Logo";
 
 export function SignIn() {
   const { t } = useTranslation();
@@ -37,7 +38,7 @@ export function SignIn() {
       password: "",
     },
 
-    // CANBIAR LA VALIDACION DE LA CLABLE a minimo 6 caracteres
+    // CANBIAR LA VALIDACION DE LA CLAVE a minimo 6 caracteres
     validate: {
       email: (val) => (/^\S+@\S+$/.test(val) ? null : t("validation.emailFormat")),
       password: (val) => (val.length <= 2 ? t("validation.passwordFormat") : null),
@@ -46,6 +47,7 @@ export function SignIn() {
 
   return (
     <Container size={420} my={40}>
+      <Logo/>
       <Title
         align="center"
         sx={(theme) => ({

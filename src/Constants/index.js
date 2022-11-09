@@ -1,8 +1,12 @@
-const SERVER = "http://192.168.0.15";
-const API_BASE = "/connexa/api/v1";
-const LOCAL_SERVER = "http://192.168.0.11";
+//const SERVER = "http://192.168.0.15";
+//const PORT = "8080";
+//const API_BASE = "/connexa/api/v1";
 
-const PORT = "8080";
+const SERVER = process.env.REACT_APP_SERVER;
+const PORT = process.env.REACT_APP_PORT;
+const API_BASE = process.env.REACT_APP_API_BASE;
+
+const LOCAL_SERVER = "http://192.168.0.11";
 
 export const TOOLBAR_HIGHT = 42;
 export const PIXEL_METER_RELATION = 25;
@@ -187,12 +191,23 @@ export const API = {
     findFloor: SERVER + ":" + PORT + API_BASE + "/floors", 
     savePosAndRot: SERVER + ":" + PORT + API_BASE + "/sites", 
     saveLayout: SERVER + ":" + PORT + API_BASE + "/site-drawings/", 
+    findLayoutByFloorId: SERVER + ":" + PORT + API_BASE + "/site-drawings", 
   },
 
   floor: { 
     findAll: SERVER + ":" + PORT + API_BASE + "/floors/all",
+    findById: SERVER + ":" + PORT + API_BASE + "/floors",
+    create: SERVER + ":" + PORT + API_BASE + "/floors/",
+    update: SERVER + ":" + PORT + API_BASE + "/floors",
+    delete: SERVER + ":" + PORT + API_BASE + "/floors/",
   },
 
+  rack: {
+    create: SERVER + ":" + PORT + API_BASE + "/sites/",
+    update: SERVER + ":" + PORT + API_BASE + "/sites/",
+    findAllHeaders: SERVER + ":" + PORT + API_BASE + "/sites", 
+    findById: SERVER + ":" + PORT + API_BASE + "/sites", 
+  },
 };
 
 export const ERRORS = {

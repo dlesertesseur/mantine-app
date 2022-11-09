@@ -1,30 +1,48 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
+import CrudFrame from "../../../Components/Crud/CrudFrame";
 import { useSelector } from "react-redux";
 import { findAllSites } from "../../../DataAccess/Sites";
-import CrudFrame from "../../../Components/Crud/CrudFrame";
-import DummyPage from "../../../Components/DummyPage";
 import { useTranslation } from "react-i18next";
+import { CreateSitePage } from "./CreateSitePage";
+import { findAllContext } from "../../../DataAccess/Context";
+import { UpdateSitePage } from "./UpdateSitePage";
+import { DeleteSitePage } from "./DeleteSitePage";
 
 const DynamicApp = ({ app }) => {
   const { user } = useSelector((state) => state.auth.value);
   const [sites, setSites] = useState([]);
-  const {t} = useTranslation();
+  const [contexts, setContexts] = useState(null);
+  const [siteId, setSiteId] = useState(null);
+  const { t } = useTranslation();
 
-  useEffect(() => {
+  const onLoadGrid = useCallback(() => {
     const params = {
       token: user.token,
     };
     findAllSites(params).then((ret) => {
       setSites(ret);
     });
+  },[user]);
+
+  useEffect(() => {
+    onLoadGrid();
+  }, [onLoadGrid, user]);
+
+  useEffect(() => {
+    const params = {
+      token: user.token,
+    };
+    findAllContext(params).then((ret) => {
+      setContexts(ret);
+    });
   }, [user]);
 
   const cols = t("crud.site.columns", { returnObjects: true });
   const columns = [
-    { headerName: cols[0], fieldName: "name" },
-    { headerName: cols[1], fieldName: "address" },
-    { headerName: cols[2], fieldName: "phone" },
-    { headerName: cols[3], fieldName: "contextName" },
+    { headerName: cols[0], fieldName: "name", align: "left" },
+    { headerName: cols[1], fieldName: "address", align: "left" },
+    { headerName: cols[2], fieldName: "phone", align: "left" },
+    { headerName: cols[3], fieldName: "contextName", align: "left" },
   ];
 
   const ret =
@@ -33,10 +51,16 @@ const DynamicApp = ({ app }) => {
         app={app}
         columns={columns}
         data={sites}
-        pages={1}
-        createPage={<DummyPage title={"CREATA SITE"} description={"ABM DE SITIOS"} back={"../"} />}
-        updatePage={<DummyPage title={"UPDATE SITE"} description={"ABM DE SITIOS"} back={"../"} />}
-        deletePage={<DummyPage title={"DELETE SITE"} description={"ABM DE SITIOS"} back={"../"} />}
+        rowSelected={siteId}
+        setRowSelected={setSiteId}
+        enableCreateButton={true}
+        createPage={<CreateSitePage user={user} back={"../"} onLoadGrid={onLoadGrid} contexts={contexts} />}
+        updatePage={
+          <UpdateSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />
+        }
+        deletePage={
+          <DeleteSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />
+        }
       />
     ) : null;
 

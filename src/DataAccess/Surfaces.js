@@ -34,6 +34,8 @@ export const findRacksByZoneId = async (parameters) => {
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
+    console.log("-> findRacksByZoneId")
+
     return data;
   } catch (error) {
     return error;
@@ -172,7 +174,7 @@ export const findLayout = async (parameters) => {
   }
 };
 
-export const findSiteById = async (parameters) => {
+export const findLayoutByFloorId = async (parameters) => {
   try {
     const requestOptions = {
       method: "GET",
@@ -182,14 +184,14 @@ export const findSiteById = async (parameters) => {
         token: parameters.token,
       },
     };
-    const url =
-      API.site.findSiteById + "/" + parameters.siteId;
+    const url = API.surface.findLayoutByFloorId + "/" + parameters.siteId + "/floors/" + parameters.floorId + "/layouts";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
+
+    console.log("-> findLayoutByFloorId")
 
     return data;
   } catch (error) {
     return error;
   }
 };
-

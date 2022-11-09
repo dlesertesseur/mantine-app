@@ -7,19 +7,24 @@ import Footer from "./Footer";
 import { Group, Layer, Line, Transformer } from "react-konva";
 import { useRef } from "react";
 import { useSelector } from "react-redux";
-import { Button, Drawer, Popover, Stack, TextInput } from "@mantine/core";
+import { Stack } from "@mantine/core";
 import { PIXEL_METER_RELATION, TOOLBAR_HIGHT } from "../../../../Constants";
 import { savePosAndRots } from "../../../../DataAccess/Surfaces";
+import { FilterControl } from "../Controls/FilterControl";
+import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 
-const Editor = ({ floor, layout, racks, inspectRack, drawCenter = false, refresh }) => {
+const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
   const { user } = useSelector((state) => state.auth.value);
   const { bodyContainerWidth, bodyContainerHeight } = useSelector((state) => state.app.value);
-  const [parts] = useState(layout.parts);
   const [selectedRack, setSelectedRack] = useState(null);
   const [savingData, setSavingData] = useState(false);
-  const [opened, setOpened] = useState(false);
   const [unlockEditStorageStructures, setUnlockEditStorageStructures] = useState(false);
-
+  const [siteId, setSiteId] = useState(null);
+  const [floorId, setFloorId] = useState(null);
+  const [floor, setFloor] = useState(null);
+  const [layout, setLayout] = useState(null);
+  const [racks, setRacks] = useState(null);
+  const [loading, setLoading] = useState(false);
   const trRef = useRef();
 
   const onRackDblClick = (ref, rack) => {
@@ -58,10 +63,6 @@ const Editor = ({ floor, layout, racks, inspectRack, drawCenter = false, refresh
     if (option === "refresh") {
       refreshData();
     }
-
-    if (option === "openDrawer") {
-      setOpened(true);
-    }
   };
 
   function handleTransform(e) {
@@ -78,17 +79,26 @@ const Editor = ({ floor, layout, racks, inspectRack, drawCenter = false, refresh
     }
   }
 
+  const loadData = (site, floor) => {
+    const params = {
+      token: user.token,
+      siteId: site.id,
+      floorId: floor.id,
+    };
+
+    setLoading(true);
+
+    findLayoutByFloorId(params).then((ret) => {
+      setLayout(ret[0]);
+      findRacksByZoneId(params).then((ret) => {
+        setRacks(ret);
+        setLoading(false);
+      });
+    });
+  };
+
   return (
     <>
-      {/* <Popover width={300} opened={opened} trapFocus position="bottom" withArrow shadow="md">
-        <Popover.Dropdown
-          sx={(theme) => ({ background: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white })}
-        >
-          <TextInput label="Name" placeholder="Name" size="xs" />
-          <TextInput label="Email" placeholder="john@doe.com" size="xs" mt="xs" />
-        </Popover.Dropdown>
-      </Popover> */}
-
       <Stack
         justify="flex-start"
         spacing="0"
@@ -102,9 +112,22 @@ const Editor = ({ floor, layout, racks, inspectRack, drawCenter = false, refresh
           onOption={onOption}
           lockMove={unlockEditStorageStructures}
           setLockMove={setUnlockEditStorageStructures}
-        />
+        >
+          <FilterControl
+            siteId={siteId}
+            setSiteId={setSiteId}
+            floorId={floorId}
+            setFloorId={setFloorId}
+            onFilter={loadData}
+            loading={loading}
+            setFloor={setFloor}
+          />
+        </Toolbar>
+
         <View2D width={bodyContainerWidth} height={bodyContainerHeight - (TOOLBAR_HIGHT * 2 + 4)} working={savingData}>
-          <Layer id="structure">{layout ? <StaticLayout floor={floor} layout={layout} parts={parts} /> : null}</Layer>
+          <Layer id="structure">
+            {layout ? <StaticLayout floor={floor} layout={layout} parts={layout.parts} /> : null}
+          </Layer>
           <Layer id="zone">
             <Zone
               name={""}

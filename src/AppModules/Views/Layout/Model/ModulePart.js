@@ -8,6 +8,7 @@ const ModulePart = ({ name, x, y, width, height, type, selected = false }) => {
       <Rect
         x={x}
         y={y}
+        perfectDrawEnabled={true}
         name={name}
         width={width}
         height={height}

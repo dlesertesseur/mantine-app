@@ -7,6 +7,7 @@ const Frame = ({ name, x, y, width, height, type, boundingBox = false, center = 
   return (
     <Group x={-(width / 2.0)} y={-(height / 2.0)}>
       <Rect
+        perfectDrawEnabled={true}
         x={x}
         y={y}
         name={name}

@@ -1,16 +1,14 @@
 import { useState } from "react";
 import { useEffect } from "react";
-import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { findRackById } from "../../../DataAccess/Surfaces";
-import { Dialog, Group } from "@mantine/core";
+import { Dialog } from "@mantine/core";
 
 const StorageStructureDialog = ({ open, setOpen, storageStructure }) => {
-  const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
 
-  const [loadingData, setLoadingData] = useState(true);
-  const [rack, setRack] = useState(null);
+  const [setLoadingData] = useState(true);
+  const [setRack] = useState(null);
 
   useEffect(() => {
     const params = {
@@ -24,7 +22,7 @@ const StorageStructureDialog = ({ open, setOpen, storageStructure }) => {
     });
 
     console.log("StorageStructureDialog::useEffect");
-  }, [storageStructure, user]);
+  }, [setLoadingData, setRack, storageStructure, user]);
 
   function handleClose() {
     setOpen(false);

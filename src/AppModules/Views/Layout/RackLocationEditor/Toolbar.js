@@ -1,11 +1,11 @@
 import React from "react";
+import LockAction from "../../../../Components/LockAction";
 import { IconRefresh, IconDeviceFloppy } from "@tabler/icons";
-import { ActionIcon, Button, Group, Tooltip } from "@mantine/core";
+import { ActionIcon, Group, Tooltip } from "@mantine/core";
 import { TOOLBAR_HIGHT } from "../../../../Constants";
 import { useTranslation } from "react-i18next";
-import LockAction from "../../../../Components/LockAction";
 
-const Toolbar = ({ onOption = null, lockMove, setLockMove }) => {
+const Toolbar = ({ onOption = null, lockMove, setLockMove, children }) => {
   const { t } = useTranslation();
 
   const handleOption = (option) => {
@@ -15,9 +15,8 @@ const Toolbar = ({ onOption = null, lockMove, setLockMove }) => {
   };
   return (
     <Group
-      position="apart"
-      px={0}
       spacing={"xs"}
+      position="apart"
       sx={(theme) => ({
         backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[1],
         height: TOOLBAR_HIGHT + "px",
@@ -49,6 +48,7 @@ const Toolbar = ({ onOption = null, lockMove, setLockMove }) => {
 
       <Group px={"xs"} spacing={"xs"}>
         <LockAction checked={lockMove} setChecked={setLockMove} toolTip={t("tooltip.lockMove")} />
+        {children}
       </Group>
     </Group>
   );

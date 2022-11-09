@@ -1,9 +1,9 @@
 {
-  "main":{
-    "title":"CONNEXA",
-    "subtitle":"Retail platform"
+  "main": {
+    "title": "CONNEXA",
+    "subtitle": "Retail platform"
   },
-  
+
   "signIn": "Login",
   "forgotPassword": "Restablecer contraseña",
 
@@ -12,12 +12,21 @@
     "forgotPassword": "Olvidé mi contraseña?",
     "doNotHaveAccount": "¿No tienes una cuenta?",
     "haveAccount": "¿Ya tienes una cuenta?",
-    "createAccount":"Crear una"
+    "createAccount": "Crear una"
   },
 
-  "signUp":{
-    "title":"Crear una cuenta",
-    "message":"Nos alegra mucho que este aqui, connexa es una plataforma que cuenta con muchas herramientas para ayudarlo en la gestion y planificacion."
+  "signUp": {
+    "title": "Crear una cuenta",
+    "message": "Nos alegra mucho que este aqui, connexa es una plataforma que cuenta con muchas herramientas para ayudarlo en la gestion y planificacion."
+  },
+
+  "message": {
+    "update": "La actualizacio fue realizada con éxito"
+  },
+
+  "status": {
+    "ok": "Correcto",
+    "error": "Algo anduvo mal !!!"
   },
 
   "button": {
@@ -92,23 +101,25 @@
     "month": "Mes",
     "active": "Activo",
     "inactive": "Inactivo",
-    "keepMeConnected":"Mantenerme contectado",
-    "conditions":"Acepto los términos y condiciones",
-    "selectedSite":"Usted esta trabajando en",
-    "noData":"Sin datos",
-    "site":"Sitio",
-    "siteDesc":"Seleccione un sitio para ver las plantas definidas",
-    "floor":"Planta",
-    "floorDesc":"Selecciona una planta para ver el plano",
-    "select":"Deleccionar uno, por favor"
+    "keepMeConnected": "Mantenerme contectado",
+    "conditions": "Acepto los términos y condiciones",
+    "selectedSite": "Usted esta trabajando en",
+    "noData": "Sin datos",
+    "site": "Sitio",
+    "siteDesc": "Seleccione un sitio para ver las plantas definidas",
+    "floor": "Planta",
+    "floorDesc": "Selecciona una planta para ver el plano",
+    "select": "Deleccionar uno, por favor",
+    "true": "Si",
+    "false": "No"
   },
 
-  "placeholder":{
-    "email":"you@connexa.com",
-    "password":"Su contraseña",
-    "firstName":"Su nombre",
-    "lastName":"Su apellido",
-    "search":"Buscar por cualquier campo"
+  "placeholder": {
+    "email": "you@connexa.com",
+    "password": "Su contraseña",
+    "firstName": "Su nombre",
+    "lastName": "Su apellido",
+    "search": "Buscar por cualquier campo"
   },
 
   "language": {
@@ -127,7 +138,7 @@
   "errors": {
     "title": "ERROR",
     "notImplemented": "La aplicacion aun no fue implenetada",
-    "loadApp":"No fue posible ejecutar aplicación",
+    "loadApp": "No fue posible ejecutar aplicación",
     "1001": "Error al intentar iniciar session",
     "1002": "Error al registrarse",
     "404": "Usuario o clave invalida"
@@ -204,15 +215,27 @@
     },
 
     "site": {
-      "name": "SUCURSALES",
-      "title": "ABM DE SUCURSALES",
-      "columns": ["Nombre", "Telefono", "Direccion", "Contexto"],
-      "align": ["left", "left", "left", "left"],
-      "width": ["35%", "20%", "35%", "10%"],
+      "columns": ["Nombre", "Direccion", "Telefono", "Contexto"],
+      "label": {
+        "name": "Nombre",
+        "address": "Direccion",
+        "phone": "Telefono",
+        "context": "Contexto"
+      },
+      "placeholder": {
+        "name": "Nombre de la sucursal",
+        "address": "Direccion de la sucursal",
+        "phone": "Telefono",
+        "context": "Contexto"
+      },
+      "title": {
+        "create": "Crear una nueva sucursal",
+        "update": "Modificar la sucursal",
+        "delete": "Eliminar la sucursal"
+      },
+      "message": {},
       "check": {
-        "columns": ["Nombre", "Contexto"],
-        "align": ["left", "left"],
-        "width": ["70%", "30%"]
+        "columns": ["Nombre", "Contexto"]
       }
     },
 
@@ -255,6 +278,7 @@
       "tab3": "Media",
       "tab4": "3D"
     },
+
     "user": {
       "name": "USUARIOS",
       "title": "ABM USUARIOS",
@@ -277,6 +301,81 @@
       "columns": ["", "", "SKU", "EAN", "Descripcion", "Estado"],
       "align": ["center", "center", "right", "left", "left", "left"],
       "width": ["5%", "5%", "10%", "15%", "50%", "15%"]
+    },
+
+    "storageStructure": {
+      "columns": [
+        "Nombre",
+        "Ancho (m)",
+        "Alto (m)",
+        "Profundidad (m)",
+        "Posición X",
+        "Posición Y",
+        "Posición Z",
+        "Rotacion (°)",
+        "Visible"
+      ],
+
+      "label": {
+        "name": "Nombre",
+        "numberOfModules": "Numero de módulos",
+        "moduleWidth": "Ancho de modulo",
+        "moduleHeight": "Alto del modulo",
+        "moduleDepth": "Profundidad del modulo",
+        "baseHeight": "Alto de la base",
+        "shelfHeight": "Alto del estante",
+        "verticalPanelWidth": "Ancho panel vertical",
+        "initialXPosition": "Initial X position",
+        "numberOfShelvesByModule": "Estantes por modulo",
+        "panelWidth": "Ancho del panel trasero",
+        "spaceHeight": "Alto del espacio",
+        "visible": "Visible"
+      },
+      "placeholder": {
+        "name": "Nombre de la estructura",
+        "numberOfModules": "Numero de módulos",
+        "moduleWidth": "Ancho de modulo",
+        "moduleHeight": "Alto del modulo",
+        "moduleDepth": "Profundidad del modulo",
+        "baseHeight": "Alto de la base",
+        "shelfHeight": "Alto del estante",
+        "verticalPanelWidth": "Ancho panel vertical",
+        "initialXPosition": "Initial X position",
+        "numberOfShelvesByModule": "Estantes poe modulo",
+        "panelWidth": "Ancho del panel trasero",
+        "spaceHeight": "Alto del espacio",
+        "visible": "Visible"
+      },
+
+      "title": {
+        "create": "Creare a new Rack",
+        "update": "Update a Rack",
+        "delete": "Delete a Rack"
+      },
+      "message": {
+        "create": "Todas las medidas están expresadas en metros.",
+        "update": "Todas las medidas están expresadas en metros.",
+        "delete": "Todas las medidas están expresadas en metros."
+      }
+    },
+
+    "floor": {
+      "columns": ["Nombre", "Descripcion"],
+      "label": {
+        "name": "Nombre",
+        "description": "Descripcion"
+      },
+      "placeholder": {
+        "name": "Nombre de planta",
+        "description": "Descripcion de planta"
+      },
+
+      "title": {
+        "create": "Crear una nueva Planta",
+        "update": "Modificar una Planta",
+        "delete": "Eliminar una Planta"
+      },
+      "message": {}
     }
   },
 
@@ -321,9 +420,8 @@
     }
   },
 
-  "tooltip":{
-    "operatorsStatus":"Muestra la posicion y actividad que estan realizando los operarios en tiempo real",
-    "lockMove":"Bloquea el movimiento y la rotación de las estructuras de almacenamiento"
+  "tooltip": {
+    "operatorsStatus": "Muestra la posicion y actividad que estan realizando los operarios en tiempo real",
+    "lockMove": "Bloquea el movimiento y la rotación de las estructuras de almacenamiento"
   }
-
 }

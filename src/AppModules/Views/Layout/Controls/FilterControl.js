@@ -2,10 +2,10 @@ import { Popover, Button, Select, Space, Group } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import { findAllFloorsBySiteId } from "../../../DataAccess/Floors";
-import { findAllSites } from "../../../DataAccess/Sites";
+import { findAllFloorsBySiteId } from "../../../../DataAccess/Floors";
+import { findAllSites } from "../../../../DataAccess/Sites";
 
-function FilterControl({onFilter, site, setSite, floor, setFloor}) {
+function FilterControl({ onFilter, siteId, setSiteId, floorId, setFloorId, setFloor, loading }) {
   const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
   const [sites, setSites] = useState([]);
@@ -22,27 +22,31 @@ function FilterControl({onFilter, site, setSite, floor, setFloor}) {
   }, [user]);
 
   useEffect(() => {
-    if (site) {
+    if (siteId) {
       const params = {
         token: user.token,
-        siteId: site,
+        siteId: siteId,
       };
 
       findAllFloorsBySiteId(params).then((ret) => {
         setFloors(ret);
       });
     }
-  }, [user, site, setFloor]);
+  }, [user, siteId, setFloorId]);
 
   const onLoadData = () => {
     setOpened(false);
-    onFilter(site, floor);
+    const rs = sites.find((s) => s.id === siteId);
+    const rf = floors.find((f) => f.id === floorId);
+    onFilter(rs, rf);
   };
 
   return (
-    <Popover width={300} position="bottom-start" withArrow shadow="md" opened={opened}>
+    <Popover width={300} position="bottom-end" withArrow shadow="md" opened={opened}>
       <Popover.Target>
-        <Button ml={"xl"} onClick={() => setOpened((o) => !o)}>{t("label.crud.filter")}</Button>
+        <Button loading={loading} size={"xs"} py={0} onClick={() => setOpened((o) => !o)}>
+          {t("label.crud.filter")}
+        </Button>
       </Popover.Target>
       <Popover.Dropdown
         sx={(theme) => ({ background: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white })}
@@ -53,9 +57,11 @@ function FilterControl({onFilter, site, setSite, floor, setFloor}) {
           description={t("label.siteDesc")}
           searchable
           nothingFound={t("label.noData")}
-          data={sites?.map((s) => { return({value: s.id, label: s.name })})}
-          value={site}
-          onChange={setSite}
+          data={sites?.map((s) => {
+            return { value: s.id, label: s.name };
+          })}
+          value={siteId}
+          onChange={setSiteId}
         />
         <Space my={"md"} />
         <Select
@@ -63,12 +69,19 @@ function FilterControl({onFilter, site, setSite, floor, setFloor}) {
           description={t("label.floorDesc")}
           placeholder={t("label.select")}
           nothingFound={t("label.noData")}
-          value={floor}
-          onChange={setFloor}
-          data={floors?.map((s) => { return({value: s.id, label: s.name })})}
+          value={floorId}
+          onChange={(event) => {
+            setFloorId(event);
+            setFloor(floors.find((f) => f.id === event));
+          }}
+          data={floors?.map((s) => {
+            return { value: s.id, label: s.name };
+          })}
         />
         <Group position="right" mt={"md"}>
-          <Button disabled={!(site && floor)} onClick={onLoadData}>{t("button.accept")}</Button>
+          <Button disabled={!(siteId && floorId)} onClick={onLoadData}>
+            {t("button.accept")}
+          </Button>
         </Group>
       </Popover.Dropdown>
     </Popover>

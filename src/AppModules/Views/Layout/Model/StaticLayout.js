@@ -6,40 +6,28 @@ import { PIXEL_METER_RELATION } from "../../../../Constants";
 const StaticLayout = ({ floor, layout, center = false, editingEnabled = false, parts, setParts}) => {
   const [pixelMeterRelation, setPixelMeterRelation] = useState(null);
   const [selectedPartId, setSelectedPartId] = useState(null);
-  const [editingPartId, setEditingPartId] = useState(null);
+  const [setEditingPartId] = useState(null);
 
   useEffect(() => {
     const n = (1.0 / floor?.pixelmeterrelation) * PIXEL_METER_RELATION;
     setPixelMeterRelation(n);
+
   }, [floor]);
 
-  // const updatePartLocation = (id, x, y) => {
-  //   const ret = parts.map((p) => {
-  //     if (p.id === id) {
-  //       p.positionx = p.positionx + (x / PIXEL_METER_RELATION);
-  //       p.positionz = p.positionz + (y / PIXEL_METER_RELATION);
-
-  //       console.log("updatePartLocation " +  p.name + "x["+x+"] y["+y+"]");
-  //     }
-  //     return p;
-  //   });
-  //   setParts(ret);
-  // }
-
   const updatePart = (partId, geometry) => {
-    const ret = parts.map((p) => {
+    const ret = parts?.map((p) => {
       if (p.id === partId) {
         p.geometry = geometry;
       }
       return p;
     });
-
+    
     setParts(ret);
   };
 
   return (
     <Group rotation={layout.rotation} name={layout.name} draggable={editingEnabled}>
-      {parts.map((part) => {
+      {parts?.map((part) => {
         return (
           <StructurePart
             key={part.id}

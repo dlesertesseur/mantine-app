@@ -1,10 +1,8 @@
 import React from "react";
 import { Group, Text } from "@mantine/core";
 import { TOOLBAR_HIGHT } from "../../../../Constants";
-import { useTranslation } from "react-i18next";
 
 const Footer = ({ seletedObject = null , updateData = false}) => {
-  const { t } = useTranslation();
 
   // useEffect(() => {
   //   if (seletedObject) {
