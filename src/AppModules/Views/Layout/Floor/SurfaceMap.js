@@ -32,12 +32,14 @@ const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, dr
   const { user } = useSelector((state) => state.auth.value);
   const { bodyContainerWidth, bodyContainerHeight } = useSelector((state) => state.app.value);
 
-  const zoneRef = useRef();
-  useEffect(()=>{
-    const zone = zoneRef.current; 
-    zone.cache();
-    console.log("CACHE LAYER");
-  }, [racks])
+  const zoneRef = useRef(null);
+  useEffect(() => {
+    const zone = zoneRef.current;
+    if (zone.hasChildren()) {
+      //zone.cache();
+      console.log("CACHE LAYER");
+    }
+  }, [racks]);
 
   //DRAW OPERATORS STATUS
   useEffect(() => {
@@ -193,10 +195,7 @@ const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, dr
           setFloor={setFloor}
         />
       </Toolbar>
-      <View2D
-        width={bodyContainerWidth}
-        height={bodyContainerHeight - (TOOLBAR_HIGHT + 2)}
-      >
+      <View2D width={bodyContainerWidth} height={bodyContainerHeight - (TOOLBAR_HIGHT + 2)}>
         <Layer id="structure">
           {layouts && floor ? <StaticLayout floor={floor} layout={layouts[0]} parts={layouts[0]?.parts} /> : null}
         </Layer>

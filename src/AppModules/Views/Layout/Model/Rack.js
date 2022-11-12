@@ -19,7 +19,6 @@ const Rack = ({
   pixelMeterRelation,
   boundingBox = false,
   center = false,
-  content = true,
   draggable = false,
   onClick = null,
   onDblClick = null,
@@ -27,6 +26,7 @@ const Rack = ({
   userData = null,
   onPress = null,
   showLabel = true,
+  detailContent = true,
 }) => {
   const ref = useRef();
 
@@ -72,7 +72,7 @@ const Rack = ({
         }
       }}
     >
-      {content ? (
+      {detailContent ? (
         <>
           {modules?.map((module) => {
             return (

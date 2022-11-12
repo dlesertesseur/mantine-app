@@ -11,7 +11,7 @@ const Zone = ({
   selectedRack = null,
   editingEnabled = false,
   showLabel = false,
-  //draggingView = false
+  detailContent = true
 }) => {
   return (
     <Group
@@ -37,7 +37,7 @@ const Zone = ({
             userData={rack}
             draggable={editingEnabled}
             showLabel={showLabel}
-            //draggingView={draggingView}
+            detailContent={detailContent}
           />
         );
       })}

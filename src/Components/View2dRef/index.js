@@ -1,6 +1,7 @@
-import { Container, LoadingOverlay } from "@mantine/core";
+import { Container } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { Stage } from "react-konva";
+import { buildActors, buildLayout } from "../Builder2d";
 
 const scaleBy = 1.05;
 
@@ -19,50 +20,32 @@ function isTouchEnabled() {
   return "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
 
-function View2D({
-  children,
+function View2DRef({
   dimensions,
-  centred = false,
+  centred = true,
   centerYOffsset = 0,
   width = 800,
   height = 600,
-  working = false,
-  handleDragging,
+  pixelMeterRelation,
+  layouts,
+  racks,
 }) {
   const stageRef = useRef(null);
   let lastCenter = null;
   let lastDist = 0;
 
-  // const paintTest = (stage) => {
-  //   let total = 100;
-  //   let width = 10;
-  //   let height = 10;
-  //   let separation = 4;
-  //   let posX = -((width + separation) * total) / 2;
-  //   let posY = -((height + separation) * total) / 2;
-    
-  //   let layer = new Konva.Layer({ name: "TEST" });
-    
-  //   for (let row = 0; row < total; row++, posY += width + separation) {
-  //     for (let col = 0; col < total; col++, posX += height + separation) {
-  //       let rect = new Konva.Rect({ x: posX, y: posY, width: width, height: height, fill: "#c5c5c5" });
-        
-  //       rect.perfectDrawEnabled(false);
-  //       rect.listening(false);
-        
-  //       layer.add(rect);
-  //     }
-  //     posX = -((width + separation) * total) / 2;
-  //   }
+  useEffect(() => {
+    const ref = stageRef.current;
 
-  //   stage.add(layer);
-  //   layer.cache();
-  // };
+    if (layouts && racks && pixelMeterRelation) {
+      buildLayout(ref, pixelMeterRelation, layouts[0], false);
+      buildActors(ref, racks, true);
+      console.log("########### buildActors ###########");
+    }
+  }, [layouts, pixelMeterRelation, racks]);
 
   useEffect(() => {
     const stage = stageRef.current;
-
-    //paintTest(stage);
 
     if (centred) {
       /*CLEAR LAYERS*/
@@ -88,6 +71,8 @@ function View2D({
       stage.position(newPos);
       stage.batchDraw();
     }
+
+    console.log("########### 2 buildActors ###########");
   }, [centerYOffsset, centred, dimensions, height, width]);
 
   function zoomStage(event) {
@@ -241,6 +226,23 @@ function View2D({
     lastDist = 0;
   }
 
+  const cacheLayers = (value) => {
+    const stage = stageRef.current;
+    if (stage !== null) {
+      const layers = stage.children;
+      for (let index = 0; index < layers.length; index++) {
+        const layer = layers[index];
+        if(value){
+          layer.cache();
+        }
+        else{
+          layer.clearCache();
+        }
+        console.log("######### " + layer.name);
+      }
+    }
+  };
+
   return (
     <Container fluid px={0}>
       <Stage
@@ -254,13 +256,9 @@ function View2D({
         onContextMenu={(e) => {
           e.evt.preventDefault();
         }}
-      >
-        {children}
-        {console.log("RAPAINT STAGE")}
-      </Stage>
-      {working ? <LoadingOverlay visible={working} overlayBlur={1} /> : null}
+      ></Stage>
     </Container>
   );
 }
 
-export default View2D;
+export default View2DRef;

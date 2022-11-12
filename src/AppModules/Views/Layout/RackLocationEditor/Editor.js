@@ -138,6 +138,7 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
               selectedRack={selectedRack}
               editingEnabled={unlockEditStorageStructures}
               showLabel={false}
+              detailContent={false}
             />
 
             <Transformer
