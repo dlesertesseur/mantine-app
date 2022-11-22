@@ -1,19 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Toolbar from "./Toolbar";
-import Zone from "../Model/Zone";
-import StaticLayout from "../Model/StaticLayout";
-import View2D from "../../../../Components/View2D";
 import Footer from "./Footer";
-import { Group, Layer, Line, Transformer } from "react-konva";
-import { useRef } from "react";
+import View2DRef from "../../../../Components/View2dRef";
 import { useSelector } from "react-redux";
 import { Stack } from "@mantine/core";
-import { PIXEL_METER_RELATION, TOOLBAR_HIGHT } from "../../../../Constants";
+import { DIVIDER_HIGHT, PIXEL_METER_RELATION, TOOLBAR_HIGHT, VIEW_HEADER_HIGHT } from "../../../../Constants";
 import { savePosAndRots } from "../../../../DataAccess/Surfaces";
 import { FilterControl } from "../Controls/FilterControl";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
+import { t } from "i18next";
+import { hideNotification, showNotification } from "@mantine/notifications";
+import ViewHeader from "../../ViewHeader";
 
-const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
+const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
   const { user } = useSelector((state) => state.auth.value);
   const { bodyContainerWidth, bodyContainerHeight } = useSelector((state) => state.app.value);
   const [selectedRack, setSelectedRack] = useState(null);
@@ -21,32 +20,52 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
   const [unlockEditStorageStructures, setUnlockEditStorageStructures] = useState(false);
   const [siteId, setSiteId] = useState(null);
   const [floorId, setFloorId] = useState(null);
-  const [floor, setFloor] = useState(null);
-  const [layout, setLayout] = useState(null);
+  const [layouts, setLayouts] = useState(null);
   const [racks, setRacks] = useState(null);
   const [loading, setLoading] = useState(false);
-  const trRef = useRef();
+  const [pixelmeterrelation, setPixelmeterrelation] = useState(null);
+  const [attrs, setAttrs] = useState();
 
-  const onRackDblClick = (ref, rack) => {
-    inspectRack(selectedRack);
+  useEffect(() => {
+    if (selectedRack !== null) {
+      selectedRack.rotationy = -Math.round(attrs.rotation);
+      selectedRack.positionx = attrs.x / PIXEL_METER_RELATION;
+      selectedRack.positionz = attrs.y / PIXEL_METER_RELATION;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [attrs]);
+
+  const onActorDblClick = (id) => {
+    console.log("### Viewer ### onActorDblClick -> id:" + id);
+    //inspectRack(actorId);
   };
 
-  const onRackClick = (ref, rack) => {
+  const onSelectActor = (id) => {
+    const rack = racks.find((r) => r.id === id);
     setSelectedRack(rack);
-    const transformNode = trRef.current;
-    transformNode.nodes([ref.current]);
   };
 
   const saveData = () => {
     setSavingData(true);
 
+    showNotification({
+      id: "savingData-notification",
+      disallowClose: true,
+      title: t("message.savingData"),
+      message: t("message.savingDataSub"),
+      loading: true,
+    });
+
     const params = {
       token: user.token,
+      siteId: siteId,
+      floorId: floorId,
       racks: racks,
     };
 
     savePosAndRots(params).then(() => {
       setSavingData(false);
+      hideNotification("savingData-notification");
     });
   };
 
@@ -65,20 +84,6 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
     }
   };
 
-  function handleTransform(e) {
-    const obj = e.target;
-    const transform = obj.getTransform().copy();
-    const attrs = transform.decompose();
-
-    if (selectedRack) {
-      if (selectedRack !== null) {
-        selectedRack.rotationy = -Math.round(attrs.rotation);
-        selectedRack.positionx = attrs.x / PIXEL_METER_RELATION;
-        selectedRack.positionz = attrs.y / PIXEL_METER_RELATION;
-      }
-    }
-  }
-
   const loadData = (site, floor) => {
     const params = {
       token: user.token,
@@ -86,10 +91,15 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
       floorId: floor.id,
     };
 
+    setUnlockEditStorageStructures(false);
+    setSelectedRack(null);
     setLoading(true);
 
+    const n = (1.0 / floor.pixelmeterrelation) * PIXEL_METER_RELATION;
+    setPixelmeterrelation(n);
+
     findLayoutByFloorId(params).then((ret) => {
-      setLayout(ret[0]);
+      setLayouts(ret);
       findRacksByZoneId(params).then((ret) => {
         setRacks(ret);
         setLoading(false);
@@ -97,8 +107,14 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
     });
   };
 
+  const updateAttrs = (param) => {
+    setAttrs({ ...param });
+  };
+
   return (
-    <>
+    <Stack>
+      <ViewHeader app={app} />
+
       <Stack
         justify="flex-start"
         spacing="0"
@@ -112,6 +128,7 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
           onOption={onOption}
           lockMove={unlockEditStorageStructures}
           setLockMove={setUnlockEditStorageStructures}
+          disabled={savingData || loading || !racks}
         >
           <FilterControl
             siteId={siteId}
@@ -120,49 +137,26 @@ const Editor = ({ inspectRack, drawCenter = false, refresh }) => {
             setFloorId={setFloorId}
             onFilter={loadData}
             loading={loading}
-            setFloor={setFloor}
+            disabled={savingData}
           />
         </Toolbar>
 
-        <View2D width={bodyContainerWidth} height={bodyContainerHeight - (TOOLBAR_HIGHT * 2 + 4)} working={savingData}>
-          <Layer id="structure">
-            {layout ? <StaticLayout floor={floor} layout={layout} parts={layout.parts} /> : null}
-          </Layer>
-          <Layer id="zone">
-            <Zone
-              name={""}
-              racks={racks}
-              pixelMeterRelation={PIXEL_METER_RELATION}
-              onRackClick={onRackClick}
-              onRackDblClick={onRackDblClick}
-              selectedRack={selectedRack}
-              editingEnabled={unlockEditStorageStructures}
-              showLabel={false}
-              detailContent={false}
-            />
-
-            <Transformer
-              onTransform={handleTransform}
-              onDragMove={handleTransform}
-              rotateEnabled={unlockEditStorageStructures}
-              resizeEnabled={false}
-              ref={trRef}
-            ></Transformer>
-          </Layer>
-
-          {drawCenter ? (
-            <Layer id="centerPoint">
-              <Group x={0} y={0}>
-                <Line x={0} y={0} points={[-10, 0, 10, 0]} stroke="#ff0000" strokeWidth={0.3} />
-                <Line x={0} y={0} points={[0, -10, 0, 10]} stroke="#ff0000" strokeWidth={0.3} />
-              </Group>
-            </Layer>
-          ) : null}
-        </View2D>
+        <View2DRef
+          width={bodyContainerWidth}
+          height={bodyContainerHeight - (TOOLBAR_HIGHT * 2 + 4 + VIEW_HEADER_HIGHT + DIVIDER_HIGHT)}
+          layouts={layouts}
+          pixelMeterRelation={pixelmeterrelation}
+          racks={racks}
+          onSelect={onSelectActor}
+          onDblClick={onActorDblClick}
+          enableActorRelocation={true}
+          updateAttrs={updateAttrs}
+          isLockStage={unlockEditStorageStructures}
+        />
         <Footer seletedObject={selectedRack} />
         {console.log("REPAINT ----> Editor " + Date.now())}
       </Stack>
-    </>
+    </Stack>
   );
 };
 

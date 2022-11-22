@@ -21,7 +21,9 @@
   },
 
   "message": {
-    "update": "Update was successful"
+    "update": "Update was successful",
+    "savingData":"Updating data on the server",
+    "savingDataSub":"Please wait until the information is finished updating."
   },
 
   "status": {
@@ -45,7 +47,11 @@
     "download": "Dowload products",
     "detailBysite": "Detail by site",
     "logout": "Logout",
-    "save": "Save"
+    "save": "Save",
+    "finishEditing":"Finish editing",
+    "addPart":"Add part",
+    "backImage":"Back image",
+    "pixelMeterRelation":"Pixel/Meter"
   },
 
   "label": {
@@ -111,7 +117,12 @@
     "floorDesc": "Select a floor to see the plan",
     "select": "Please select one",
     "true": "True",
-    "false": "False"
+    "false": "False",
+    "activateEdition":"Activate Edition",
+    "adjustImage": "Adjust image",
+    "dropZone":"Drag images here or click to select files",
+    "dropZoneSub":"Attach as many files as you like, each file should not exceed 5mb",
+    "measurementControl":"Measurement control"
   },
 
   "placeholder": {

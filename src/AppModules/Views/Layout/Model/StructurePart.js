@@ -1,6 +1,5 @@
 import React from "react";
 import Polygon from "./Polygon";
-import EditablePolygon from "./EditablePolygon";
 import { Group, Rect } from "react-konva";
 
 const StructurePart = ({
@@ -16,7 +15,6 @@ const StructurePart = ({
   borderColor,
   geometry,
   pixelMeterRelation,
-  editingEnabled = false,
   updatePart,
   selected,
   onSelect,
@@ -27,9 +25,10 @@ const StructurePart = ({
   };
 
   const drawPolygon = (geometry) => {
+    
     let pol = null;
 
-    if (!editingEnabled) {
+    // if (!editingEnabled) {
       pol = (
         <Polygon
           x={x}
@@ -43,28 +42,29 @@ const StructurePart = ({
           pixelMeterRelation={pixelMeterRelation}
         />
       );
-    } else {
-      pol = (
-        <EditablePolygon
-          x={x}
-          y={y}
-          name={name}
-          partId={partId}
-          geometry={geometry}
-          updatePart={updatePart}
-          color={color}
-          borderColor={borderColor}
-          rotation={rotation}
-          type={type}
-          pixelMeterRelation={pixelMeterRelation}
-          selected={selected}
-          onSelect={onSelect}
-          onEdit={onEdit}
-        />
-      );
-    }
+    // } else {
+    //   pol = (
+    //     <EditablePolygon
+    //       x={x}
+    //       y={y}
+    //       name={name}
+    //       partId={partId}
+    //       geometry={geometry}
+    //       updatePart={updatePart}
+    //       color={color}
+    //       borderColor={borderColor}
+    //       rotation={rotation}
+    //       type={type}
+    //       pixelMeterRelation={pixelMeterRelation}
+    //       selected={selected}
+    //       onSelect={onSelect}
+    //       onEdit={onEdit}
+    //     />
+    //   );
+    // }
 
     return pol;
+
   };
 
   return <Group>{geometry ? drawPolygon(geometry) : drawRect()}</Group>;

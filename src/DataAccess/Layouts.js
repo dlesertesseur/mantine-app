@@ -1,6 +1,6 @@
 import { API } from "../Constants";
 
-const findAllFloorsBySiteId = async (parameters) => {
+const findAllLayoutById = async (parameters) => {
   try {
     const requestOptions = {
       method: "GET",
@@ -10,8 +10,7 @@ const findAllFloorsBySiteId = async (parameters) => {
         token: parameters.token,
       },
     };
-    const url = API.floor.findAll + "/" + parameters.siteId;
-
+    const url = API.layout.findAllById + "/" + parameters.siteId + "/floors/" + parameters.floorId + "/layouts";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -21,10 +20,8 @@ const findAllFloorsBySiteId = async (parameters) => {
   }
 };
 
-const createFloor = async (parameters) => {
+const createLayout = async (parameters) => {
   try {
-    parameters.pixelmeterrelation=0;
-
     const body = JSON.stringify(parameters.data);
 
     const requestOptions = {
@@ -37,7 +34,7 @@ const createFloor = async (parameters) => {
       body: body,
     };
 
-    const url = API.floor.create + parameters.siteId;
+    const url = API.layout.create + parameters.siteId + "/floors/" + parameters.floorId + "/layouts";
 
     const res = await fetch(url, requestOptions);
     const data = await res.json();
@@ -48,7 +45,7 @@ const createFloor = async (parameters) => {
   }
 };
 
-const findFloorById = async (parameters) => {
+const findLayoutById = async (parameters) => {
   try {
     const requestOptions = {
       method: "GET",
@@ -58,7 +55,7 @@ const findFloorById = async (parameters) => {
         token: parameters.token,
       },
     };
-    const url = API.floor.findById + "/" + parameters.floorId
+    const url = API.layout.findById + parameters.siteId + "/floors/" + parameters.floorId + "/layouts/" + parameters.layoutId;
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -68,7 +65,7 @@ const findFloorById = async (parameters) => {
   }
 };
 
-const updateFloor = async (parameters) => {
+const updateLayout = async (parameters) => {
   try {
     const body = JSON.stringify(parameters.data);
 
@@ -82,7 +79,7 @@ const updateFloor = async (parameters) => {
       body: body,
     };
 
-    const url = API.floor.update;
+    const url = API.layout.update + parameters.siteId + "/floors/" + parameters.floorId + "/layouts";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -92,7 +89,7 @@ const updateFloor = async (parameters) => {
   }
 };
 
-const deleteFloor = async (parameters) => {
+const deleteLayout = async (parameters) => {
   try {
     const body = JSON.stringify(parameters.data);
 
@@ -106,7 +103,7 @@ const deleteFloor = async (parameters) => {
       body: body,
     };
 
-    const url = API.floor.delete + parameters.floorId;
+    const url = API.layout.delete + parameters.siteId + "/floors/" + parameters.floorId + "/layouts/" + parameters.layoutId;
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -116,24 +113,4 @@ const deleteFloor = async (parameters) => {
   }
 };
 
-const findAllImagesByFloorById = async (parameters) => {
-  try {
-    const requestOptions = {
-      method: "GET",
-      mode: "cors",
-      headers: {
-        "Content-Type": "application/json",
-        token: parameters.token,
-      },
-    };
-    const url = API.floor.findAllImages + "/" + parameters.siteId + "/floors/" + parameters.floorId + "/images"
-    const res = await fetch(url, requestOptions);
-    const data = await res.json();
-
-    return data;
-  } catch (error) {
-    return error;
-  }
-};
-
-export { findAllFloorsBySiteId, createFloor, updateFloor, deleteFloor, findFloorById, findAllImagesByFloorById };
+export { createLayout, updateLayout, deleteLayout, findLayoutById, findAllLayoutById };

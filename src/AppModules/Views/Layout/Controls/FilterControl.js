@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { findAllFloorsBySiteId } from "../../../../DataAccess/Floors";
 import { findAllSites } from "../../../../DataAccess/Sites";
 
-function FilterControl({ onFilter, siteId, setSiteId, floorId, setFloorId, setFloor, loading }) {
+function FilterControl({ onFilter, siteId, setSiteId, floorId, setFloorId, loading, disabled}) {
   const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
   const [sites, setSites] = useState([]);
@@ -44,7 +44,7 @@ function FilterControl({ onFilter, siteId, setSiteId, floorId, setFloorId, setFl
   return (
     <Popover width={300} position="bottom-end" withArrow shadow="md" opened={opened}>
       <Popover.Target>
-        <Button loading={loading} size={"xs"} py={0} onClick={() => setOpened((o) => !o)}>
+        <Button loading={loading} disabled={disabled} size={"xs"} py={0} onClick={() => setOpened((o) => !o)}>
           {t("label.crud.filter")}
         </Button>
       </Popover.Target>
@@ -72,7 +72,6 @@ function FilterControl({ onFilter, siteId, setSiteId, floorId, setFloorId, setFl
           value={floorId}
           onChange={(event) => {
             setFloorId(event);
-            setFloor(floors.find((f) => f.id === event));
           }}
           data={floors?.map((s) => {
             return { value: s.id, label: s.name };

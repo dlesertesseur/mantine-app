@@ -10,6 +10,7 @@ import { SignIn } from "./Screens/SignIn";
 import { SignUp } from "./Screens/SignUp";
 import { NotFound } from "./Screens/NotFound";
 import { ProtectedRoute } from "./Components/ProtectedRoute";
+import { NotificationsProvider } from "@mantine/notifications";
 
 function App() {
   const [colorScheme, setColorScheme] = useState("light");
@@ -19,24 +20,26 @@ function App() {
   return (
     <ColorSchemeProvider colorScheme={colorScheme} toggleColorScheme={toggleColorScheme}>
       <MantineProvider theme={{ colorScheme }} withGlobalStyles withNormalizeCSS>
-        <Provider store={store}>
-          <BrowserRouter basename="/platform/">
-            <Routes>
-              <Route path="*" element={<NotFound />} />
-              <Route exact path="/" element={<SignIn />} />
-              <Route exact path="/signUp" element={<SignUp />} />
+        <NotificationsProvider>
+          <Provider store={store}>
+            <BrowserRouter basename="/platform/">
+              <Routes>
+                <Route path="*" element={<NotFound />} />
+                <Route exact path="/" element={<SignIn />} />
+                <Route exact path="/signUp" element={<SignUp />} />
 
-              <Route
-                path="/menu/*"
-                element={
-                  <ProtectedRoute>
-                    <CustomAppShell />
-                  </ProtectedRoute>
-                }
-              />
-            </Routes>
-          </BrowserRouter>
-        </Provider>
+                <Route
+                  path="/menu/*"
+                  element={
+                    <ProtectedRoute>
+                      <CustomAppShell />
+                    </ProtectedRoute>
+                  }
+                />
+              </Routes>
+            </BrowserRouter>
+          </Provider>
+        </NotificationsProvider>
       </MantineProvider>
     </ColorSchemeProvider>
   );

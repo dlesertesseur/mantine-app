@@ -13,11 +13,7 @@ const DynamicApp = () => {
 
   return (
     <>
-      <SurfaceMap
-        editingEnabled={false}
-        inspectRack={inspectRack}
-        drawCenter={true}
-      />
+      <SurfaceMap editingEnabled={false} inspectRack={inspectRack} drawCenter={true} />
 
       {openPlanogram && rack ? (
         <StorageStructureDialog open={openPlanogram} setOpen={setOpenPlanogram} storageStructure={rack} />

@@ -28,6 +28,7 @@ const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, dr
   const [layouts, setLayouts] = useState(null);
   const [racks, setRacks] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pixelmeterrelation, setPixelmeterrelation] = useState(null);
 
   const { user } = useSelector((state) => state.auth.value);
   const { bodyContainerWidth, bodyContainerHeight } = useSelector((state) => state.app.value);
@@ -161,6 +162,9 @@ const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, dr
       floorId: floor.id,
     };
 
+    const n = (1.0 / floor.pixelmeterrelation) * PIXEL_METER_RELATION;
+    setPixelmeterrelation(n);
+
     setLoading(true);
 
     findLayoutByFloorId(params).then((ret) => {
@@ -197,7 +201,7 @@ const SurfaceMap = ({ updateTime = 3000, editingEnabled = false, inspectRack, dr
       </Toolbar>
       <View2D width={bodyContainerWidth} height={bodyContainerHeight - (TOOLBAR_HIGHT + 2)}>
         <Layer id="structure">
-          {layouts && floor ? <StaticLayout floor={floor} layout={layouts[0]} parts={layouts[0]?.parts} /> : null}
+          {layouts && floor ? <StaticLayout pixelMeterRelation={pixelmeterrelation} layout={layouts[0]} parts={layouts[0]?.parts} /> : null}
         </Layer>
         <Layer id="zone" ref={zoneRef}>
           <Zone

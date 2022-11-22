@@ -102,7 +102,7 @@ export function CreateFloorPage({ user, siteId, back, onFilter }) {
             fontWeight: 700,
           })}
         >
-          {t("crud.floor.title.update")}
+          {t("crud.floor.title.create")}
         </Title>
 
         <form

@@ -22,7 +22,6 @@ const Footer = ({ seletedObject = null , updateData = false}) => {
     >
       <Group px={"xs"} spacing={"xs"}>
         <Text size="md">{seletedObject?.name}</Text>
-        <Text size="md">{seletedObject?.rotationy}</Text>
       </Group>
     </Group>
   );

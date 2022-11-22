@@ -1,18 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import StructurePart from "./StructurePart";
 import { Circle, Group } from "react-konva";
 import { PIXEL_METER_RELATION } from "../../../../Constants";
 
-const StaticLayout = ({ floor, layout, center = false, editingEnabled = false, parts, setParts}) => {
-  const [pixelMeterRelation, setPixelMeterRelation] = useState(null);
+const StaticLayout = ({ layout, pixelMeterRelation, center = false, parts, setParts }) => {
   const [selectedPartId, setSelectedPartId] = useState(null);
   const [setEditingPartId] = useState(null);
-
-  useEffect(() => {
-    const n = (1.0 / floor?.pixelmeterrelation) * PIXEL_METER_RELATION;
-    setPixelMeterRelation(n);
-
-  }, [floor]);
 
   const updatePart = (partId, geometry) => {
     const ret = parts?.map((p) => {
@@ -21,12 +14,12 @@ const StaticLayout = ({ floor, layout, center = false, editingEnabled = false, p
       }
       return p;
     });
-    
+
     setParts(ret);
   };
 
   return (
-    <Group rotation={layout.rotation} name={layout.name} draggable={editingEnabled}>
+    <Group rotation={layout.rotation} name={layout.name} >
       {parts?.map((part) => {
         return (
           <StructurePart
@@ -43,7 +36,6 @@ const StaticLayout = ({ floor, layout, center = false, editingEnabled = false, p
             type={part.primitivetype}
             pixelMeterRelation={pixelMeterRelation}
             name={layout.name}
-            editingEnabled={editingEnabled}
             updatePart={updatePart}
             selected={part.id === selectedPartId}
             onSelect={(id) => setSelectedPartId(id)}

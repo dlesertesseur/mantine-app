@@ -1,14 +1,7 @@
 import { Container } from "@mantine/core";
-import { useCallback, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { Stage } from "react-konva";
-import {
-  buildActors,
-  buildLayout,
-  buildRelocatableActors,
-  buildSelectionLayer,
-  selectObjectWithId,
-  setDraggableGroups,
-} from "../Builder2d";
+import { buildEditableLayout, buildSelectionLayer } from "../Builder2d";
 
 const scaleBy = 1.05;
 
@@ -27,7 +20,7 @@ function isTouchEnabled() {
   return "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
 
-function View2DRef({
+function View2dEditPolygon({
   dimensions,
   centred = true,
   centerYOffsset = 0,
@@ -35,68 +28,30 @@ function View2DRef({
   height = 600,
   pixelMeterRelation,
   layouts,
-  racks,
-  onSelect,
-  onDblClick,
-  updateAttrs,
-  enableActorRelocation = false,
-  isLockStage
+  racks = [],
 }) {
   const stageRef = useRef(null);
+
   let lastCenter = null;
   let lastDist = 0;
 
-  const onLocalSelection = useCallback(
-    (evt) => {
-      const ref = stageRef.current;
-      const obj = evt.target;
-      const group = obj.getParent();
-      selectObjectWithId(ref, obj);
+  const onSelect = (attrs) => {
+    console.log("onSelect ", attrs);
 
-      onSelect(group.id());
-    },
-    [onSelect]
-  );
-
-  const onLocalDblClick = useCallback(
-    (evt) => {
-      const obj = evt.target;
-      const group = obj.getParent();
-      onDblClick(group.id());
-    },
-    [onDblClick]
-  );
-
-  const localDragend = (e) => {
-    const tranform = e.target;
-    const group = tranform.nodes()[0];
-    updateAttrs(group.attrs);
-  };
-
-  const localTransformend = (e) => {
-    const tranform = e.currentTarget;
-    const group = tranform.nodes()[0];
-    updateAttrs(group.attrs);
+    if (attrs.id !== "editPoint") {
+      //setTargetAttrs(attrs);
+    } else {
+    }
   };
 
   useEffect(() => {
     const ref = stageRef.current;
 
     if (layouts && racks && pixelMeterRelation) {
-
       ref.destroyChildren();
-
-      buildLayout(ref, pixelMeterRelation, layouts[0], true);
-
-      if (!enableActorRelocation) {
-        buildActors(ref, racks, true, onLocalSelection, onLocalDblClick);
-      } else {
-        buildRelocatableActors(ref, racks, onSelect, localDragend, localTransformend);
-      }
-
+      buildEditableLayout(ref, pixelMeterRelation, layouts[0], onSelect);
       buildSelectionLayer(ref);
-
-      console.log("########### buildActors ###########");
+      console.log("########### View2dEditPolygon - buildLayout ###########");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layouts, pixelMeterRelation, racks]);
@@ -129,14 +84,8 @@ function View2DRef({
       stage.batchDraw();
     }
 
-    console.log("########### centred ###########");
+    console.log("########### View2dEditPolygon - centred ###########");
   }, [centerYOffsset, centred, dimensions, height, width]);
-
-  useEffect(() => {
-    const stage = stageRef.current;
-    setDraggableGroups(stage, "actors", isLockStage);
-  },[isLockStage])
-
 
   function zoomStage(event) {
     event.evt.preventDefault();
@@ -278,12 +227,6 @@ function View2DRef({
     }
   }
 
-  // const processAction = (state) => {
-  //   if(handleDragging){
-  //     handleDragging(state);
-  //   }
-  // };
-
   function handleTouchEnd() {
     lastCenter = null;
     lastDist = 0;
@@ -307,4 +250,4 @@ function View2DRef({
   );
 }
 
-export default View2DRef;
+export default View2dEditPolygon;

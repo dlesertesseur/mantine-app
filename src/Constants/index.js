@@ -9,8 +9,12 @@ const API_BASE = process.env.REACT_APP_API_BASE;
 const LOCAL_SERVER = "http://192.168.0.11";
 
 export const TOOLBAR_HIGHT = 42;
-export const PIXEL_METER_RELATION = 25;
-export const BLOCK_SNAP_SIZE = 1;
+export const VIEW_HEADER_HIGHT = 48;
+export const DIVIDER_HIGHT = 20;
+export const PIXEL_METER_RELATION = 25.0;
+export const BLOCK_SNAP_SIZE = 1.0;
+
+export const GUIDELINE_OFFSET = 5;
 
 export const API = {
   auth: {
@@ -200,6 +204,8 @@ export const API = {
     create: SERVER + ":" + PORT + API_BASE + "/floors/",
     update: SERVER + ":" + PORT + API_BASE + "/floors",
     delete: SERVER + ":" + PORT + API_BASE + "/floors/",
+    findAllImages: SERVER + ":" + PORT + API_BASE + "/sites",
+    urlBase: SERVER + ":" + PORT,
   },
 
   rack: {
@@ -207,6 +213,14 @@ export const API = {
     update: SERVER + ":" + PORT + API_BASE + "/sites/",
     findAllHeaders: SERVER + ":" + PORT + API_BASE + "/sites", 
     findById: SERVER + ":" + PORT + API_BASE + "/sites", 
+  },
+
+  layout: { 
+    findAllById: SERVER + ":" + PORT + API_BASE + "/site-drawings",
+    findById: SERVER + ":" + PORT + API_BASE + "/site-drawings",
+    create: SERVER + ":" + PORT + API_BASE + "/site-drawings/",
+    update: SERVER + ":" + PORT + API_BASE + "/site-drawings/",
+    delete: SERVER + ":" + PORT + API_BASE + "/site-drawings/",
   },
 };
 

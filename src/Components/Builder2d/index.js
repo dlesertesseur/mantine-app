@@ -1,6 +1,6 @@
 import Konva from "konva";
 import { PIXEL_METER_RELATION } from "../../Constants";
-import { getModulePartColor, getModulePartStrokeColor } from "../../Util";
+import { getModulePartColor, getModulePartStrokeColor, getPartSelectedColor } from "../../Util";
 
 function buildPolygon(pixelMeterRelation, geometry, fill, stroke) {
   let polygon = null;
@@ -18,7 +18,51 @@ function buildPolygon(pixelMeterRelation, geometry, fill, stroke) {
   return polygon;
 }
 
-function bulidPart(pixelMeterRelation, part) {
+function buildEditablePolygon(pixelMeterRelation, geometry, fill, stroke) {
+  let polygon = null;
+  let points = geometry.points;
+
+  const group = new Konva.Group();
+
+  if (points) {
+    points.forEach((p) => {
+      polygon = new Konva.Circle({
+        id:"editPoint",
+        x: p.positionx * pixelMeterRelation,
+        y: p.positiony * pixelMeterRelation,
+        fill: "#0000ff",
+        radius: 5,
+        draggable: true,
+      });
+
+      group.add(polygon);
+    });
+  }
+
+  return group;
+}
+
+function buildEditablePart(pixelMeterRelation, part) {
+  let grPart = null;
+  let polygon = null;
+  let editPoints = null;
+
+  grPart = new Konva.Group({
+    id: part.id,
+    x: part.positionx * PIXEL_METER_RELATION,
+    y: part.positionz * PIXEL_METER_RELATION,
+    rotation: part.rotationy,
+    name: part.name,
+  });
+  polygon = buildPolygon(pixelMeterRelation, part.geometries[0], part.color, part.borderColor);
+  editPoints = buildEditablePolygon(pixelMeterRelation, part.geometries[0], part.color, part.borderColor);
+
+  grPart.add(polygon);
+  grPart.add(editPoints);
+  return grPart;
+}
+
+function buildPart(pixelMeterRelation, part) {
   let grPart = null;
   let polygon = null;
 
@@ -36,44 +80,72 @@ function bulidPart(pixelMeterRelation, part) {
 }
 
 function buildLayout(stageRef, pixelMeterRelation, layout, cache = false) {
+  let layer = null;
   let part;
   const parts = layout.parts;
-  const layer = new Konva.Layer({ id: layout.id });
+
+  layer = new Konva.Layer({ id: layout.id });
 
   for (let index = 0; index < parts.length; index++) {
-    part = bulidPart(pixelMeterRelation, parts[index]);
+    part = buildPart(pixelMeterRelation, parts[index]);
     layer.add(part);
   }
 
-  if(cache){
+  if (cache) {
     layer.cache();
   }
 
   stageRef.add(layer);
 }
 
-function buildModulePart(modulePart) {
-  let grPart = null;
+function buildEditableLayout(stageRef, pixelMeterRelation, layout, onSelect) {
+  let layer = null;
+  let part;
+  const parts = layout.parts;
 
-  grPart = new Konva.Rect({
-    id: modulePart.id,
-    x: (modulePart.positionx - modulePart.dimensionx / 2.0) * PIXEL_METER_RELATION,
-    y: (modulePart.positionz - modulePart.dimensionz / 2.0) * PIXEL_METER_RELATION,
-    width: modulePart.dimensionx * PIXEL_METER_RELATION,
-    height: modulePart.dimensionz * PIXEL_METER_RELATION,
-    rotation: modulePart.rotationy,
-    name: modulePart.name,
-    stroke: getModulePartStrokeColor(modulePart.type),
-    fill: getModulePartColor(modulePart.type),
+  layer = new Konva.Layer({ id: layout.id });
+
+  for (let index = 0; index < parts.length; index++) {
+    part = buildEditablePart(pixelMeterRelation, parts[index]);
+    layer.add(part);
+  }
+
+  stageRef.on("mousedown touchstart", (e) => {
+    const stage = e.currentTarget;
+    const target = e.target;
+    const group = target.getParent();
+
+    if (target !== stage) {
+      onSelect(group.attrs);
+    } else {
+      onSelect(null);
+    }
   });
 
-  return grPart;
+  stageRef.add(layer);
+  // stageRef.add(new Konva.Layer({ id: "edition-layer" }));
 }
 
-function buildModule(grModule, parts) {
+function buildModule(grModule, parts, number) {
   let grPart = null;
+  let modulePart = null;
+
   for (let index = 0; index < parts.length; index++) {
-    grPart = buildModulePart(parts[index]);
+    modulePart = parts[index];
+
+    grPart = new Konva.Rect({
+      id: modulePart.id,
+      x: (modulePart.positionx - modulePart.dimensionx / 2.0) * PIXEL_METER_RELATION,
+      y: (modulePart.positionz - modulePart.dimensionz / 2.0) * PIXEL_METER_RELATION,
+      width: modulePart.dimensionx * PIXEL_METER_RELATION,
+      height: modulePart.dimensionz * PIXEL_METER_RELATION,
+      rotation: modulePart.rotationy,
+      name: "M" + number.toString().padStart(2, "0"),
+      stroke: getModulePartStrokeColor(modulePart.type),
+      fill: getModulePartColor(modulePart.type),
+      perfectDrawEnabled: true,
+    });
+
     grModule.add(grPart);
   }
 }
@@ -88,13 +160,13 @@ function buildActorModules(grActor, modules) {
     grModule = new Konva.Group({
       x: module.positionx * PIXEL_METER_RELATION,
       y: module.positionz * PIXEL_METER_RELATION,
-      name: module.name,
+      name: "moduleGroup",
       width: module.dimensionx * PIXEL_METER_RELATION,
       height: module.dimensionz * PIXEL_METER_RELATION,
       rotation: -module.rotationy,
     });
 
-    buildModule(grModule, module.parts);
+    buildModule(grModule, module.parts, module.number);
 
     grActor.add(grModule);
   }
@@ -108,23 +180,193 @@ function buildActorFrames(grActor, frames) {
     frame = frames[index];
 
     grFrame = new Konva.Rect({
-        id: frame.id,
-        x: (frame.positionx - frame.dimensionx / 2.0) * PIXEL_METER_RELATION,
-        y: (frame.positionz - frame.dimensionz / 2.0) * PIXEL_METER_RELATION,
-        width: frame.dimensionx * PIXEL_METER_RELATION,
-        height: frame.dimensionz * PIXEL_METER_RELATION,
-        rotation: frame.rotationy,
-        name: frame.name,
-        stroke: getModulePartStrokeColor(frame.type),
-        fill: getModulePartColor(frame.type),
-        strokeWidth:0.2
-      });
+      id: frame.id,
+      x: (frame.positionx - frame.dimensionx / 2.0) * PIXEL_METER_RELATION,
+      y: (frame.positionz - frame.dimensionz / 2.0) * PIXEL_METER_RELATION,
+      width: frame.dimensionx * PIXEL_METER_RELATION,
+      height: frame.dimensionz * PIXEL_METER_RELATION,
+      rotation: frame.rotationy,
+      name: frame.name,
+      stroke: getModulePartStrokeColor(frame.type),
+      fill: getModulePartColor(frame.type),
+      strokeWidth: 0.2,
+      listening: false,
+      perfectDrawEnabled: true,
+    });
 
     grActor.add(grFrame);
   }
 }
 
-function buildActor(pixelMeterRelation, actor) {
+function buildActorBase(grActor, actor) {
+  const grBase = new Konva.Rect({
+    id: actor.id,
+    name: actor.name,
+    x: (-actor.dimensionx / 2.0) * PIXEL_METER_RELATION,
+    y: (-actor.dimensionz / 2.0) * PIXEL_METER_RELATION,
+    width: actor.dimensionx * PIXEL_METER_RELATION,
+    height: actor.dimensionz * PIXEL_METER_RELATION,
+    perfectDrawEnabled: true,
+  });
+
+  grActor.add(grBase);
+}
+
+function buildActor(pixelMeterRelation, actor, onDblClick) {
+  let grActor = null;
+
+  grActor = new Konva.Group({
+    id: actor.id,
+    x: actor.positionx * pixelMeterRelation,
+    y: actor.positionz * pixelMeterRelation,
+    name: actor.name,
+    width: actor.dimensionx * pixelMeterRelation,
+    height: actor.dimensionz * pixelMeterRelation,
+    rotation: -actor.rotationy,
+  });
+
+  grActor.on("dblclick dbltap", onDblClick);
+
+  buildActorModules(grActor, actor.modules);
+  buildActorFrames(grActor, actor.frames);
+  buildActorBase(grActor, actor);
+
+  return grActor;
+}
+
+function buildActors(stageRef, actors, cache = false, onSelect = null, onDblClick = null) {
+  let layer = null;
+  let actor = null;
+
+  layer = new Konva.Layer({ id: "actors" });
+
+  layer.on("mousedown touchstart", onSelect);
+
+  for (let index = 0; index < actors.length; index++) {
+    actor = buildActor(PIXEL_METER_RELATION, actors[index], onDblClick);
+    layer.add(actor);
+  }
+
+  if (cache) {
+    layer.cache({ pixelRatio: 3 });
+  }
+  stageRef.add(layer);
+
+  return layer;
+}
+
+function transformerActor(stageRef, obj) {
+  const objects = stageRef.find("#transformer-obj");
+
+  if (objects) {
+    const transformer = objects[0];
+    transformer.nodes(obj.children);
+  }
+}
+
+function selectObjectWithId(stageRef, obj) {
+  const layers = stageRef.find("#selection-layer");
+
+  if (layers) {
+    const layer = layers[0];
+
+    layer.removeChildren();
+
+    const group = obj.getParent().clone();
+
+    /*MARCO*/
+    const selector = new Konva.Rect({
+      x: obj.x(),
+      y: obj.y(),
+      width: obj.width(),
+      height: obj.height(),
+      stroke: getPartSelectedColor(),
+      strokeWidth: 2,
+    });
+
+    /*CARTEL*/
+    const label = new Konva.Label({ x: 0, y: 0 });
+    label.rotation(-group.rotation());
+    const tag = new Konva.Tag({
+      cornerRadius: 2,
+      pointerDirection: "down",
+      pointerWidth: 6,
+      pointerHeight: 6,
+      fill: "#fff",
+      stroke: "#000",
+      strokeWidth: 0.5,
+    });
+    const text = new Konva.Text({
+      padding: 2,
+      text: group.name(),
+      align: "center",
+    });
+
+    label.add(tag, text);
+    group.add(selector, label);
+
+    layer.add(group);
+  }
+}
+
+function buildSelectionLayer(stageRef) {
+  const selectionLayer = new Konva.Layer({ id: "selection-layer" });
+
+  /* CENTER */
+  // let line = null;
+  // const length = 20;
+
+  // line = new Konva.Line({
+  //   x: 0,
+  //   y: 0,
+  //   points: [0, -length, 0, length],
+  //   stroke: "red",
+  //   tension: 1,
+  // });
+  // selectionLayer.add(line);
+
+  // line = new Konva.Line({
+  //   x: 0,
+  //   y: 0,
+  //   points: [-length, 0, length, 0],
+  //   stroke: "red",
+  //   tension: 1,
+  // });
+  // selectionLayer.add(line);
+
+  stageRef.add(selectionLayer);
+}
+
+function buildRelocatableActors(stageRef, actors, onSelect, dragend, transformend) {
+  let actor;
+
+  const layer = new Konva.Layer({ id: "actors" });
+
+  for (let index = 0; index < actors.length; index++) {
+    actor = buildRelocatableActor(stageRef, PIXEL_METER_RELATION, actors[index], onSelect);
+    layer.add(actor);
+  }
+
+  const trasformer = new Konva.Transformer({
+    id: "transformer-obj",
+    resizeEnabled: false,
+    rotateEnabled: true,
+    rotationSnaps: [0, 90, 180, 270],
+    borderStrokeWidth: 2,
+    borderStroke: "#ff0000",
+    shouldOverdrawWholeArea: false,
+  });
+
+  trasformer.on("dragend", dragend);
+  trasformer.on("transformend", transformend);
+
+  layer.add(trasformer);
+  stageRef.add(layer);
+
+  return layer;
+}
+
+function buildRelocatableActor(stageRef, pixelMeterRelation, actor, onSelect) {
   let grActor = null;
 
   grActor = new Konva.Group({
@@ -139,22 +381,73 @@ function buildActor(pixelMeterRelation, actor) {
 
   buildActorModules(grActor, actor.modules);
   buildActorFrames(grActor, actor.frames);
+  buildActorBase(grActor, actor);
+
+  grActor.cache({ pixelRatio: 3 });
+
+  grActor.on("mousedown touchstart", (e) => {
+    const objects = stageRef.find("#transformer-obj");
+
+    if (objects) {
+      const target = e.target;
+      const group = target.getParent();
+      //group.draggable(isLockStage());
+      const transformer = objects[0];
+      transformer.nodes([group]);
+
+      onSelect(actor.id);
+    }
+  });
 
   return grActor;
 }
 
-function buildActors(stageRef, actors, cache = false) {
-  let actor;
-  const layer = new Konva.Layer({ id: "actors" });
+function setDraggableGroups(stageRef, layerNname, state) {
+  const layers = stageRef.find("#" + layerNname);
+  if (layers !== null && layers.length > 0) {
+    const layer = layers[0];
 
-  for (let index = 0; index < actors.length; index++) {
-    actor = buildActor(PIXEL_METER_RELATION, actors[index]);
-    layer.add(actor);
-  }
+    const groups = layer.children;
 
-  if(cache){
-    layer.cache({pixelRatio:3});
+    groups.forEach((element) => {
+      element.draggable(state);
+    });
   }
-  stageRef.add(layer);
 }
-export { buildLayout, buildActors };
+
+function selectPolygon(stageRef, id, pixelMeterRelation) {
+  const groups = stageRef.find("#" + id);
+  if (groups !== null && groups.length > 0) {
+    const group = groups[0];
+
+    const line = group.children[0];
+    line.stroke("#ff0000");
+    line.strokeWidth(1);
+
+    // const layer = stageRef.find("#selection-layer")[0];
+    // line.attrs.points.forEach((p, index) => {
+    //   const c = new Konva.Circle({
+    //     id: index,
+    //     x: p.x * pixelMeterRelation,
+    //     y: p.y * pixelMeterRelation,
+    //     radius: 5,
+    //     fill: "#0000ff",
+    //   });
+    //   layer.add(c);
+    // });
+
+    //console.log("selectPolygon() -> ", edit, layer);
+  }
+}
+
+export {
+  buildLayout,
+  buildActors,
+  selectObjectWithId,
+  buildSelectionLayer,
+  buildRelocatableActors,
+  transformerActor,
+  setDraggableGroups,
+  buildEditableLayout,
+  selectPolygon,
+};

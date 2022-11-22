@@ -2,7 +2,7 @@ import Editor from "./Editor";
 import { useState } from "react";
 import { Group } from "@mantine/core";
 
-const DynamicApp = () => {
+const DynamicApp = ({app}) => {
   const [setRack] = useState(null);
 
   const inspectRack = (rack) => {
@@ -14,6 +14,7 @@ const DynamicApp = () => {
       <Editor
         inspectRack={inspectRack}
         drawCenter={false}
+        app={app}
       />
     </Group>
   );

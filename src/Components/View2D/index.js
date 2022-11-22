@@ -27,42 +27,16 @@ function View2D({
   width = 800,
   height = 600,
   working = false,
-  handleDragging,
+  onSelect,
+  onDblClick,
+  onContextMenu,
 }) {
   const stageRef = useRef(null);
   let lastCenter = null;
   let lastDist = 0;
 
-  // const paintTest = (stage) => {
-  //   let total = 100;
-  //   let width = 10;
-  //   let height = 10;
-  //   let separation = 4;
-  //   let posX = -((width + separation) * total) / 2;
-  //   let posY = -((height + separation) * total) / 2;
-    
-  //   let layer = new Konva.Layer({ name: "TEST" });
-    
-  //   for (let row = 0; row < total; row++, posY += width + separation) {
-  //     for (let col = 0; col < total; col++, posX += height + separation) {
-  //       let rect = new Konva.Rect({ x: posX, y: posY, width: width, height: height, fill: "#c5c5c5" });
-        
-  //       rect.perfectDrawEnabled(false);
-  //       rect.listening(false);
-        
-  //       layer.add(rect);
-  //     }
-  //     posX = -((width + separation) * total) / 2;
-  //   }
-
-  //   stage.add(layer);
-  //   layer.cache();
-  // };
-
   useEffect(() => {
     const stage = stageRef.current;
-
-    //paintTest(stage);
 
     if (centred) {
       /*CLEAR LAYERS*/
@@ -230,16 +204,18 @@ function View2D({
     }
   }
 
-  // const processAction = (state) => {
-  //   if(handleDragging){
-  //     handleDragging(state);
-  //   }
-  // };
-
   function handleTouchEnd() {
     lastCenter = null;
     lastDist = 0;
   }
+
+  const onLocalSelect = (e) => {
+    var transform = stageRef.current.getAbsoluteTransform().copy();
+    transform.invert();
+    const pos = e.target.getStage().getPointerPosition();
+    let clickPos = transform.point(pos);
+    onSelect(e, clickPos);
+  };
 
   return (
     <Container fluid px={0}>
@@ -252,11 +228,14 @@ function View2D({
         onTouchEnd={handleTouchEnd}
         ref={stageRef}
         onContextMenu={(e) => {
-          e.evt.preventDefault();
+          onContextMenu ? onContextMenu(e) : e.evt.preventDefault();
         }}
+        onMouseDown={(e) => onLocalSelect(e)}
+        onTap={(e) => onLocalSelect(e)}
+        onDblClick={(e) => onDblClick(e)}
+        onDblTap={(e) => onDblClick(e)}
       >
         {children}
-        {console.log("RAPAINT STAGE")}
       </Stage>
       {working ? <LoadingOverlay visible={working} overlayBlur={1} /> : null}
     </Container>

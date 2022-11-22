@@ -1,3 +1,5 @@
+import uuid from "react-uuid";
+
 function findTraduction(locale, field, translations) {
   let value = null;
 
@@ -153,6 +155,43 @@ function getPartSelectedColor() {
   return color;
 }
 
+const createPartTemplate = () => {
+  const part = {
+    id: uuid(),
+    name: "NEW PART",
+    primitivetype: 100,
+    positionx: 0,
+    positiony: 0,
+    positionz: 0,
+    color: "#9C99A6",
+    timestamp: null,
+    borderColor: "#8C99A6",
+    geometries: [
+      {
+        id: uuid(),
+        name: "NEW GEOMETRY",
+        type: "polygon",
+        timestamp: null,
+        pixelmeterrelation: null,
+        thickness: 2,
+        path: "",
+        points: [
+          {
+            id: uuid(),
+            positionx: 0,
+            positiony: 0,
+            positionz: 0,
+            ordernumber: 0,
+            texturated: null,
+            timestamp: null,
+          },
+        ],
+      },
+    ],
+  };
+  return part;
+};
+
 export {
   findTranslatedField,
   getFillColor,
@@ -162,4 +201,5 @@ export {
   getModulePartSelectedColor,
   getRackSelectedColor,
   getPartSelectedColor,
+  createPartTemplate,
 };

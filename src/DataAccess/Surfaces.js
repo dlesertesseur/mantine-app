@@ -99,7 +99,7 @@ export const savePosAndRots = async (parameters) => {
       body: body,
     };
 
-    const res = await fetch(API.surface.savePosAndRot +"/"+parameters.siteId + "/floors/" + parameters.floorId ,requestOptions);
+    const res = await fetch(API.surface.savePosAndRot +"/"+parameters.siteId + "/floors/" + parameters.floorId + "/racks/posandrots", requestOptions);
     const data = await res.json();
 
     return data;

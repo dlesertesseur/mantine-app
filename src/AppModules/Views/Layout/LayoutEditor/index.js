@@ -1,6 +1,6 @@
 import Editor from "./Editor";
 
-const DynamicApp = () => {
+const DynamicApp = ({app}) => {
   
   const inspectRack = (rack) => {
     // setRack(rack);
@@ -9,7 +9,8 @@ const DynamicApp = () => {
   return (
     <Editor
       inspectRack={inspectRack}
-      drawCenter={false}
+      drawCenter={true}
+      app={app}
     />
   );
 };
