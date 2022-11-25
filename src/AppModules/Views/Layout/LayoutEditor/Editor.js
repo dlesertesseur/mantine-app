@@ -38,6 +38,7 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
   const [distanceInMeters, setDistanceInMeters] = useState(1);
   const [distanceInPixels, setDistanceInPixels] = useState(1);
   const [imageList, setImageList] = useState([]);
+  const [partType, setPartType] = useState(null);
 
   const [image] = useImage(backImageUrl);
 
@@ -65,9 +66,8 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
     }
 
     if (option === "addPart") {
-      const part = createPartTemplate();
-      setParts([...parts, part]);
-      setEditingPartId(part.id);
+      setEditingPartId(uuid());
+      setPartType(params);
     }
 
     if (option === "finishEditing") {
@@ -80,10 +80,8 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
       setBackImageUrl(url);
     }
 
-    if(option === "calculatePixelMeterRelation"){
+    if (option === "calculatePixelMeterRelation") {
       const relation = distanceInPixels / distanceInMeters;
-
-      console.log("calculatePixelMeterRelation", relation);
       setPixelmeterrelation(relation);
     }
   };
@@ -109,9 +107,9 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
       setPixelmeterrelation(ret[0].pixelmeterrelation);
 
       findAllImagesByFloorById(params).then((list) => {
-        setImageList(list)
+        setImageList(list);
         setLoading(false);
-      })
+      });
     });
   };
 
@@ -124,15 +122,14 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
       setSelectedPartId(null);
       if (editingPartId) {
         const part = parts?.find((p) => p.id === editingPartId);
-        if (part !== null) {
-          const points = part.geometries[0].points;
+
+        if (part) {
+          const points = part?.geometries[0].points;
           const point = {
             id: uuid(),
             ordernumber: points.length + 1,
-            // positionx: (clickPos.x - part.positionx * PIXEL_METER_RELATION) / pixelmeterrelation,
-            // positiony: (clickPos.y - part.positionz * PIXEL_METER_RELATION) / pixelmeterrelation,
-            positionx: (clickPos.x - part.positionx) / pixelmeterrelation,
-            positiony: (clickPos.y - part.positionz) / pixelmeterrelation,
+            positionx: clickPos.x - (part.positionx * pixelmeterrelation),
+            positiony: clickPos.y - (part.positionz * pixelmeterrelation),
             positionz: null,
             texturated: null,
             timestamp: null,
@@ -140,6 +137,21 @@ const Editor = ({ inspectRack, drawCenter = true, app }) => {
 
           points.push(point);
           setRepaint(Date.now());
+        } else {
+          /*CREA LA PARTE CON CENTRO EN LA POSICION DE CLICK Y AGREGA UN PUNTO EN EL (0,0)*/
+          const part = createPartTemplate(editingPartId, clickPos.x / pixelmeterrelation, clickPos.y / pixelmeterrelation, partType);
+          const points = part?.geometries[0].points;
+          const point = {
+            id: uuid(),
+            ordernumber: 0,
+            positionx: 0,
+            positiony: 0,
+            positionz: null,
+            texturated: null,
+            timestamp: null,
+          };
+          points.push(point);
+          setParts([...parts, part]);
         }
       }
     }

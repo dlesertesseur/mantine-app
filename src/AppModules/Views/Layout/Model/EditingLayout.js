@@ -1,4 +1,3 @@
-import { PIXEL_METER_RELATION } from "../../../../Constants";
 import EditablePolygon from "./EditablePolygon";
 
 const EditingLayout = ({
@@ -36,8 +35,8 @@ const EditingLayout = ({
       <EditablePolygon
         key={part.id}
         partId={part.id}
-        x={part.positionx * PIXEL_METER_RELATION}
-        y={part.positionz * PIXEL_METER_RELATION}
+        x={part.positionx * pixelMeterRelation}
+        y={part.positionz * pixelMeterRelation}
         rotation={part.rotationy}
         width={part.dimensionx}
         height={part.dimensionz}

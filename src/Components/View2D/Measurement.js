@@ -17,7 +17,7 @@ const Measurement = ({ visible = true, setDistance }) => {
   };
 
   return (
-    <Group x={0} y={0} visible={visible} draggable={true}>
+    <Group x={0} y={0} visible={visible} draggable={true} onDragEnd={() => {}}>
       <Circle
         id={"mp01"}
         name={"mp01"}

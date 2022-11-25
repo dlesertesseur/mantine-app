@@ -4,7 +4,9 @@ const initialState = {
   value: {
     bodyContainerWidth:0,
     bodyContainerHeight:0,
-    draggingView:false
+    draggingView:false,
+    actualScale:1,
+
   },
 };
 
@@ -20,10 +22,14 @@ export const appSlice = createSlice({
     setDraggingView: (state, { payload }) => {
       state.value.draggingView = payload;
     },
+
+    setActualScale: (state, { payload }) => {
+      state.value.actualScale = payload;
+    },
   },
   extraReducers: {},
 });
 
-export const { setBodyContainerSize, setDraggingView } = appSlice.actions;
+export const { setBodyContainerSize, setDraggingView, setActualScale } = appSlice.actions;
 
 export default appSlice.reducer;

@@ -2,15 +2,18 @@ import React, { useEffect, useState } from "react";
 import Toolbar from "./Toolbar";
 import Footer from "./Footer";
 import View2DRef from "../../../../Components/View2dRef";
+import ViewHeader from "../../ViewHeader";
 import { useSelector } from "react-redux";
-import { Stack } from "@mantine/core";
+import { Menu, Stack } from "@mantine/core";
 import { DIVIDER_HIGHT, PIXEL_METER_RELATION, TOOLBAR_HIGHT, VIEW_HEADER_HIGHT } from "../../../../Constants";
 import { savePosAndRots } from "../../../../DataAccess/Surfaces";
 import { FilterControl } from "../Controls/FilterControl";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 import { t } from "i18next";
 import { hideNotification, showNotification } from "@mantine/notifications";
-import ViewHeader from "../../ViewHeader";
+import { findAllLayoutMarkersById } from "../../../../DataAccess/LayoutsMarkers";
+import { IconTag } from "@tabler/icons";
+import uuid from "react-uuid";
 
 const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
   const { user } = useSelector((state) => state.auth.value);
@@ -25,6 +28,8 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
   const [loading, setLoading] = useState(false);
   const [pixelmeterrelation, setPixelmeterrelation] = useState(null);
   const [attrs, setAttrs] = useState();
+  const [clickContextMenuPosition, setClickContextMenuPosition] = useState(null);
+  const [markers, setMarkers] = useState([]);
 
   useEffect(() => {
     if (selectedRack !== null) {
@@ -35,7 +40,7 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attrs]);
 
-  const onActorDblClick = (id) => {
+  const onActorDblClick = (e, id) => {
     console.log("### Viewer ### onActorDblClick -> id:" + id);
     //inspectRack(actorId);
   };
@@ -73,14 +78,19 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
     refresh();
   };
 
-  const onOption = (option) => {
-    console.log("onOption() ---> " + option);
+  const addLabel = () => {};
 
+  const onOption = (option) => {
     if (option === "save") {
       saveData();
     }
+
     if (option === "refresh") {
       refreshData();
+    }
+
+    if (option === "addLabel") {
+      addLabel();
     }
   };
 
@@ -95,13 +105,18 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
     setSelectedRack(null);
     setLoading(true);
 
-    const n = (1.0 / floor.pixelmeterrelation) * PIXEL_METER_RELATION;
-    setPixelmeterrelation(n);
-
     findLayoutByFloorId(params).then((ret) => {
+      const n = (1.0 / ret[0].pixelmeterrelation) * PIXEL_METER_RELATION;
+      setPixelmeterrelation(n);
+
       setLayouts(ret);
       findRacksByZoneId(params).then((ret) => {
         setRacks(ret);
+
+        // findAllLayoutMarkersById(params).then((ret) => {
+        //   setMarkers(ret);
+        // });
+
         setLoading(false);
       });
     });
@@ -109,6 +124,46 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
 
   const updateAttrs = (param) => {
     setAttrs({ ...param });
+  };
+
+  const addMarker = (e) => {
+    console.log("#### ADD MARKER ####", e);
+
+    const marker = {
+      id: uuid(),
+      positionx: clickContextMenuPosition.x / pixelmeterrelation,
+      positiony: clickContextMenuPosition.y / pixelmeterrelation,
+      rotationx: 0,
+      positionz: 0,
+      rotationy: 0,
+      rotationz: 0,
+      dimensionx: 0,
+      dimensiony: 0,
+      dimensionz: 0,
+      text: "NEW MARKER",
+      fontFamily: "Arial",
+      fontSize: 14,
+      align: "center",
+      verticalAlign: "middle",
+      padding: 5,
+      lineHeight: 1,
+      wrap: "word",
+      ellipsis: true,
+      fill: "#ffffff",
+      stroke: "#000000",
+    };
+
+    setMarkers([...markers, marker]);
+  };
+
+  const stageContextMenu = () => {
+    return (
+      <Menu.Dropdown>
+        <Menu.Item icon={<IconTag size={14} />} onClick={addMarker}>
+          {t("stageContextMenu.addMarker")}
+        </Menu.Item>
+      </Menu.Dropdown>
+    );
   };
 
   return (
@@ -152,6 +207,9 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
           enableActorRelocation={true}
           updateAttrs={updateAttrs}
           isLockStage={unlockEditStorageStructures}
+          stageContextMenu={stageContextMenu}
+          markers={markers}
+          setClickContextMenuPosition={setClickContextMenuPosition}
         />
         <Footer seletedObject={selectedRack} />
         {console.log("REPAINT ----> Editor " + Date.now())}

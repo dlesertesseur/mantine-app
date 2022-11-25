@@ -2,7 +2,7 @@ import React from "react";
 import EditPoint from "./EditPoint";
 import { useRef } from "react";
 import { Group, Line } from "react-konva";
-import { PIXEL_METER_RELATION } from "../../../../Constants";
+import { useSelector } from "react-redux";
 
 const EditablePolygon = ({
   x,
@@ -23,12 +23,14 @@ const EditablePolygon = ({
 }) => {
   const polygonRef = useRef();
 
+  const { actualScale } = useSelector((state) => state.app.value);
+
   const updateLocation = (id, x, y) => {
     const points = geometry.points;
     points.forEach((p) => {
       if (p.id === id) {
-        p.positionx = x / pixelMeterRelation;
-        p.positiony = y / pixelMeterRelation;
+        p.positionx = x;
+        p.positiony = y;
       }
     });
 
@@ -41,11 +43,12 @@ const EditablePolygon = ({
       <EditPoint
         key={p.id}
         id={p.id}
-        x={p.positionx * pixelMeterRelation}
-        y={p.positiony * pixelMeterRelation}
+        x={p.positionx}
+        y={p.positiony}
         updateLocation={updateLocation}
         selected={p.id === editPointSelected}
-        setSelected={setEditPointSelected} 
+        setSelected={setEditPointSelected}
+        scale={actualScale} 
       />
     ));
 
@@ -58,8 +61,8 @@ const EditablePolygon = ({
 
     if (points) {
       points.forEach((p) => {
-        pointList.push(p.positionx * pixelMeterRelation);
-        pointList.push(p.positiony * pixelMeterRelation);
+        pointList.push(p.positionx);
+        pointList.push(p.positiony);
       });
     }
 
@@ -71,7 +74,7 @@ const EditablePolygon = ({
         name={name}
         points={pointList}
         stroke={selected ? colorLine : borderColor}
-        strokeWidth={selected ? 2 : 1}
+        strokeWidth={selected ? 2 * (1/actualScale) : 1 * (1/actualScale)}
         closed={true}
         fill={color ? color : "#0000ff"}
       />
@@ -82,7 +85,7 @@ const EditablePolygon = ({
   const onDragEnd = (e) => {
     const attrs = e.target.attrs;
     if (attrs.id === partId) {
-      const location = { x: attrs.x / PIXEL_METER_RELATION, y: attrs.y / PIXEL_METER_RELATION };
+      const location = { x: attrs.x / pixelMeterRelation , y: attrs.y / pixelMeterRelation };
       updatePartLocation(partId, location);
     }
   };

@@ -1,6 +1,8 @@
 import { Container, LoadingOverlay } from "@mantine/core";
 import { useEffect, useRef } from "react";
 import { Stage } from "react-konva";
+import { useDispatch } from "react-redux";
+import { setActualScale } from "../../Features/App";
 
 const scaleBy = 1.05;
 
@@ -31,6 +33,7 @@ function View2D({
   onDblClick,
   onContextMenu,
 }) {
+  const dispatch = useDispatch();
   const stageRef = useRef(null);
   let lastCenter = null;
   let lastDist = 0;
@@ -82,6 +85,9 @@ function View2D({
       };
       stage.position(newPos);
       stage.batchDraw();
+
+      /*Actualiza la escala en el estado de la app*/
+      dispatch(setActualScale(newScale));
     }
   }
 

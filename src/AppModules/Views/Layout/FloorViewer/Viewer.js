@@ -47,10 +47,11 @@ const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCe
 
     setLoading(true);
 
-    const n = (1.0 / floor.pixelmeterrelation) * PIXEL_METER_RELATION;
-    setPixelmeterrelation(n);
-
     findLayoutByFloorId(params).then((ret) => {
+      
+      const n = (1.0 / ret[0].pixelmeterrelation) * PIXEL_METER_RELATION;
+      setPixelmeterrelation(n);
+
       setLayouts(ret);
       findRacksByZoneId(params).then((ret) => {
         setRacks(ret);

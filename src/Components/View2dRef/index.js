@@ -1,9 +1,10 @@
-import { Container } from "@mantine/core";
-import { useCallback, useEffect, useRef } from "react";
+import { Container, Menu } from "@mantine/core";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Stage } from "react-konva";
 import {
   buildActors,
   buildLayout,
+  buildMarkers,
   buildRelocatableActors,
   buildSelectionLayer,
   selectObjectWithId,
@@ -40,9 +41,13 @@ function View2DRef({
   onDblClick,
   updateAttrs,
   enableActorRelocation = false,
-  isLockStage
+  isLockStage,
+  stageContextMenu,
+  setClickContextMenuPosition,
+  markers
 }) {
   const stageRef = useRef(null);
+  const [openMenu, setOpenMenu] = useState(false);
   let lastCenter = null;
   let lastDist = 0;
 
@@ -62,7 +67,7 @@ function View2DRef({
     (evt) => {
       const obj = evt.target;
       const group = obj.getParent();
-      onDblClick(group.id());
+      onDblClick(evt, group.id());
     },
     [onDblClick]
   );
@@ -83,7 +88,6 @@ function View2DRef({
     const ref = stageRef.current;
 
     if (layouts && racks && pixelMeterRelation) {
-
       ref.destroyChildren();
 
       buildLayout(ref, pixelMeterRelation, layouts[0], true);
@@ -96,10 +100,12 @@ function View2DRef({
 
       buildSelectionLayer(ref);
 
+      buildMarkers(ref, markers);
+
       console.log("########### buildActors ###########");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layouts, pixelMeterRelation, racks]);
+  }, [layouts, pixelMeterRelation, racks, markers]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -135,8 +141,7 @@ function View2DRef({
   useEffect(() => {
     const stage = stageRef.current;
     setDraggableGroups(stage, "actors", isLockStage);
-  },[isLockStage])
-
+  }, [isLockStage]);
 
   function zoomStage(event) {
     event.evt.preventDefault();
@@ -289,21 +294,85 @@ function View2DRef({
     lastDist = 0;
   }
 
+  function handleSelect(e) {
+    setOpenMenu(false);
+
+    if (racks) {
+      if (stageRef.current === e.target) {
+        const objects = stageRef.current.find("#transformer-obj");
+
+        onSelect(null);
+
+        if (objects) {
+          const transformer = objects[0];
+          transformer.nodes([]);
+        }
+      }
+    }
+  }
+
+  const screenToDevice = (e) => {
+    const stage = stageRef.current;
+    var transform = stage.getAbsoluteTransform().copy();
+    transform.invert();
+    const pos = e.target.getStage().getPointerPosition();
+    const clickPos = transform.point(pos);
+
+    return(clickPos);
+  }
+
+  const contextMenu = (e) => {
+    const stage = stageRef.current;
+    console.log("### CONTEXT MENU ####");
+
+    e.evt.preventDefault();
+    if (layouts?.length > 0) {
+      if (e.target !== stage) {
+        return;
+      } else {
+        setClickContextMenuPosition(screenToDevice(e));
+        var menuNode = document.getElementById("stage-context-menu");
+        var containerRect = stage.container().getBoundingClientRect();
+        menuNode.style.display = "initial";
+        menuNode.style.top = containerRect.top + stage.getPointerPosition().y + "px";
+        menuNode.style.left = containerRect.left + stage.getPointerPosition().x + "px";
+        menuNode.style.visibility = "visible";
+        setOpenMenu(true);
+      }
+    }
+  };
+
   return (
-    <Container fluid px={0}>
-      <Stage
-        width={width}
-        height={height}
-        draggable={!isTouchEnabled()}
-        onWheel={zoomStage}
-        onTouchMove={handleTouch}
-        onTouchEnd={handleTouchEnd}
-        ref={stageRef}
-        onContextMenu={(e) => {
-          e.evt.preventDefault();
+    <>
+      <Container fluid px={0}>
+        <Stage
+          width={width}
+          height={height}
+          draggable={!isTouchEnabled()}
+          onWheel={zoomStage}
+          onTouchMove={handleTouch}
+          onTouchEnd={handleTouchEnd}
+          ref={stageRef}
+          onContextMenu={(e) => {
+            contextMenu(e);
+          }}
+          onMouseDown={handleSelect}
+          onTap={handleSelect}
+        ></Stage>
+      </Container>
+
+      <div
+        id={"stage-context-menu"}
+        style={{
+          position: "absolute",
+          visibility: "hidden",
         }}
-      ></Stage>
-    </Container>
+      >
+        <Menu shadow="md" width={200} opened={openMenu} onChange={setOpenMenu}>
+          {stageContextMenu()}
+        </Menu>
+      </div>
+    </>
   );
 }
 

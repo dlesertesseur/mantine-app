@@ -22,8 +22,8 @@
 
   "message": {
     "update": "La actualizacio fue realizada con éxito",
-    "savingData":"Actualizando datos en el servidor",
-    "savingDataSub":"Espere hasta que la información termine de actualizarse."
+    "savingData": "Actualizando datos en el servidor",
+    "savingDataSub": "Espere hasta que la información termine de actualizarse."
   },
 
   "status": {
@@ -47,11 +47,13 @@
     "download": "Bajar productos",
     "detailBysite": "Detalle por sitio",
     "logout": "Cerrar sesion",
-    "save": "Salvar", 
-    "finishEditing":"Terminar edicion",
-    "addPart":"Agregar parte",
-    "backImage":"Imagen de fondo",
-    "pixelMeterRelation":"Pixel/Metro"
+    "save": "Salvar",
+    "finishEditing": "Terminar edicion",
+    "addPart": "Agregar parte",
+    "backImage": "Imagen de fondo",
+    "pixelMeterRelation": "Pixel/Metro",
+    "deleteImage": "Eliminar imagen",
+    "addLabel":"Agregar etiqueta"
   },
 
   "label": {
@@ -68,7 +70,8 @@
       "create": "Nuevo",
       "update": "Modificar",
       "delete": "Eliminar",
-      "filter": "Filtro"
+      "filter": "Filtro",
+      "images": "Imagenes"
     },
     "applications": "Aplicaciones",
     "description": "Descripcion",
@@ -118,11 +121,11 @@
     "select": "Seleccionar uno, por favor",
     "true": "Si",
     "false": "No",
-    "activateEdition":"Activar edicion",
+    "activateEdition": "Activar edicion",
     "adjustImage": "Ajustar imagen",
-    "dropZone":"Arrastre imágenes aquí o haga clic para seleccionar archivos",
-    "dropZoneSub":"Adjunte tantos archivos como desee, cada archivo no debe exceder los 5 MB",
-    "measurementControl":"Controles de medicion"
+    "dropZone": "Arrastre imágenes aquí o haga clic para seleccionar archivos",
+    "dropZoneSub": "Adjunte tantos archivos como desee, cada archivo no debe exceder los 5 MB",
+    "measurementControl": "Controles de medicion"
   },
 
   "placeholder": {
@@ -384,7 +387,8 @@
       "title": {
         "create": "Crear una nueva Planta",
         "update": "Modificar una Planta",
-        "delete": "Eliminar una Planta"
+        "delete": "Eliminar una Planta",
+        "images": "Agregar imagenes a la planta"
       },
       "message": {}
     }
@@ -434,5 +438,15 @@
   "tooltip": {
     "operatorsStatus": "Muestra la posicion y actividad que estan realizando los operarios en tiempo real",
     "lockMove": "Bloquea el movimiento y la rotación de las estructuras de almacenamiento"
+  },
+
+  "partType": {
+    "wall": "Muro",
+    "column": "Columa",
+    "zone": "Zona"
+  },
+
+  "stageContextMenu":{
+    "addMarker":"Agregar etiqueta"
   }
 }

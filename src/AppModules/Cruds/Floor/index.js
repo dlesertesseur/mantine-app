@@ -8,6 +8,7 @@ import { CreateFloorPage } from "./CreateFloorPage";
 import { UpdateFloorPage } from "./UpdateFloorPage";
 import { DeleteFloorPage } from "./DeleteFloorPage";
 import { CONTEXTS } from "../../../Constants";
+import { ImagesByFloorPage } from "./ImagesByFloorPage";
 
 const DynamicApp = ({ app }) => {
   const { user, siteSelected } = useSelector((state) => state.auth.value);
@@ -67,6 +68,13 @@ const DynamicApp = ({ app }) => {
       updatePage={<UpdateFloorPage user={user} siteId={site} floorId={floorId} back={"../"} onFilter={onFilter} />}
       deletePage={<DeleteFloorPage user={user} siteId={site} floorId={floorId} back={"../"} onFilter={onFilter} />}
       filterControl={showFilterControl ? <FilterControl site={site} setSite={setSite} onFilter={onFilter} /> : null}
+      relationshipPages={[
+        {
+          path: "/images",
+          key: "label.crud.images",
+          element: <ImagesByFloorPage user={user} siteId={site} floorId={floorId} back={"../"} onFilter={onFilter} />,
+        },
+      ]}
     />
   );
 

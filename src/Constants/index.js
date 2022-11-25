@@ -205,6 +205,7 @@ export const API = {
     update: SERVER + ":" + PORT + API_BASE + "/floors",
     delete: SERVER + ":" + PORT + API_BASE + "/floors/",
     findAllImages: SERVER + ":" + PORT + API_BASE + "/sites",
+    uploadImage: SERVER + ":" + PORT + API_BASE + "/sites",
     urlBase: SERVER + ":" + PORT,
   },
 
@@ -222,6 +223,15 @@ export const API = {
     update: SERVER + ":" + PORT + API_BASE + "/site-drawings/",
     delete: SERVER + ":" + PORT + API_BASE + "/site-drawings/",
   },
+
+  layoutMarkers: { 
+    findAllById: SERVER + ":" + PORT + API_BASE + "/markers",
+    findById: SERVER + ":" + PORT + API_BASE + "/markers",
+    create: SERVER + ":" + PORT + API_BASE + "/markers/",
+    update: SERVER + ":" + PORT + API_BASE + "/markers/",
+    delete: SERVER + ":" + PORT + API_BASE + "/markers/",
+  },
+
 };
 
 export const ERRORS = {

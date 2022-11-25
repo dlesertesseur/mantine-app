@@ -155,42 +155,78 @@ function getPartSelectedColor() {
   return color;
 }
 
-const createPartTemplate = () => {
+const createPartTemplate = (id, x = 0, y = 0, partType) => {
+
+  console.log("createPartTemplate -> " + partType);
   const part = {
-    id: uuid(),
-    name: "NEW PART",
+    id: id,
+    name: partType.toUpperCase(),
     primitivetype: 100,
-    positionx: 0,
+    positionx: x,
     positiony: 0,
-    positionz: 0,
-    color: "#9C99A6",
+    positionz: y,
+    color: getPartFillColor(partType),
     timestamp: null,
-    borderColor: "#8C99A6",
+    borderColor: getPartStrokeColor(partType),
     geometries: [
       {
         id: uuid(),
-        name: "NEW GEOMETRY",
+        name: "GEOMETRY",
         type: "polygon",
         timestamp: null,
         pixelmeterrelation: null,
         thickness: 2,
         path: "",
-        points: [
-          {
-            id: uuid(),
-            positionx: 0,
-            positiony: 0,
-            positionz: 0,
-            ordernumber: 0,
-            texturated: null,
-            timestamp: null,
-          },
-        ],
+        points: [],
       },
     ],
   };
   return part;
 };
+
+function getPartFillColor(type) {
+  let color;
+
+  switch (type) {
+    case "wall":
+      color = "#0000BF";
+      break;
+    case "column":
+      color = "#BBBBB9";
+      break;
+    case "zone":
+      color = "#f6c345";
+      break;
+
+    default:
+      color = "#ff00ff";
+      break;
+  }
+
+  return color;
+}
+
+function getPartStrokeColor(type) {
+  let color;
+
+  switch (type) {
+    case "wall":
+      color = "#0000AB";
+      break;
+    case "column":
+      color = "#959594";
+      break;
+    case "zone":
+      color = "#ddaf3e";
+      break;
+
+    default:
+      color = "#ff00ff";
+      break;
+  }
+
+  return color;
+}
 
 export {
   findTranslatedField,
@@ -202,4 +238,6 @@ export {
   getRackSelectedColor,
   getPartSelectedColor,
   createPartTemplate,
+  getPartFillColor,
+  getPartStrokeColor,
 };

@@ -4,6 +4,7 @@ import { Divider, Stack, Text } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import { findTranslatedField } from "../../Util";
 import { useTranslation } from "react-i18next";
+import uuid from "react-uuid";
 
 const CrudFrame = ({
   app,
@@ -15,6 +16,7 @@ const CrudFrame = ({
   createPage,
   updatePage,
   deletePage,
+  relationshipPages,
   filterControl = null,
   loading = false,
 }) => {
@@ -65,12 +67,17 @@ const CrudFrame = ({
                 enableCreateButton={enableCreateButton}
                 rowSelected={rowSelected}
                 setRowSelected={setRowSelected}
+                relationship={relationshipPages}
               />
             }
           />
           <Route path="/create" element={createPage} />
           <Route path="/update" element={updatePage} />
           <Route path="/delete" element={deletePage} />
+
+          {relationshipPages?.map((r) => (
+            <Route key={uuid()} path={r.path} element={r.element} />
+          ))}
         </Routes>
       </Stack>
 

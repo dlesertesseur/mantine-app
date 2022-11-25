@@ -51,7 +51,9 @@
     "finishEditing":"Finish editing",
     "addPart":"Add part",
     "backImage":"Back image",
-    "pixelMeterRelation":"Pixel/Meter"
+    "pixelMeterRelation":"Pixel/Meter",
+    "deleteImage": "Delete image",
+    "addLabel":"Add label"
   },
 
   "label": {
@@ -68,7 +70,8 @@
       "create": "New",
       "update": "Update",
       "delete": "Delete",
-      "filter": "Filter"
+      "filter": "Filter",
+      "images": "Images"
     },
     "applications": "Applications",
     "description": "Description",
@@ -372,7 +375,8 @@
       "title": {
         "create": "Creare a new Floor",
         "update": "Update a Floor",
-        "delete": "Delete a Floor"
+        "delete": "Delete a Floor",
+        "images": "Add images to floor"
       },
       "message": {}
     }
@@ -422,5 +426,15 @@
   "tooltip": {
     "operatorsStatus": "Shows the position and activity that operators are performing in real time",
     "lockMove": "Blocks movement and rotation of storage structures"
+  },
+
+  "partType": {
+    "wall": "Wall",
+    "column": "Column",
+    "zone": "Zone"
+  },
+
+  "stageContextMenu":{
+    "addMarker":"Add marker"
   }
 }

@@ -440,6 +440,53 @@ function selectPolygon(stageRef, id, pixelMeterRelation) {
   }
 }
 
+function buildMarker(pixelMeterRelation, marker, onDblClick) {
+  let grMarker = null;
+
+  grMarker = new Konva.Group({
+    id: marker.id,
+    x: marker.positionx * pixelMeterRelation,
+    y: marker.positionz * pixelMeterRelation,
+
+    rotation: -marker.rotationy,
+  });
+
+  grMarker.on("dblclick dbltap", onDblClick);
+
+  const text = new Konva.Text({
+    text: marker.text,
+    fontSize: marker.fontSize,
+    fontFamily: marker.fontFamily,
+    fill: marker.fill,
+    stroke: marker.stroke
+  });
+
+  grMarker.add(text);
+  return grMarker;
+}
+
+function buildMarkers(stageRef, markers, cache = false, onSelect = null, onDblClick = null) {
+  let layer = null;
+  let actor = null;
+
+  layer = new Konva.Layer({ id: "markers-layer" });
+
+  layer.on("mousedown touchstart", onSelect);
+
+  for (let index = 0; index < markers.length; index++) {
+    actor = buildMarker(1, markers[index], onDblClick);
+    layer.add(actor);
+  }
+
+  if (cache) {
+    layer.cache({ pixelRatio: 3 });
+  }
+  stageRef.add(layer);
+
+  return layer;
+}
+
+
 export {
   buildLayout,
   buildActors,
@@ -450,4 +497,5 @@ export {
   setDraggableGroups,
   buildEditableLayout,
   selectPolygon,
+  buildMarkers
 };

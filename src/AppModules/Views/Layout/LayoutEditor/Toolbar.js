@@ -1,8 +1,6 @@
-import React, { useEffect } from "react";
 import {
   IconDeviceFloppy,
   IconEditOff,
-  IconPolygon,
   IconAdjustments,
   IconAdjustmentsOff,
   IconRulerMeasure,
@@ -13,6 +11,7 @@ import { ActionIcon, Button, Divider, Group, Indicator, NumberInput, Switch, Too
 import { TOOLBAR_HIGHT } from "../../../../Constants";
 import { useTranslation } from "react-i18next";
 import { ImageSelctor } from "../Controls/ImageSelctor";
+import { PartSelector } from "../Controls/PartSelector";
 
 const Toolbar = ({
   onOption = null,
@@ -28,13 +27,11 @@ const Toolbar = ({
   distanceInMeters,
   setDistanceInMeters,
   defineRelationship,
-  imageList
+  imageList,
 }) => {
   const { t } = useTranslation();
 
   const handleOption = (option, params) => {
-
-    console.log("############", option, params);
 
     if (onOption) {
       onOption(option, params);
@@ -59,44 +56,47 @@ const Toolbar = ({
 
   const measurementControls = () => {
     return (
-      <Group>
-        <Indicator offset={2} size={12} position={"top-end"} color={"red"} withBorder dot={defineRelationship} inline >
-          <Switch
-            radius={"lg"}
-            size="lg"
-            onLabel={<IconRulerMeasure size={18} />}
-            offLabel={<IconRuler3 size={18} />}
-            checked={showMeasurementPoints}
-            onChange={(event) => setShowMeasurementPoints(event.currentTarget.checked)}
-            disabled={disabled}
-          />
-        </Indicator>
-        {showMeasurementPoints ? (
-          <>
-            <NumberInput
-              size="xs"
-              value={distanceInMeters}
-              onChange={setDistanceInMeters}
-              sx={{ width: 60 }}
-              precision={2}
-              min={-1}
-              step={0.05}
+      <>
+        <Divider orientation="vertical" />
+        <Group>
+          <Indicator offset={2} size={12} position={"top-end"} color={"red"} withBorder dot={defineRelationship} inline>
+            <Switch
+              radius={"lg"}
+              size="lg"
+              onLabel={<IconRulerMeasure size={18} />}
+              offLabel={<IconRuler3 size={18} />}
+              checked={showMeasurementPoints}
+              onChange={(event) => setShowMeasurementPoints(event.currentTarget.checked)}
+              disabled={disabled}
             />
+          </Indicator>
+          {showMeasurementPoints ? (
+            <>
+              <NumberInput
+                size="xs"
+                value={distanceInMeters}
+                onChange={setDistanceInMeters}
+                sx={{ width: 60 }}
+                precision={2}
+                min={-1}
+                step={0.05}
+              />
 
-            <ActionIcon
-              color="blue"
-              variant="filled"
-              onClick={(event) => {
-                handleOption("calculatePixelMeterRelation");
-              }}
-            >
-              <IconCheck size={18} />
-            </ActionIcon>
+              <ActionIcon
+                color="blue"
+                variant="filled"
+                onClick={(event) => {
+                  handleOption("calculatePixelMeterRelation");
+                }}
+              >
+                <IconCheck size={18} />
+              </ActionIcon>
 
-            <Divider orientation="vertical" />
-          </>
-        ) : null}
-      </Group>
+              <Divider orientation="vertical" />
+            </>
+          ) : null}
+        </Group>
+      </>
     );
   };
 
@@ -136,7 +136,9 @@ const Toolbar = ({
           {t("button.finishEditing")}
         </Button>
 
-        <Indicator offset={8} size={12} position="top-end" color="red" withBorder dot={newParts > 0}>
+        <PartSelector disabled={disabled ? true : editing} onOption={handleOption}/>
+
+        {/* <Indicator offset={8} size={12} position="top-end" color="red" withBorder dot={newParts > 0}>
           <Button
             leftIcon={<IconPolygon size={22} />}
             color="blue"
@@ -148,14 +150,15 @@ const Toolbar = ({
           >
             {t("button.addPart")}
           </Button>
-        </Indicator>
+        </Indicator> */}
 
-        <Divider orientation="vertical" />
-
-        <ImageSelctor imageList={imageList} disabled={disabled} loadImage={handleOption} />
-        {imageSelected ? imageControls() : null}
-
-        <Divider orientation="vertical" />
+        {imageList.length > 0 ? (
+          <>
+            <Divider orientation="vertical" />
+            <ImageSelctor imageList={imageList} disabled={disabled} loadImage={handleOption} />
+            {imageSelected ? imageControls() : null}
+          </>
+        ) : null}
 
         {imageSelected ? measurementControls() : null}
       </Group>

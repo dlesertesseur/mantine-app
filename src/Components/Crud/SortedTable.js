@@ -11,6 +11,7 @@ import {
   Button,
   Stack,
   LoadingOverlay,
+  Divider,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from "@tabler/icons";
@@ -113,15 +114,26 @@ function sortData(data, payload) {
   );
 }
 
-export default function SortedTable({ data, columns, filterControl = null, loading = false, enableCreateButton, rowSelected, setRowSelected }) {
+export default function SortedTable({
+  data,
+  columns,
+  filterControl = null,
+  loading = false,
+  enableCreateButton,
+  rowSelected,
+  setRowSelected,
+  relationship,
+}) {
   const { classes, cx } = useStyles();
+  const { t } = useTranslation();
+
+  const navigate = useNavigate();
+
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const navigate = useNavigate();
-  const { t } = useTranslation();
 
   useEffect(() => {
     setSortedData(data);
@@ -152,7 +164,7 @@ export default function SortedTable({ data, columns, filterControl = null, loadi
         case "bool":
           ret = data ? t("label.true") : t("label.false");
           break;
-  
+
         default:
           break;
       }
@@ -208,6 +220,20 @@ export default function SortedTable({ data, columns, filterControl = null, loadi
           >
             {t("label.crud.delete")}
           </Button>
+
+          {relationship? <Divider orientation="vertical" /> : null}
+          {relationship?.map((r) => (
+            <Button
+              key={r.path}
+              onClick={() => {
+                navigate("." + r.path);
+              }}
+              disabled={!rowSelected ? true : false}
+            >
+              {t(r.key)}
+            </Button>
+          ))}
+          {relationship? <Divider orientation="vertical" /> : null}
 
           {filterControl !== null ? filterControl : null}
         </Group>
