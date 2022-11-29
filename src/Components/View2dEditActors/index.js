@@ -28,7 +28,7 @@ function isTouchEnabled() {
   return "ontouchstart" in window || navigator.maxTouchPoints > 0 || navigator.msMaxTouchPoints > 0;
 }
 
-function View2DRef({
+function View2dEditActors({
   dimensions,
   centred = true,
   centerYOffsset = 0,
@@ -88,7 +88,7 @@ function View2DRef({
     const ref = stageRef.current;
 
     ref.batchDraw();
-    
+
     if (layouts && racks && pixelMeterRelation) {
       ref.destroyChildren();
 
@@ -102,14 +102,10 @@ function View2DRef({
 
       buildSelectionLayer(ref);
 
-      if (markers) {
-        buildMarkers(ref, markers);
-      }
-
       console.log("########### buildActors ###########");
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [layouts, pixelMeterRelation, racks, markers]);
+  }, [layouts, pixelMeterRelation, racks]);
 
   useEffect(() => {
     const stage = stageRef.current;
@@ -146,6 +142,15 @@ function View2DRef({
     const stage = stageRef.current;
     setDraggableGroups(stage, "actors", isLockStage);
   }, [isLockStage]);
+
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (markers) {
+      buildMarkers(stage, markers, false, onSelect, onDblClick);
+      console.log("########### buildMarkers ###########");
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markers]);
 
   function zoomStage(event) {
     event.evt.preventDefault();
@@ -301,7 +306,7 @@ function View2DRef({
   function handleSelect(e) {
     setOpenMenu(false);
 
-    if (racks) {
+    if (racks || markers) {
       if (stageRef.current === e.target) {
         const objects = stageRef.current.find("#transformer-obj");
 
@@ -384,4 +389,4 @@ function View2DRef({
   );
 }
 
-export default View2DRef;
+export default View2dEditActors;

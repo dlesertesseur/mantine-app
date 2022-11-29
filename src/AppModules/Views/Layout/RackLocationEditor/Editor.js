@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Toolbar from "./Toolbar";
 import Footer from "./Footer";
-import View2DRef from "../../../../Components/View2dRef";
 import ViewHeader from "../../ViewHeader";
+import View2dEditActors from "../../../../Components/View2dEditActors";
+import uuid from "react-uuid";
 import { useSelector } from "react-redux";
 import { Menu, Stack } from "@mantine/core";
 import { DIVIDER_HIGHT, PIXEL_METER_RELATION, TOOLBAR_HIGHT, VIEW_HEADER_HIGHT } from "../../../../Constants";
@@ -11,9 +12,13 @@ import { FilterControl } from "../Controls/FilterControl";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 import { t } from "i18next";
 import { hideNotification, showNotification } from "@mantine/notifications";
-import { findAllLayoutMarkersById } from "../../../../DataAccess/LayoutsMarkers";
+import {
+  createLayoutMarker,
+  findAllLayoutMarkersById,
+  updateLayoutMarker,
+} from "../../../../DataAccess/LayoutsMarkers";
 import { IconTag } from "@tabler/icons";
-import uuid from "react-uuid";
+import TextEditor from "../../../../Components/TextEditor";
 
 const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
   const { user } = useSelector((state) => state.auth.value);
@@ -30,25 +35,58 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
   const [attrs, setAttrs] = useState();
   const [clickContextMenuPosition, setClickContextMenuPosition] = useState(null);
   const [markers, setMarkers] = useState([]);
+  const [opened, setOpened] = useState(false);
+  const [selectedMarker, setSelectedMarker] = useState(null);
 
   useEffect(() => {
-    if (selectedRack !== null) {
+    if (selectedRack && selectedRack?.id === attrs.id) {
       selectedRack.rotationy = -Math.round(attrs.rotation);
       selectedRack.positionx = attrs.x / PIXEL_METER_RELATION;
       selectedRack.positionz = attrs.y / PIXEL_METER_RELATION;
+    } else {
+      const marker = markers.find((r) => r.id === attrs.id);
+      if (marker) {
+        marker.rotationy = -Math.round(attrs.rotation);
+        marker.positionx = attrs.x;
+        marker.positionz = attrs.y;
+      }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [attrs]);
 
   const onActorDblClick = (e, id) => {
-    console.log("### Viewer ### onActorDblClick -> id:" + id);
+    const marker = markers.find((r) => r.id === id);
+    if (marker) {
+      setSelectedMarker(marker);
+      setOpened(true);
+    }
     //inspectRack(actorId);
   };
 
   const onSelectActor = (id) => {
     const rack = racks.find((r) => r.id === id);
-    setSelectedRack(rack);
+    if (rack) {
+      setSelectedRack(rack);
+    }
   };
+
+  /********************************************/
+  /******* CAMBIAR POR FUNCION DE API *********/
+  /********************************************/
+  const saveMarkers = (params) => {
+    markers.forEach((m) => {
+      params.data = m;
+      if (m?.isNew) {
+        createLayoutMarker(params);
+      } else {
+        updateLayoutMarker(params);
+      }
+    });
+  };
+  /********************************************/
+  /******* CAMBIAR POR FUNCION DE API *********/
+  /********************************************/
 
   const saveData = () => {
     setSavingData(true);
@@ -69,6 +107,9 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
     };
 
     savePosAndRots(params).then(() => {
+
+      saveMarkers(params);
+
       setSavingData(false);
       hideNotification("savingData-notification");
     });
@@ -113,9 +154,9 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
       findRacksByZoneId(params).then((ret) => {
         setRacks(ret);
 
-        // findAllLayoutMarkersById(params).then((ret) => {
-        //   setMarkers(ret);
-        // });
+        findAllLayoutMarkersById(params).then((ret) => {
+          setMarkers(ret);
+        });
 
         setLoading(false);
       });
@@ -131,15 +172,15 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
 
     const marker = {
       id: uuid(),
-      positionx: clickContextMenuPosition.x / pixelmeterrelation,
-      positiony: clickContextMenuPosition.y / pixelmeterrelation,
+      positionx: clickContextMenuPosition.x,
+      positiony: 0,
+      positionz: clickContextMenuPosition.y,
       rotationx: 0,
-      positionz: 0,
       rotationy: 0,
       rotationz: 0,
-      dimensionx: 0,
+      dimensionx: 20,
       dimensiony: 0,
-      dimensionz: 0,
+      dimensionz: 60,
       text: "NEW MARKER",
       fontFamily: "Arial",
       fontSize: 14,
@@ -151,6 +192,7 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
       ellipsis: true,
       fill: "#ffffff",
       stroke: "#000000",
+      isNew: true,
     };
 
     setMarkers([...markers, marker]);
@@ -164,6 +206,18 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
         </Menu.Item>
       </Menu.Dropdown>
     );
+  };
+
+  const updateMarker = (id, values) => {
+    const marker = markers.find((r) => r.id === id);
+    if (marker) {
+      marker.text = values.text;
+      marker.stroke = values.stroke;
+      marker.align = values.align;
+      marker.fontFamily = values.fontFamily;
+      marker.fontSize = values.fontSize;
+      setMarkers([...markers]);
+    }
   };
 
   return (
@@ -196,19 +250,21 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
           />
         </Toolbar>
 
-        <View2DRef
+        <TextEditor opened={opened} setOpened={setOpened} data={selectedMarker} updateMarker={updateMarker} />
+
+        <View2dEditActors
           width={bodyContainerWidth}
           height={bodyContainerHeight - (TOOLBAR_HIGHT * 2 + 4 + VIEW_HEADER_HIGHT + DIVIDER_HIGHT)}
           layouts={layouts}
-          pixelMeterRelation={pixelmeterrelation}
           racks={racks}
+          markers={markers}
+          pixelMeterRelation={pixelmeterrelation}
           onSelect={onSelectActor}
           onDblClick={onActorDblClick}
           enableActorRelocation={true}
           updateAttrs={updateAttrs}
           isLockStage={unlockEditStorageStructures}
           stageContextMenu={stageContextMenu}
-          markers={markers}
           setClickContextMenuPosition={setClickContextMenuPosition}
         />
         <Footer seletedObject={selectedRack} />

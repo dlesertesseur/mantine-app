@@ -125,7 +125,15 @@
     "adjustImage": "Ajustar imagen",
     "dropZone": "Arrastre imágenes aquí o haga clic para seleccionar archivos",
     "dropZoneSub": "Adjunte tantos archivos como desee, cada archivo no debe exceder los 5 MB",
-    "measurementControl": "Controles de medicion"
+    "measurementControl": "Controles de medicion",
+    "markerText":"Texto de marcador",
+    "fontFamily":"Tipo de fuente",
+    "fontSize":"Tamaño de fuente",
+    "textAlign":"Alinear texto",
+    "left":"Izquierda",
+    "center":"Centro",
+    "right":"Derecha",
+    "textColor":"Color de texto"
   },
 
   "placeholder": {
@@ -405,6 +413,9 @@
   "dialog": {
     "storageStructure": {
       "title": "Estructura de almacenamiento"
+    },
+    "textEditor": {
+      "title": "Editar texto"
     }
   },
 

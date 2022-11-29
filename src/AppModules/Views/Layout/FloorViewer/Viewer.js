@@ -9,7 +9,7 @@ import { FilterControl } from "../Controls/FilterControl";
 import ViewHeader from "../../ViewHeader";
 
 const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCenter = false, app}) => {
-  const [setActorId] = useState(null);
+  const [actorId, setActorId] = useState(null);
   const [siteId, setSiteId] = useState(null);
   const [floorId, setFloorId] = useState(null);
   const [layouts, setLayouts] = useState(null);

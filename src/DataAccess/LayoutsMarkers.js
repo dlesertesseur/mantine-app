@@ -10,7 +10,7 @@ const findAllLayoutMarkersById = async (parameters) => {
         token: parameters.token,
       },
     };
-    const url = API.layoutMarkers.findAllById + "/" + parameters.siteId + "/floors/" + parameters.floorId + "/markers";
+    const url = API.layoutMarkers.findAllById + "/" + parameters.siteId + "/floors/" + parameters.floorId + "/markers/all";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -113,4 +113,28 @@ const deleteLayoutMarker = async (parameters) => {
   }
 };
 
-export { createLayoutMarker, updateLayoutMarker, deleteLayoutMarker, findLayoutMarkerById, findAllLayoutMarkersById };
+const saveLayoutMarkers = async (parameters) => {
+  try {
+    const body = JSON.stringify(parameters.data);
+
+    const requestOptions = {
+      method: "PUT",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+      body: body,
+    };
+
+    const url = API.layoutMarkers.save + parameters.siteId + "/floors/" + parameters.floorId + "/markers";
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+};
+
+export { createLayoutMarker, updateLayoutMarker, deleteLayoutMarker, findLayoutMarkerById, findAllLayoutMarkersById, saveLayoutMarkers };

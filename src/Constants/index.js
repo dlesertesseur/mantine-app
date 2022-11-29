@@ -225,11 +225,12 @@ export const API = {
   },
 
   layoutMarkers: { 
-    findAllById: SERVER + ":" + PORT + API_BASE + "/markers",
-    findById: SERVER + ":" + PORT + API_BASE + "/markers",
-    create: SERVER + ":" + PORT + API_BASE + "/markers/",
-    update: SERVER + ":" + PORT + API_BASE + "/markers/",
-    delete: SERVER + ":" + PORT + API_BASE + "/markers/",
+    findAllById: SERVER + ":" + PORT + API_BASE + "/sites",
+    findById: SERVER + ":" + PORT + API_BASE + "/sites",
+    create: SERVER + ":" + PORT + API_BASE + "/sites/",
+    update: SERVER + ":" + PORT + API_BASE + "/sites/",
+    delete: SERVER + ":" + PORT + API_BASE + "/sites/",
+    save: SERVER + ":" + PORT + API_BASE + "/sites/",
   },
 
 };
