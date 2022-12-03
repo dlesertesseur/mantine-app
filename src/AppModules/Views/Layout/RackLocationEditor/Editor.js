@@ -12,11 +12,7 @@ import { FilterControl } from "../Controls/FilterControl";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 import { t } from "i18next";
 import { hideNotification, showNotification } from "@mantine/notifications";
-import {
-  createLayoutMarker,
-  findAllLayoutMarkersById,
-  updateLayoutMarker,
-} from "../../../../DataAccess/LayoutsMarkers";
+import { findAllLayoutMarkersById, saveLayoutMarkers } from "../../../../DataAccess/LayoutsMarkers";
 import { IconTag } from "@tabler/icons";
 import TextEditor from "../../../../Components/TextEditor";
 
@@ -71,23 +67,6 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
     }
   };
 
-  /********************************************/
-  /******* CAMBIAR POR FUNCION DE API *********/
-  /********************************************/
-  const saveMarkers = (params) => {
-    markers.forEach((m) => {
-      params.data = m;
-      if (m?.isNew) {
-        createLayoutMarker(params);
-      } else {
-        updateLayoutMarker(params);
-      }
-    });
-  };
-  /********************************************/
-  /******* CAMBIAR POR FUNCION DE API *********/
-  /********************************************/
-
   const saveData = () => {
     setSavingData(true);
 
@@ -104,14 +83,26 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
       siteId: siteId,
       floorId: floorId,
       racks: racks,
+      markers: markers,
     };
 
     savePosAndRots(params).then(() => {
-
-      saveMarkers(params);
-
-      setSavingData(false);
-      hideNotification("savingData-notification");
+      saveLayoutMarkers(params)
+        .then(() => {
+          setSavingData(false);
+          hideNotification("savingData-notification");
+        })
+        .catch((error) => {
+          setSavingData(false);
+          hideNotification("savingData-notification");
+          showNotification({
+            id: "savingData-error",
+            disallowClose: true,
+            title: t("message.error"),
+            message: error,
+            loading: true,
+          });
+        });
     });
   };
 
@@ -193,6 +184,7 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
       fill: "#ffffff",
       stroke: "#000000",
       isNew: true,
+      draggable:unlockEditStorageStructures
     };
 
     setMarkers([...markers, marker]);
@@ -216,6 +208,8 @@ const Editor = ({ inspectRack, drawCenter = false, refresh, app }) => {
       marker.align = values.align;
       marker.fontFamily = values.fontFamily;
       marker.fontSize = values.fontSize;
+
+      markers.forEach(m => m.draggable = unlockEditStorageStructures);
       setMarkers([...markers]);
     }
   };

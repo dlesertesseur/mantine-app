@@ -141,6 +141,7 @@ function View2dEditActors({
   useEffect(() => {
     const stage = stageRef.current;
     setDraggableGroups(stage, "actors", isLockStage);
+    setDraggableGroups(stage, "markers-layer", isLockStage);
   }, [isLockStage]);
 
   useEffect(() => {

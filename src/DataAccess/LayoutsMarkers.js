@@ -115,7 +115,7 @@ const deleteLayoutMarker = async (parameters) => {
 
 const saveLayoutMarkers = async (parameters) => {
   try {
-    const body = JSON.stringify(parameters.data);
+    const body = JSON.stringify(parameters.markers);
 
     const requestOptions = {
       method: "PUT",
@@ -127,7 +127,7 @@ const saveLayoutMarkers = async (parameters) => {
       body: body,
     };
 
-    const url = API.layoutMarkers.save + parameters.siteId + "/floors/" + parameters.floorId + "/markers";
+    const url = API.layoutMarkers.save + parameters.siteId + "/floors/" + parameters.floorId + "/markers/posandrots";
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 

@@ -86,9 +86,8 @@ function View2DRef({
 
   useEffect(() => {
     const ref = stageRef.current;
-
     ref.batchDraw();
-    
+
     if (layouts && racks && pixelMeterRelation) {
       ref.destroyChildren();
 
@@ -108,6 +107,7 @@ function View2DRef({
 
       console.log("########### buildActors ###########");
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [layouts, pixelMeterRelation, racks, markers]);
 
@@ -146,6 +146,8 @@ function View2DRef({
     const stage = stageRef.current;
     setDraggableGroups(stage, "actors", isLockStage);
   }, [isLockStage]);
+
+  useEffect(() => {}, []);
 
   function zoomStage(event) {
     event.evt.preventDefault();

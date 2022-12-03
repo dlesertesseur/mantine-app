@@ -7,6 +7,7 @@ import { Stack } from "@mantine/core";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 import { FilterControl } from "../Controls/FilterControl";
 import ViewHeader from "../../ViewHeader";
+import { findAllLayoutMarkersById } from "../../../../DataAccess/LayoutsMarkers";
 
 const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCenter = false, app}) => {
   const [actorId, setActorId] = useState(null);
@@ -15,6 +16,7 @@ const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCe
   const [layouts, setLayouts] = useState(null);
   const [racks, setRacks] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [markers, setMarkers] = useState([]);
   const [pixelmeterrelation, setPixelmeterrelation] = useState(null);
 
   const { user } = useSelector((state) => state.auth.value);
@@ -55,7 +57,10 @@ const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCe
       setLayouts(ret);
       findRacksByZoneId(params).then((ret) => {
         setRacks(ret);
-        setLoading(false);
+        findAllLayoutMarkersById(params).then((ret) => {
+          setMarkers(ret);
+          setLoading(false);
+        });
       });
     });
   };
@@ -89,6 +94,7 @@ const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCe
           layouts={layouts}
           pixelMeterRelation={pixelmeterrelation}
           racks={racks}
+          markers={markers}
           onSelect={onSelectActor}
           onDblClick={onActorDblClick}
         />
