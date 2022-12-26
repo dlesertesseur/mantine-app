@@ -93,6 +93,8 @@ export const signIn = createAsyncThunk("auth/signIn", async (parameters, asyncTh
     const res = await fetch(apiUrl, requestOptions);
     const data = await res.json();
 
+    //console.log("signIn ->", data);
+
     return data;
   } catch (error) {
     return asyncThunk.rejectWithValue(error);

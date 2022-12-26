@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import Toolbar from "./Toolbar";
 import View2DRef from "../../../../Components/View2dRef";
+import ViewHeader from "../../ViewHeader";
 import { useSelector } from "react-redux";
 import { DIVIDER_HIGHT, PIXEL_METER_RELATION, TOOLBAR_HIGHT, VIEW_HEADER_HIGHT } from "../../../../Constants";
 import { Stack } from "@mantine/core";
 import { findLayoutByFloorId, findRacksByZoneId } from "../../../../DataAccess/Surfaces";
 import { FilterControl } from "../Controls/FilterControl";
-import ViewHeader from "../../ViewHeader";
 import { findAllLayoutMarkersById } from "../../../../DataAccess/LayoutsMarkers";
 
 const Viewer = ({ updateTime = 3000, editingEnabled = false, inspectRack, drawCenter = false, app}) => {

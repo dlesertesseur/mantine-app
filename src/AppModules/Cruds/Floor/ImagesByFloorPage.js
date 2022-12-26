@@ -1,6 +1,6 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
 import ImageCard from "../../../Components/ImageCard";
-import { Title, Container, Button, Group, LoadingOverlay, useMantineTheme, Text, Image } from "@mantine/core";
+import { Title, Container, Button, Group, LoadingOverlay, useMantineTheme, Text } from "@mantine/core";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";

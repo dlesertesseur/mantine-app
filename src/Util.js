@@ -248,8 +248,6 @@ function colorList(){
   return(ret);
 }
 
-
-
 export {
   findTranslatedField,
   getFillColor,

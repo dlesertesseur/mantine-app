@@ -22,8 +22,8 @@
 
   "message": {
     "update": "Update was successful",
-    "savingData":"Updating data on the server",
-    "savingDataSub":"Please wait until the information is finished updating."
+    "savingData": "Updating data on the server",
+    "savingDataSub": "Please wait until the information is finished updating."
   },
 
   "status": {
@@ -48,12 +48,12 @@
     "detailBysite": "Detail by site",
     "logout": "Logout",
     "save": "Save",
-    "finishEditing":"Finish editing",
-    "addPart":"Add part",
-    "backImage":"Back image",
-    "pixelMeterRelation":"Pixel/Meter",
+    "finishEditing": "Finish editing",
+    "addPart": "Add part",
+    "backImage": "Back image",
+    "pixelMeterRelation": "Pixel/Meter",
     "deleteImage": "Delete image",
-    "addLabel":"Add label"
+    "addLabel": "Add label"
   },
 
   "label": {
@@ -121,19 +121,19 @@
     "select": "Please select one",
     "true": "True",
     "false": "False",
-    "activateEdition":"Activate Edition",
+    "activateEdition": "Activate Edition",
     "adjustImage": "Adjust image",
-    "dropZone":"Drag images here or click to select files",
-    "dropZoneSub":"Attach as many files as you like, each file should not exceed 5mb",
-    "measurementControl":"Measurement control",
-    "markerText":"Marker text",
-    "fontFamily":"Font family",
-    "fontSize":"Font size",
-    "textAlign":"Text align",
-    "left":"Left",
-    "center":"Center",
-    "right":"Right",
-    "textColor":"Text color"
+    "dropZone": "Drag images here or click to select files",
+    "dropZoneSub": "Attach as many files as you like, each file should not exceed 5mb",
+    "measurementControl": "Measurement control",
+    "markerText": "Marker text",
+    "fontFamily": "Font family",
+    "fontSize": "Font size",
+    "textAlign": "Text align",
+    "left": "Left",
+    "center": "Center",
+    "right": "Right",
+    "textColor": "Text color"
   },
 
   "placeholder": {
@@ -188,7 +188,20 @@
   "crud": {
     "application": {
       "name": "APPLICATIONS",
-      "title": "APPLICATIONS CRUD",
+      "title": {
+        "create": "Creare a new application",
+        "update": "Update application",
+        "delete": "Delete application"
+      },
+      "label": {
+        "name": "Name",
+        "description": "Description",
+        "path": "Path",
+        "icon": "Icon"
+      },
+      "placeholder": {
+        "path": "/Cruds/"
+      },
       "columns": ["Icon", "Name", "Description", "Path"],
       "align": ["center", "left", "left", "left"],
       "width": ["5%", "30%", "45%", "20%"],
@@ -208,7 +221,15 @@
 
     "organization": {
       "name": "ORGANIZATION",
-      "title": "ORGANIZATION CRUD",
+      "title": {
+        "create": "Creare a new organization",
+        "update": "Update organization",
+        "delete": "Delete organization"
+      },
+      "label": {
+        "name": "Name",
+        "description": "Description"
+      },
       "columns": ["Name", "Description", "Creation date"],
       "align": ["left", "left", "center"],
       "width": ["30%", "50%", "20%"]
@@ -445,7 +466,7 @@
     "zone": "Zone"
   },
 
-  "stageContextMenu":{
-    "addMarker":"Add marker"
+  "stageContextMenu": {
+    "addMarker": "Add marker"
   }
 }

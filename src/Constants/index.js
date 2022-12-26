@@ -54,7 +54,7 @@ export const API = {
   },
 
   application: {
-    create: SERVER + ":" + PORT + API_BASE + "/applications",
+    create: SERVER + ":" + PORT + API_BASE + "/applications/",
     update: SERVER + ":" + PORT + API_BASE + "/applications/",
     delete: SERVER + ":" + PORT + API_BASE + "/applications/",
     findAll: SERVER + ":" + PORT + API_BASE + "/applications",
@@ -70,12 +70,11 @@ export const API = {
 
   organization: {
     create: SERVER + ":" + PORT + API_BASE + "/organizations",
-    update: SERVER + ":" + PORT + API_BASE + "/organizations/",
+    update: SERVER + ":" + PORT + API_BASE + "/organizations",
     delete: SERVER + ":" + PORT + API_BASE + "/organizations/",
-    findAll: SERVER + ":" + PORT + API_BASE + " /organizations",
+    findAll: SERVER + ":" + PORT + API_BASE + "/organizations",
     findById: SERVER + ":" + PORT + API_BASE + "/organizations/",
-    findRolesByEmailAndOrganization:
-      SERVER + ":" + PORT + API_BASE + "/organizations/{email}/organizations/{organizationId}/roles",
+    findRolesByEmailAndOrganization: SERVER + ":" + PORT + API_BASE + "/organizations/{email}/organizations/{organizationId}/roles",
   },
 
   project: {

@@ -11,6 +11,7 @@ import { SignUp } from "./Screens/SignUp";
 import { NotFound } from "./Screens/NotFound";
 import { ProtectedRoute } from "./Components/ProtectedRoute";
 import { NotificationsProvider } from "@mantine/notifications";
+import { IndoorMap } from "./Screens/IndoorMap";
 
 function App() {
   const [colorScheme, setColorScheme] = useState("light");
@@ -27,6 +28,8 @@ function App() {
                 <Route path="*" element={<NotFound />} />
                 <Route exact path="/" element={<SignIn />} />
                 <Route exact path="/signUp" element={<SignUp />} />
+
+                <Route exact path="/indoorMap" element={<IndoorMap />} />
 
                 <Route
                   path="/menu/*"

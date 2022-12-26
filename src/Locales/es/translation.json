@@ -188,7 +188,17 @@
   "crud": {
     "application": {
       "name": "APLICACIONES",
-      "title": "ABM DE APLICACIONES",
+      "title": {
+        "create":"Crear una nueva aplicacion",
+        "update":"Modificar una aplicacion",
+        "delete":"Eliminar una aplicacion"
+      },
+      "label": {
+        "name":"Nombre",
+        "description":"Descripcion",
+        "path":"Ruta",
+        "icon":"Icono"
+      },
       "columns": ["Icono", "Nombre", "Descripcion", "Ruta"],
       "align": ["center", "left", "left", "left"],
       "width": ["5%", "30%", "45%", "20%"],
@@ -208,7 +218,15 @@
 
     "organization": {
       "name": "ORGANIZACIONES",
-      "title": "ABM DE ORGANIZACIONES",
+      "title": {
+        "create": "Crear una nueva organizacion",
+        "update": "Modificar la organizacion",
+        "delete": "Eliminar la organizacion"
+      },
+      "label": {
+        "name": "Nombre",
+        "description": "Descripcion"
+      },
       "columns": ["Nombre", "Descripcion", "Fecha de creacion"],
       "align": ["left", "left", "center"],
       "width": ["30%", "50%", "20%"]
