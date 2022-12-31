@@ -189,7 +189,7 @@
     "application": {
       "name": "APPLICATIONS",
       "title": {
-        "create": "Creare a new application",
+        "create": "Create a new application",
         "update": "Update application",
         "delete": "Delete application"
       },
@@ -222,7 +222,7 @@
     "organization": {
       "name": "ORGANIZATION",
       "title": {
-        "create": "Creare a new organization",
+        "create": "Create a new organization",
         "update": "Update organization",
         "delete": "Delete organization"
       },
@@ -245,10 +245,18 @@
 
     "role": {
       "name": "ROLES",
-      "title": "ROLES CRUD",
-      "columns": ["ID", "Name", "Context"],
-      "align": ["left", "left", "left"],
-      "width": ["5%", "30%", "65%"],
+      "title": {
+        "create": "Create a new role",
+        "update": "Update role",
+        "delete": "Delete role"
+      },
+      "label": {
+        "name": "Name",
+        "context": "Context"
+      },
+      "columns": ["Name", "Context"],
+      "align": ["left", "left"],
+      "width": ["30%", "65%"],
       "selectApplications": "Select applications",
       "translation": {
         "columns": ["Locale", "Language", "Name"],
@@ -402,7 +410,7 @@
       },
 
       "title": {
-        "create": "Creare a new Floor",
+        "create": "Create a new Floor",
         "update": "Update a Floor",
         "delete": "Delete a Floor",
         "images": "Add images to floor"

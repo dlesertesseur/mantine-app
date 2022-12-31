@@ -242,10 +242,18 @@
 
     "role": {
       "name": "ROLES",
-      "title": "ABM DE ROLES",
-      "columns": ["ID", "Nombre", "Contexto"],
-      "align": ["left", "left", "left"],
-      "width": ["5%", "30%", "65%"],
+      "title": {
+        "create":"Crear un nuevo rol",
+        "update":"Modificar un rol",
+        "delete":"Eliminar un rol"
+      },
+      "label": {
+        "name": "Nombre",
+        "context": "Contexto"
+      },
+      "columns": ["Nombre", "Contexto"],
+      "align": ["left", "left"],
+      "width": ["30%", "65%"],
       "selectApplications": "Seleccionar aplicaciones",
       "translation": {
         "columns": ["Localizacion", "Idioma", "Nombre"],
