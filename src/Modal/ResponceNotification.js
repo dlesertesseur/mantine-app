@@ -26,8 +26,8 @@ const ResponceNotification = ({ opened, onClose, title, text, code }) => {
             radius={"sm"}
           >
             {text}
-            <Group position="right">
-              <Button onClick={() => onClose()} color={code ? "red" : "green"}>
+            <Group position="right" >
+              <Button onClick={() => onClose()} color={code ? "red" : "green"} m={5}>
                 {t("button.accept")}
               </Button>
             </Group>

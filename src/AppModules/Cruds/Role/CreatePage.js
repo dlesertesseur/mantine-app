@@ -1,14 +1,30 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay, Select } from "@mantine/core";
+import {
+  TextInput,
+  Title,
+  Container,
+  Button,
+  Group,
+  LoadingOverlay,
+  Select,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createRole } from "../../../DataAccess/Roles";
+import { useDispatch, useSelector } from "react-redux";
+import { createRole } from "../../../Features/Role";
+import { actions } from "../../../Constants";
 
-export function CreatePage({ user, back, onLoadGrid, contexts }) {
+export function CreatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth.value);
+  const { contexts, action, error, errorMessage } = useSelector(
+    (state) => state.role.value
+  );
 
   const form = useForm({
     initialValues: {
@@ -18,19 +34,22 @@ export function CreatePage({ user, back, onLoadGrid, contexts }) {
 
     validate: {
       name: (val) => (val ? null : t("validation.required")),
-      description: (val) => (val ? null : t("validation.required")),
+      context: (val) => (val ? null : t("validation.required")),
     },
   });
 
+  
   const [working, setWorking] = useState(false);
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
-  const [response, setResponse] = useState(null);
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
         label={t("crud.role.label." + field)}
-        placeholder={t("crud.role.placeholder." + field).startsWith("crud.") ? "" : t("crud.role.placeholder." + field)}
+        placeholder={
+          t("crud.role.placeholder." + field).startsWith("crud.")
+            ? ""
+            : t("crud.role.placeholder." + field)
+        }
         {...form.getInputProps(field)}
       />
     );
@@ -38,19 +57,20 @@ export function CreatePage({ user, back, onLoadGrid, contexts }) {
     return ret;
   };
 
-  const createSelectField = (field) => {
+  const createSelectField = (field) => {    
     const ret = (
       <Select
         label={t("crud.role.label." + field)}
-        data={contexts.map(c => { 
-          return({ value: c.id, label: c.name });
-          })}
+        data={contexts.map((c) => {
+          return { value: c.id, label: c.name };
+        })}
         {...form.getInputProps(field)}
       />
     );
 
     return ret;
   };
+
   const onCreate = (values) => {
     setWorking(true);
 
@@ -58,51 +78,28 @@ export function CreatePage({ user, back, onLoadGrid, contexts }) {
       token: user.token,
       data: values,
     };
-    createRole(params)
-      .then((ret) => {
-        setWorking(false);
-
-        if (ret.error) {
-          setResponse({
-            code: ret.status,
-            title: ret.error,
-            text: ret.status ? ret.message : t("message.create"),
-          });
-          setResponseModalOpen(true);
-        } else {
-          if (ret.status) {
-            setResponse({
-              code: ret.status,
-              title: ret.status ? t("status.error") : t("status.ok"),
-              text: ret.status ? ret.message : t("message.create"),
-            });
-            setResponseModalOpen(true);
-          } else {
-            onLoadGrid();
-            navigate(back);
-          }
-        }
-      })
-      .catch((error) => {
-        setResponse({ code: error.status, title: t("status.error"), text: error.message });
-        setResponseModalOpen(true);
-      });
+    dispatch(createRole(params));
   };
 
   const onClose = () => {
-    setResponseModalOpen(false);
-    onLoadGrid();
-    navigate(back);
+    navigate(-1);
   };
+
+  useEffect(() => {
+    if(action === actions.created){
+      setWorking(false);
+      navigate(-1);
+    }
+  },[action, navigate])
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
       <ResponceNotification
-        opened={responseModalOpen}
+        opened={error}
         onClose={onClose}
-        code={response?.code}
-        title={response?.title}
-        text={response?.text}
+        code={""}
+        title={t("status.error")}
+        text={errorMessage}
       />
       <LoadingOverlay overlayOpacity={0.5} visible={working} />
       <Container size={"sm"}>
@@ -126,14 +123,12 @@ export function CreatePage({ user, back, onLoadGrid, contexts }) {
           <Group grow mb={"md"}>
             {createTextField("name")}
           </Group>
-          <Group mb={"xs"}>
-            {createSelectField("context")}
-          </Group>
+          <Group mb={"xs"}>{createSelectField("context")}</Group>
 
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(back);
+                navigate(-1);
               }}
             >
               {t("button.cancel")}

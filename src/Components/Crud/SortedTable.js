@@ -247,7 +247,7 @@ export default function SortedTable({
         </Group>
       </Group>
 
-      <ScrollArea sx={{ height: 700 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <ScrollArea sx={{ height: 500 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
         <LoadingOverlay visible={loading} overlayBlur={2} />
 
         <Table horizontalSpacing="xs" verticalSpacing="xs" striped highlightOnHover withBorder withColumnBorders>

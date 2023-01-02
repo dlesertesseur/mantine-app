@@ -40,7 +40,7 @@ const findAllRolesInContext = async (params) => {
     const url = API.role.findAllRolesInContext + params.contextId;
     const res = await fetch(url, requestOptions);
     const data = await res.json();
-    
+
     if (res.status !== 200) {
       throw Error(data.message);
     }
@@ -50,7 +50,6 @@ const findAllRolesInContext = async (params) => {
     return error;
   }
 };
-
 
 const findAllRoles = async ({ siteId, userId, token }) => {
   try {
@@ -82,7 +81,7 @@ async function createRole(parameters) {
   try {
     const body = JSON.stringify({
       name: parameters.data.name,
-      description: parameters.data.description,
+      contextId: parameters.data.context,
     });
 
     const requestOptions = {
@@ -94,6 +93,8 @@ async function createRole(parameters) {
       },
       body: body,
     };
+
+    console.log("createRole", requestOptions);
 
     const url = API.role.create;
     const res = await fetch(url, requestOptions);
@@ -109,20 +110,18 @@ async function updateRole(parameters) {
     const body = JSON.stringify({
       id: parameters.data.id,
       name: parameters.data.name,
-      description: parameters.data.description,
+      contextId: parameters.data.context,
     });
 
     const requestOptions = {
       method: "PUT",
       mode: "cors",
       headers: {
-        "Content-Type":"application/json",
+        "Content-Type": "application/json",
         token: parameters.token,
       },
       body: body,
     };
-
-    console.log("updateOrganization requestOptions -> ", requestOptions);
 
     const res = await fetch(API.role.update, requestOptions);
     const data = await res.json();
@@ -148,13 +147,39 @@ async function deleteRole(parameters) {
       body: body,
     };
 
-    await fetch(API.role.delete + parameters.id, requestOptions).then((response) => {
-      return response;
-    });
+    await fetch(API.role.delete + parameters.id, requestOptions).then(
+      (response) => {
+        return response;
+      }
+    );
   } catch (error) {
     return error;
   }
 }
 
+async function findRoleById(parameters) {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: { "Content-Type": "application/json", token: parameters.token },
+    };
 
-export { createRole, updateRole, deleteRole, findAllRolesByUserId, findAllRolesInContext, findAllRoles };
+    const url = API.role.findById + parameters.id;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+export {
+  createRole,
+  updateRole,
+  deleteRole,
+  findAllRolesByUserId,
+  findAllRolesInContext,
+  findAllRoles,
+  findRoleById,
+};

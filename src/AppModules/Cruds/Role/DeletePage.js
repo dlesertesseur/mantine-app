@@ -1,33 +1,53 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
 import DeleteConfirmation from "../../../Modal/DeleteConfirmation";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay } from "@mantine/core";
+import {
+  TextInput,
+  Title,
+  Container,
+  Button,
+  Group,
+  LoadingOverlay,
+  Select,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { findOrganizationById } from "../../../DataAccess/Organization";
-import { deleteRole } from "../../../DataAccess/Roles";
+import { useDispatch, useSelector } from "react-redux";
+import { deleteRole, findRoleById } from "../../../Features/Role";
+import { actions } from "../../../Constants";
 
-export function DeletePage({ user, back, rowId, onLoadGrid }) {
+export function DeletePage({ rowId }) {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  
   const { t } = useTranslation();
-  const [data, setData] = useState(null);
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
-  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [response, setResponse] = useState(null);
   const [working, setWorking] = useState(false);
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
+
+  const { user } = useSelector((state) => state.auth.value);
+  const { contexts, action, selectedRole, error, errorMessage } = useSelector(
+    (state) => state.role.value
+  );
 
   const form = useForm({
     initialValues: {
       name: "",
-      description: "",
+      context: "",
     },
 
     validate: {
       name: (val) => (val ? null : t("validation.required")),
-      description: (val) => (val ? null : t("validation.required")),
+      context: (val) => (val ? null : t("validation.required")),
     },
   });
+
+  useEffect(() => {
+    if(action === actions.deleted){
+      setWorking(false);
+      navigate(-1);
+    }
+  },[action, navigate])
 
   useEffect(() => {
     setWorking(true);
@@ -36,17 +56,20 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
       token: user.token,
       id: rowId,
     };
-    findOrganizationById(params).then((ret) => {
-      setWorking(false);
-      setData(ret);
-
-      form.setFieldValue("name", ret.name);
-      form.setFieldValue("description", ret.description);
-    });
+    dispatch(findRoleById(params));
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rowId, user]);
 
+  useEffect(() => {
+    if (selectedRole) {
+      setWorking(false);
+      form.setFieldValue("name", selectedRole.name);
+      form.setFieldValue("context", selectedRole.context.id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRole]);
+  
   const createTextField = (field) => {
     const ret = (
       <TextInput
@@ -60,55 +83,47 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
     return ret;
   };
 
+  const createSelectField = (field) => {
+    const ret = (
+      <Select
+        disabled
+        label={t("crud.role.label." + field)}
+        data={contexts.map((c) => {
+          return { value: c.id, label: c.name };
+        })}
+        {...form.getInputProps(field)}
+      />
+    );
+
+    return ret;
+  };
+
   const onDelete = () => {
     setWorking(true);
 
     const params = {
       token: user.token,
-      id: data.id,
+      id: selectedRole.id,
     };
-    deleteRole(params)
-      .then((ret) => {
-        setWorking(false);
-
-        if (ret.status) {
-          setResponse({
-            code: ret.status,
-            title: ret.status ? t("status.error") : t("status.ok"),
-            text: ret.status ? ret.message : t("message.delete"),
-          });
-          setResponseModalOpen(true);
-        } else {
-          onLoadGrid();
-          navigate(back);
-        }
-      })
-      .catch((error) => {
-        setResponse({ code: error.status, title: t("status.error"), text: error.message });
-        setResponseModalOpen(true);
-      });
+    dispatch(deleteRole(params));
   };
 
   const onClose = () => {
-    setResponseModalOpen(false);
-    onLoadGrid();
-    navigate(back);
+    navigate(-1);
   };
 
   const onConfirm = () => {
     onDelete();
-    navigate(back);
-    onLoadGrid();
   };
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
       <ResponceNotification
-        opened={responseModalOpen}
+        opened={error}
         onClose={onClose}
-        code={response?.code}
-        title={response?.title}
-        text={response?.text}
+        code={""}
+        title={t("status.error")}
+        text={errorMessage}
       />
 
       <DeleteConfirmation
@@ -141,14 +156,12 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
           <Group grow mb={"md"}>
             {createTextField("name")}
           </Group>
-          <Group grow mb={"md"}>
-            {createTextField("description")}
-          </Group>
+          <Group mb={"xs"}>{createSelectField("context")}</Group>
 
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(back);
+                navigate(-1);
               }}
             >
               {t("button.cancel")}

@@ -248,11 +248,13 @@
       "title": {
         "create": "Create a new role",
         "update": "Update role",
-        "delete": "Delete role"
+        "delete": "Delete role",
+        "assignApps":"Assign Apps"
       },
       "label": {
         "name": "Name",
-        "context": "Context"
+        "context": "Context",
+        "applications": "Applications"
       },
       "columns": ["Name", "Context"],
       "align": ["left", "left"],

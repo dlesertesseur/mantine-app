@@ -92,6 +92,7 @@ export const API = {
     delete: SERVER + ":" + PORT + API_BASE + "/roles/",
     findAll: SERVER + ":" + PORT + API_BASE + "/roles",
     findByName: SERVER + ":" + PORT + API_BASE + "/roles",
+    findById: SERVER + ":" + PORT + API_BASE + "/roles/",
     findAllApplicationsByRole: SERVER + ":" + PORT + API_BASE + "/application-role-relations/role/",
     findAllRolesInContext: SERVER + ":" + PORT + API_BASE + "/roles/context/",
   },
@@ -249,4 +250,11 @@ export const ERRORS = {
 
 export const CONTEXTS = {
   organizatrionId: 2,
+};
+
+export const actions = {
+  created: "CREATED",
+  updated: "UPDATED",
+  deleted: "DELETED",
+  readed: "READED",
 };

@@ -1,6 +1,6 @@
 import { API } from "../Constants";
 
-async function findAllApplications(params, setData) {
+async function findAllApplications(params) {
   try {
     const requestOptions = {
       method: "GET",

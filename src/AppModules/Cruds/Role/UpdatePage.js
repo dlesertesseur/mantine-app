@@ -1,33 +1,51 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay } from "@mantine/core";
+import {
+  TextInput,
+  Title,
+  Container,
+  Button,
+  Group,
+  LoadingOverlay,
+  Select,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { findOrganizationById, updateOrganization } from "../../../DataAccess/Organization";
+import { useDispatch, useSelector } from "react-redux";
+import { findRoleById, updateRole } from "../../../Features/Role";
+import { actions } from "../../../Constants";
 
-export function UpdatePage({ user, back, rowId, onLoadGrid }) {
+export function UpdatePage({ rowId }) {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth.value);
+  const { contexts, action, selectedRole, error, errorMessage } = useSelector(
+    (state) => state.role.value
+  );
 
   const form = useForm({
     initialValues: {
       name: "",
-      description: "",
-      path: "",
-      icon: "",
+      context: "",
     },
 
     validate: {
       name: (val) => (val ? null : t("validation.required")),
-      description: (val) => (val ? null : t("validation.required")),
+      context: (val) => (val ? null : t("validation.required")),
     },
   });
 
   const [working, setWorking] = useState(false);
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
-  const [response, setResponse] = useState(null);
+
+  useEffect(() => {
+    if(action === actions.updated){
+      setWorking(false);
+      navigate(-1);
+    }
+  },[action, navigate])
 
   useEffect(() => {
     setWorking(true);
@@ -37,16 +55,18 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
       id: rowId,
     };
 
-    findOrganizationById(params).then((ret) => {
+    dispatch(findRoleById(params));
+
+  }, [dispatch, rowId, user]);
+
+  useEffect(() => {
+    if (selectedRole) {
       setWorking(false);
-      setData(ret);
-
-      form.setFieldValue("name", ret.name);
-      form.setFieldValue("description", ret.description);
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowId, user]);
+      form.setFieldValue("name", selectedRole.name);
+      form.setFieldValue("context", selectedRole.context.id);
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedRole]);
 
   const createTextField = (field) => {
     const ret = (
@@ -64,6 +84,20 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
     return ret;
   };
 
+  const createSelectField = (field) => {
+    const ret = (
+      <Select
+        label={t("crud.role.label." + field)}
+        data={contexts.map((c) => {
+          return { value: c.id, label: c.name };
+        })}
+        {...form.getInputProps(field)}
+      />
+    );
+
+    return ret;
+  };
+
   const onUpdate = (values) => {
     setWorking(true);
 
@@ -71,42 +105,21 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
       token: user.token,
       data: values,
     };
-    updateOrganization(params)
-      .then((ret) => {
-        setWorking(false);
-
-        if (ret.status) {
-          setResponse({
-            code: ret.status,
-            title: ret.status ? t("status.error") : t("status.ok"),
-            text: ret.status ? ret.message : t("message.update"),
-          });
-          setResponseModalOpen(true);
-        } else {
-          onLoadGrid();
-          navigate(back);
-        }
-      })
-      .catch((error) => {
-        setResponse({ code: error.status, title: t("status.error"), text: error.message });
-        setResponseModalOpen(true);
-      });
+    dispatch(updateRole(params));
   };
 
   const onClose = () => {
-    setResponseModalOpen(false);
-    onLoadGrid();
-    navigate(back);
+    navigate(-1);
   };
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
       <ResponceNotification
-        opened={responseModalOpen}
+        opened={error}
         onClose={onClose}
-        code={response?.code}
-        title={response?.title}
-        text={response?.text}
+        code={""}
+        title={t("status.error")}
+        text={errorMessage}
       />
       <LoadingOverlay overlayOpacity={0.5} visible={working} />
       <Container size={"sm"}>
@@ -124,23 +137,21 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
 
         <form
           onSubmit={form.onSubmit((values) => {
-            const toSend = { ...data };
+            const toSend = { ...selectedRole };
             toSend.name = values.name;
-            toSend.description = values.description;
+            toSend.context = values.context;
             onUpdate(toSend);
           })}
         >
           <Group grow mb={"md"}>
             {createTextField("name")}
           </Group>
-          <Group grow mb={"md"}>
-            {createTextField("description")}
-          </Group>
+          <Group mb={"xs"}>{createSelectField("context")}</Group>
 
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(back);
+                navigate(-1);
               }}
             >
               {t("button.cancel")}

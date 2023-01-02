@@ -2,9 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import CrudFrame from "../../../Components/Crud/CrudFrame";
 import { useSelector } from "react-redux";
 import { findAllSites } from "../../../DataAccess/Sites";
+import { findAllContext } from "../../../DataAccess/Context";
 import { useTranslation } from "react-i18next";
 import { CreateSitePage } from "./CreateSitePage";
-import { findAllContext } from "../../../DataAccess/Context";
 import { UpdateSitePage } from "./UpdateSitePage";
 import { DeleteSitePage } from "./DeleteSitePage";
 
@@ -55,12 +55,8 @@ const DynamicApp = ({ app }) => {
         setRowSelected={setSiteId}
         enableCreateButton={true}
         createPage={<CreateSitePage user={user} back={"../"} onLoadGrid={onLoadGrid} contexts={contexts} />}
-        updatePage={
-          <UpdateSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />
-        }
-        deletePage={
-          <DeleteSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />
-        }
+        updatePage={<UpdateSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />}
+        deletePage={<DeleteSitePage user={user} back={"../"} siteId={siteId} onLoadGrid={onLoadGrid} contexts={contexts} />}
       />
     ) : null;
 

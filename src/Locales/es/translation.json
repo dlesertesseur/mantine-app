@@ -245,11 +245,13 @@
       "title": {
         "create":"Crear un nuevo rol",
         "update":"Modificar un rol",
-        "delete":"Eliminar un rol"
+        "delete":"Eliminar un rol",
+        "assignApps":"Asignar aplicaciones"
       },
       "label": {
         "name": "Nombre",
-        "context": "Contexto"
+        "context": "Contexto",
+        "applications": "Aplicaciones"
       },
       "columns": ["Nombre", "Contexto"],
       "align": ["left", "left"],
