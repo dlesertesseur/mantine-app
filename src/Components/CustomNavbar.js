@@ -67,8 +67,8 @@ export default function CustomNavbar() {
               title={findTranslatedField(i18n.language, organizationSelected, "name")}
               description={organizationSelected?.description}
               //AGREGAR LOS CAMPOS A LA ORGANIZACION
-              image={"/platform/images/picmento_logo.png"}
-              phone={"+11 (876) 890 56 23"}
+              //image={"/platform/images/picmento_logo.png"}
+              //phone={"+11 (876) 890 56 23"}
               //AGREGAR LOS CAMPOS A LA ORGANIZACION
               />
           ) : null}

@@ -1,9 +1,10 @@
 import React from "react";
 import LanguageSelector from "./LanguageSelector";
-import { Group, ActionIcon, useMantineColorScheme, Title } from "@mantine/core";
+import { Group, ActionIcon, useMantineColorScheme, Title, Image } from "@mantine/core";
 import { IconSun, IconMoonStars } from "@tabler/icons";
 import UserButton from "./UserButton";
 import { useTranslation } from "react-i18next";
+//import logo from "/images/connexa_logo.png";
 
 export default function CustomHeader() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
@@ -14,7 +15,7 @@ export default function CustomHeader() {
         {/* <div style={{ width: 240, marginLeft: "auto", marginRight: "auto" }}>
           <Image
             radius="xs"
-            src="/images/connexa_logo.jpeg"
+            src={logo}
             alt="logo"
           />
         </div> */}

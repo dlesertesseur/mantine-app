@@ -15,10 +15,11 @@ export function OrganizationInfo({ image, title, description, phone }) {
   const { classes } = useStyles();
   return (
     <Paper p="xs" withBorder>
-      <Image src={image} />
+      {image ? <Image src={image} /> : null}
+
       <Group noWrap>
         <div>
-          <Text size="xs" sx={{ textTransform: "uppercase" }} weight={700} color="dimmed">
+          <Text size="xs" sx={{ textTransform: "uppercase", fontSize:18 }} weight={700} color="black">
             {title}
           </Text>
 
@@ -26,12 +27,14 @@ export function OrganizationInfo({ image, title, description, phone }) {
             {description}
           </Text>
 
-          <Group noWrap spacing={10} mt={5}>
-            <IconPhoneCall stroke={1.5} size={16} className={classes.icon} />
-            <Text size="xs" color="dimmed">
-              {phone}
-            </Text>
-          </Group>
+          {phone ? (
+            <Group noWrap spacing={10} mt={5}>
+              <IconPhoneCall stroke={1.5} size={16} className={classes.icon} />
+              <Text size="xs" color="dimmed">
+                {phone}
+              </Text>
+            </Group>
+          ) : null}
         </div>
       </Group>
     </Paper>

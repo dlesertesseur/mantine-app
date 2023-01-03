@@ -332,8 +332,8 @@
         "status": "Estado",
         "countryOfOrigin":"Pais de origen"
       },
-      "columns": ["SKU", "EAN", "Descripcion", "Marca", "Estado"],
-      "align": ["center", "right", "right", "left", "left"],
+      "columns": ["SKU", "EAN", "Descripcion", "Marca", "País de origen", "Estado"],
+      "align": ["center", "right", "right", "left", "left", "left"],
       "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
       "tab1": "Informacion general",
       "tab2": "Unidades de medida",

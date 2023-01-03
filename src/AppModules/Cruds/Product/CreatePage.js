@@ -1,25 +1,14 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
-import {
-  TextInput,
-  Title,
-  Container,
-  Button,
-  Group,
-  LoadingOverlay,
-  Select,
-} from "@mantine/core";
+import { TextInput, Title, Container, Button, Group, LoadingOverlay, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { findAllBrands } from "../../../Features/Brand";
-import { clearError, create, findAllCountries } from "../../../Features/Product";
+import { clearError, create, findAllCountries, setActivePage } from "../../../Features/Product";
 
 export function CreatePage({ onLoadGrid }) {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const { user, projectSelected } = useSelector((state) => state.auth.value);
@@ -37,10 +26,10 @@ export function CreatePage({ onLoadGrid }) {
   const form = useForm({
     initialValues: {
       sku: "",
-      ean:"",
+      ean: "",
       description: "",
       brand: "",
-      countryOfOrigin: ""
+      countryOfOrigin: "",
     },
 
     validate: {
@@ -48,20 +37,16 @@ export function CreatePage({ onLoadGrid }) {
       ean: (val) => (val ? null : t("validation.required")),
       description: (val) => (val ? null : t("validation.required")),
       brand: (val) => (val ? null : t("validation.required")),
-      countryOfOrigin: (val) => (val ? null : t("validation.required"))
+      countryOfOrigin: (val) => (val ? null : t("validation.required")),
     },
   });
-
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
         label={t("crud.product.label." + field)}
         placeholder={
-          t("crud.product.placeholder." + field).startsWith("crud.")
-            ? ""
-            : t("crud.product.placeholder." + field)
+          t("crud.product.placeholder." + field).startsWith("crud.") ? "" : t("crud.product.placeholder." + field)
         }
         {...form.getInputProps(field)}
       />
@@ -75,19 +60,13 @@ export function CreatePage({ onLoadGrid }) {
       return { value: c.id, label: c.name };
     });
     const ret = (
-
-      <Select
-        label={t("crud.product.label." + field)}
-        data={list ? list : []}
-        {...form.getInputProps(field)}
-      />
+      <Select label={t("crud.product.label." + field)} data={list ? list : []} {...form.getInputProps(field)} />
     );
 
     return ret;
   };
 
   const onCreate = (values) => {
-
     const params = {
       token: user.token,
       sku: values.sku,
@@ -106,25 +85,20 @@ export function CreatePage({ onLoadGrid }) {
       measurementTypeIdForPrice: "Q",
       measurementUnitIdForPrice: "UNIDADES",
     };
-    
+
     dispatch(create(params));
   };
 
   const onClose = () => {
     dispatch(clearError());
-    // onLoadGrid();
-    // navigate(-1);
   };
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
-      <ResponceNotification
-        opened={error}
-        onClose={onClose}
-        code={errorCode}
-        title={error}
-        text={errorMessage}
-      />
+      {error ? (
+        <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
+      ) : null}
+      
       <LoadingOverlay overlayOpacity={0.5} visible={creating} />
       <Container size={"sm"}>
         <Title
@@ -149,16 +123,12 @@ export function CreatePage({ onLoadGrid }) {
           <Group grow mb={"md"}>
             {createTextField("description")}
           </Group>
-          <Group mb={"md"}>
-            {createSelectField("brand", brands)}
-          </Group>
-          <Group mb={"md"}>
-            {createSelectField("countryOfOrigin", countries)}
-          </Group>
+          <Group mb={"md"}>{createSelectField("brand", brands)}</Group>
+          <Group mb={"md"}>{createSelectField("countryOfOrigin", countries)}</Group>
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(-1);
+                dispatch(setActivePage("./"));
               }}
             >
               {t("button.cancel")}

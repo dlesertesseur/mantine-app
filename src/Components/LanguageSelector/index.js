@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { createStyles, UnstyledButton, Menu, Image, Group } from "@mantine/core";
+import { useTranslation } from "react-i18next";
 import en from "./images/en.png";
 import es from "./images/es.png";
 import br from "./images/br.png";
-import { useTranslation } from "react-i18next";
 
 const data = [
   { label: "English", image: en, locale: "en" },

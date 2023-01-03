@@ -143,6 +143,8 @@ export const API = {
     findAllCountries: SERVER + ":" + PORT + API_BASE + "/countries",
     findAllProductsPage: SERVER + ":" + PORT + API_BASE + "/products/",
     findAllProducts: SERVER + ":" + PORT + API_BASE + "/products/unpaged",
+    findProductById: SERVER + ":" + PORT + API_BASE + "/products/",
+    uploadImage: SERVER + ":" + PORT + API_BASE + "/product-images/",
   },
 
   category_product_relation: {

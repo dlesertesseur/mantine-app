@@ -1,12 +1,12 @@
-import React from "react";
-import SortedTable from "./SortedTable";
+import React, { useEffect } from "react";
 import uuid from "react-uuid";
+import SortedTableStateController from "./SortedTableStateController";
 import { Divider, Stack, Text } from "@mantine/core";
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 import { findTranslatedField } from "../../Util";
 import { useTranslation } from "react-i18next";
 
-const CrudFrame = ({
+const CrudFrameStateController = ({
   app,
   data,
   columns,
@@ -19,8 +19,15 @@ const CrudFrame = ({
   relationshipPages,
   filterControl = null,
   loading = false,
+  activePage,
+  setActivePage,
 }) => {
   const { i18n } = useTranslation();
+  const navigate = useNavigate();
+
+  useEffect(() => {
+      navigate(activePage);
+  }, [activePage, navigate]);
 
   return (
     <Stack
@@ -58,7 +65,7 @@ const CrudFrame = ({
           <Route
             path="/"
             element={
-              <SortedTable
+              <SortedTableStateController
                 data={data}
                 columns={columns}
                 filterControl={filterControl}
@@ -67,6 +74,7 @@ const CrudFrame = ({
                 rowSelected={rowSelected}
                 setRowSelected={setRowSelected}
                 relationship={relationshipPages}
+                setActivePage={setActivePage}
               />
             }
           />
@@ -79,17 +87,8 @@ const CrudFrame = ({
           ))}
         </Routes>
       </Stack>
-
-      {/* <Group
-        position="center"
-        sx={(theme) => ({
-          backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
-        })}
-      >
-        <Pagination total={2}/>
-      </Group> */}
     </Stack>
   );
 };
 
-export default CrudFrame;
+export default CrudFrameStateController;

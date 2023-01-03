@@ -28,136 +28,129 @@ const initialState = {
     uploading: false,
     downloading: false,
     loadingUnassignedProducts: false,
+    activePage: null,
+    selectedRowId: null,
+    product: null,
   },
 };
 
-export const create = createAsyncThunk(
-  "product/create",
-  async (parameters, asyncThunk) => {
+export const create = createAsyncThunk("product/create", async (parameters, asyncThunk) => {
+  try {
+    const body = JSON.stringify({
+      sku: parameters.sku,
+      ean: parameters.ean,
+      description: parameters.description,
+      brandId: parameters.brandId,
+      price: parameters.price,
+      currency: parameters.currency,
+      status: parameters.status,
+      projectId: parameters.projectId,
+      countryOfOriginId: parameters.countryOfOriginId,
+      measurementTypeIdForContent: parameters.measurementTypeIdForContent,
+      measurementUnitIdForContent: parameters.measurementUnitIdForContent,
+      measurementTypeIdForSale: parameters.measurementTypeIdForSale,
+      measurementUnitIdForSale: parameters.measurementUnitIdForSale,
+      measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
+      measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
+    });
 
-    try {
-      const body = JSON.stringify({
-        sku: parameters.sku,
-        ean: parameters.ean,
-        description: parameters.description,
-        brandId: parameters.brandId,
-        price: parameters.price,
-        currency: parameters.currency,
-        status: parameters.status,
-        projectId: parameters.projectId,
-        countryOfOriginId: parameters.countryOfOriginId,
-        measurementTypeIdForContent: parameters.measurementTypeIdForContent,
-        measurementUnitIdForContent: parameters.measurementUnitIdForContent,
-        measurementTypeIdForSale: parameters.measurementTypeIdForSale,
-        measurementUnitIdForSale: parameters.measurementUnitIdForSale,
-        measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
-        measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
-      });
+    console.log("product/create", {
+      sku: parameters.sku,
+      ean: parameters.ean,
+      description: parameters.description,
+      brandId: parameters.brand,
+      price: parameters.price,
+      currency: parameters.currency,
+      status: parameters.status,
+      projectId: parameters.projectId,
+      countryOfOriginId: parameters.countryOfOrigin,
+      measurementTypeIdForContent: parameters.measurementTypeIdForContent,
+      measurementUnitIdForContent: parameters.measurementUnitIdForContent,
+      measurementTypeIdForSale: parameters.measurementTypeIdForSale,
+      measurementUnitIdForSale: parameters.measurementUnitIdForSale,
+      measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
+      measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
+    });
 
-console.log("product/create", {
-  sku: parameters.sku,
-  ean: parameters.ean,
-  description: parameters.description,
-  brandId: parameters.brand,
-  price: parameters.price,
-  currency: parameters.currency,
-  status: parameters.status,
-  projectId: parameters.projectId,
-  countryOfOriginId: parameters.countryOfOrigin,
-  measurementTypeIdForContent: parameters.measurementTypeIdForContent,
-  measurementUnitIdForContent: parameters.measurementUnitIdForContent,
-  measurementTypeIdForSale: parameters.measurementTypeIdForSale,
-  measurementUnitIdForSale: parameters.measurementUnitIdForSale,
-  measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
-  measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
-})
+    const requestOptions = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+      body: body,
+    };
 
-      const requestOptions = {
-        method: "POST",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-        body: body,
-      };
+    const res = await fetch(API.product.create, requestOptions);
+    const data = await res.json();
 
-      const res = await fetch(API.product.create, requestOptions);
-      const data = await res.json();
-
-      return data;
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
 
-export const update = createAsyncThunk(
-  "product/update",
-  async (parameters, asyncThunk) => {
-    try {
-      const body = JSON.stringify({
-        id: parameters.id,
-        sku: parameters.sku,
-        ean: parameters.ean,
-        description: parameters.description,
-        brandId: parameters.brand,
-        price: parameters.price,
-        currency: parameters.currency,
-        status: parameters.status,
-        projectId: parameters.projectId,
-        countryOfOriginId: parameters.countryOfOrigin,
-        measurementTypeIdForContent: parameters.measurementTypeIdForContent,
-        measurementUnitIdForContent: parameters.measurementUnitIdForContent,
-        measurementTypeIdForSale: parameters.measurementTypeIdForSale,
-        measurementUnitIdForSale: parameters.measurementUnitIdForSale,
-        measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
-        measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
-      });
+export const update = createAsyncThunk("product/update", async (parameters, asyncThunk) => {
+  try {
+    const transfer = {
+      id: parameters.id,
+      sku: parameters.sku,
+      ean: parameters.ean,
+      description: parameters.description,
+      brandId: parameters.brand,
+      price: parameters.price,
+      currency: parameters.currency,
+      status: parameters.status,
+      projectId: parameters.projectId,
+      countryOfOriginId: parameters.countryOfOrigin,
+      measurementTypeIdForContent: parameters.measurementTypeIdForContent,
+      measurementUnitIdForContent: parameters.measurementUnitIdForContent,
+      measurementTypeIdForSale: parameters.measurementTypeIdForSale,
+      measurementUnitIdForSale: parameters.measurementUnitIdForSale,
+      measurementTypeIdForPrice: parameters.measurementTypeIdForPrice,
+      measurementUnitIdForPrice: parameters.measurementUnitIdForPrice,
+    };
 
-      const requestOptions = {
-        method: "PUT",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-        body: body,
-      };
+    const body = JSON.stringify(transfer);
 
-      const res = await fetch(API.product.update, requestOptions);
-      const data = await res.json();
+    const requestOptions = {
+      method: "PUT",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+      body: body,
+    };
 
-      return data;
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    const res = await fetch(API.product.update, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
 
-export const remove = createAsyncThunk(
-  "product/delete",
-  async (parameters, asyncThunk) => {
-    try {
-      const requestOptions = {
-        method: "DELETE",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-      };
+export const remove = createAsyncThunk("product/delete", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
 
-      await fetch(API.product.delete + parameters.id, requestOptions).then(
-        (response) => {
-          return response;
-        }
-      );
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    await fetch(API.product.delete + parameters.id, requestOptions).then((response) => {
+      return response;
+    });
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
 
 export const findAllProductsByPage = createAsyncThunk(
   "product/findAllProductsByPage",
@@ -172,11 +165,7 @@ export const findAllProductsByPage = createAsyncThunk(
         },
       };
 
-      const url =
-        API.product.findAllProductsPage +
-        parameters.pageNbr +
-        "/" +
-        parameters.itemsByPage;
+      const url = API.product.findAllProductsPage + parameters.pageNbr + "/" + parameters.itemsByPage;
       const res = await fetch(url, requestOptions);
       const data = await res.json();
 
@@ -186,6 +175,27 @@ export const findAllProductsByPage = createAsyncThunk(
     }
   }
 );
+
+export const findProductById = createAsyncThunk("product/findProductById", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
+
+    const url = API.product.findProductById + parameters.id;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
+  }
+});
 
 export const findAllProductsByCategoryIdPage = createAsyncThunk(
   "product/findAllProductsByCategoryIdPage",
@@ -316,29 +326,26 @@ export const uncategorizeProductsByProjectId = createAsyncThunk(
   }
 );
 
-export const findAllCountries = createAsyncThunk(
-  "product/findAllCountries",
-  async (parameters, asyncThunk) => {
-    try {
-      const requestOptions = {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-      };
+export const findAllCountries = createAsyncThunk("product/findAllCountries", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
 
-      const url = API.product.findAllCountries;
-      const res = await fetch(url, requestOptions);
-      const data = await res.json();
+    const url = API.product.findAllCountries;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
 
-      return data;
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
 
 export const findAllImagesByProductId = createAsyncThunk(
   "product/findAllImagesByProductId",
@@ -364,55 +371,68 @@ export const findAllImagesByProductId = createAsyncThunk(
   }
 );
 
-export const removeImage = createAsyncThunk(
-  "product/removeImage",
-  async (parameters, asyncThunk) => {
-    try {
-      const requestOptions = {
-        method: "DELETE",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-      };
+export const removeImage = createAsyncThunk("product/removeImage", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
 
-      await fetch(API.productImages.delete + parameters, requestOptions).then(
-        (response) => {
-          return response;
-        }
-      );
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    await fetch(API.productImages.delete + parameters, requestOptions).then((response) => {
+      return response;
+    });
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
 
-export const findAllProducts = createAsyncThunk(
-  "product/findAllProducts",
-  async (parameters, asyncThunk) => {
-    try {
-      const requestOptions = {
-        method: "GET",
-        mode: "cors",
-        headers: {
-          "Content-Type": "application/json",
-          token: parameters.token,
-        },
-      };
+export const findAllProducts = createAsyncThunk("product/findAllProducts", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
 
-      console.log("findAllProducts", requestOptions);
+    const url = API.product.findAllProducts;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
 
-      const url = API.product.findAllProducts;
-      const res = await fetch(url, requestOptions);
-      const data = await res.json();
-
-      return data;
-    } catch (error) {
-      return asyncThunk.rejectWithValue(error);
-    }
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
   }
-);
+});
+
+export const uploadImage = createAsyncThunk("product/uploadImage", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        token: parameters.token,
+      },
+      body: parameters.data,
+    };
+
+    const url = API.product.uploadImage + parameters.id;
+
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;  
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
+  }
+});
+
 
 export const productSlice = createSlice({
   name: "product",
@@ -451,6 +471,13 @@ export const productSlice = createSlice({
       state.value.creating = null;
     },
 
+    setActivePage: (state, { payload }) => {
+      state.value.activePage = payload;
+    },
+
+    setSelectedRowId: (state, { payload }) => {
+      state.value.selectedRowId = payload;
+    },
   },
   extraReducers: {
     /*CREATE*/
@@ -471,6 +498,7 @@ export const productSlice = createSlice({
         state.value.id = payload.id;
         state.value.error = null;
         state.value.refreshData = Date.now();
+        state.value.activePage = "./";
       }
       state.value.loadingProducts = false;
       state.value.creating = false;
@@ -488,43 +516,60 @@ export const productSlice = createSlice({
     [update.pending]: (state) => {
       state.value.loadingProducts = true;
       state.value.error = null;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
+      state.value.creating = true;
     },
     [update.fulfilled]: (state, { payload }) => {
       if (payload.error) {
-        state.value.error = payload;
+        state.value.error = payload.error;
+        state.value.errorMessage = payload.message;
+        state.value.errorCode = payload.status;
       } else {
-        state.value.selectedRow = payload;
+        state.value.id = payload.id;
         state.value.error = null;
         state.value.refreshData = Date.now();
+        state.value.activePage = "./";
       }
       state.value.loadingProducts = false;
+      state.value.creating = false;
     },
 
     [update.rejected]: (state, { payload }) => {
       state.value.loadingProducts = false;
       state.value.error = payload;
+      state.value.errorMessage = payload.message;
+      state.value.errorCode = payload.status;
+      state.value.creating = false;
     },
 
     /*DELETE*/
     [remove.pending]: (state) => {
       state.value.loadingProducts = true;
       state.value.error = null;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
+      state.value.creating = true;
     },
 
     [remove.fulfilled]: (state, { payload }) => {
-      if (payload) {
-        state.value.error = payload;
-      } else {
-        state.value.error = null;
-        state.value.selectedRow = null;
-        state.value.refreshData = Date.now();
-      }
+      state.value.error = null;
+      state.value.refreshData = Date.now();
+      state.value.activePage = "./";
       state.value.loadingProducts = false;
+      state.value.creating = false;
+      state.value.selectedRowId = null;
+      state.value.product = null;
     },
 
     [remove.rejected]: (state, { payload }) => {
+      console.log("[remove.rejected]", payload);
+
       state.value.loadingProducts = false;
       state.value.error = payload;
+      state.value.errorMessage = payload.message;
+      state.value.errorCode = payload.status;
+      state.value.creating = false;
     },
 
     /*FIND ALL COUNTRIES*/
@@ -677,10 +722,7 @@ export const productSlice = createSlice({
       state.value.error = null;
     },
 
-    [categorizeProductsByProjectIdCategortyId.fulfilled]: (
-      state,
-      { payload }
-    ) => {
+    [categorizeProductsByProjectIdCategortyId.fulfilled]: (state, { payload }) => {
       if (payload.error) {
         state.value.error = payload;
       } else {
@@ -690,10 +732,7 @@ export const productSlice = createSlice({
       state.value.refreshCategorizeData = Date.now();
     },
 
-    [categorizeProductsByProjectIdCategortyId.rejected]: (
-      state,
-      { payload }
-    ) => {
+    [categorizeProductsByProjectIdCategortyId.rejected]: (state, { payload }) => {
       state.value.uploading = false;
       state.value.error = payload;
     },
@@ -726,21 +765,37 @@ export const productSlice = createSlice({
     },
 
     [findAllProducts.fulfilled]: (state, { payload }) => {
-
-      console.log("[findAllProducts.fulfilled]", payload);
       if (payload.error) {
         state.value.error = payload;
       } else {
-        state.value.products = payload?.map((p) => ({
-          ...p,
-          countryName: p.countryOfOrigin.name,
-        }));
+        state.value.products = payload;
         state.value.error = null;
       }
       state.value.loadingProducts = false;
     },
 
     [findAllProducts.rejected]: (state, { payload }) => {
+      state.value.loadingProducts = false;
+      state.value.error = payload;
+    },
+
+    /*PRODUCT BY ID*/
+    [findProductById.pending]: (state) => {
+      state.value.loadingProducts = true;
+      state.value.error = null;
+    },
+
+    [findProductById.fulfilled]: (state, { payload }) => {
+      if (payload.error) {
+        state.value.error = payload;
+      } else {
+        state.value.product = payload;
+        state.value.error = null;
+      }
+      state.value.loadingProducts = false;
+    },
+
+    [findProductById.rejected]: (state, { payload }) => {
       state.value.loadingProducts = false;
       state.value.error = payload;
     },
@@ -754,7 +809,9 @@ export const {
   setPage,
   refreshCategorizeData,
   clearProductsInCategory,
-  clearError
+  clearError,
+  setActivePage,
+  setSelectedRowId,
 } = productSlice.actions;
 
 export default productSlice.reducer;

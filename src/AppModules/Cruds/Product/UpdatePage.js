@@ -1,61 +1,106 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay } from "@mantine/core";
+import {
+  TextInput,
+  Title,
+  Container,
+  Button,
+  Group,
+  LoadingOverlay,
+  Select,
+  ScrollArea,
+  useMantineTheme,
+  Text,
+} from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { findOrganizationById, updateOrganization } from "../../../DataAccess/Organization";
+import { useEffect } from "react";
+import {
+  clearError,
+  findAllCountries,
+  findAllImagesByProductId,
+  findProductById,
+  setActivePage,
+  update,
+  uploadImage,
+} from "../../../Features/Product";
+import { useDispatch, useSelector } from "react-redux";
+import { findAllBrands } from "../../../Features/Brand";
+import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
+import { IconUpload, IconX, IconPhoto } from "@tabler/icons";
+import { Carousel } from "@mantine/carousel";
+import ImageCard from "../../../Components/ImageCard";
+import { API } from "../../../Constants";
 
-export function UpdatePage({ user, back, rowId, onLoadGrid }) {
+export function UpdatePage() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
-  const [data, setData] = useState(null);
+  const dispatch = useDispatch();
+  const theme = useMantineTheme();
+
+  const { user, projectSelected } = useSelector((state) => state.auth.value);
+  const { brands } = useSelector((state) => state.brand.value);
+  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product, images } = useSelector(
+    (state) => state.product.value
+  );
+
+  useEffect(() => {
+    const parameters = {
+      token: user.token,
+    };
+    dispatch(findAllBrands(parameters));
+    dispatch(findAllCountries(parameters));
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (selectedRowId) {
+      const params = {
+        token: user.token,
+        id: selectedRowId,
+      };
+      dispatch(findProductById(params));
+    }
+  }, [dispatch, selectedRowId, user]);
+
+  useEffect(() => {
+    if (product) {
+      form.setFieldValue("sku", product.sku);
+      form.setFieldValue("ean", product.ean);
+      form.setFieldValue("description", product.description);
+      form.setFieldValue("brand", product.brand.id);
+      form.setFieldValue("countryOfOrigin", product.countryOfOrigin.id);
+
+      const params = {
+        token: user.token,
+        id: product.id,
+      };
+      dispatch(findAllImagesByProductId(params));
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   const form = useForm({
     initialValues: {
-      name: "",
+      sku: "",
+      ean: "",
       description: "",
-      path: "",
-      icon: "",
+      brand: "",
+      countryOfOrigin: "",
     },
 
     validate: {
-      name: (val) => (val ? null : t("validation.required")),
+      sku: (val) => (val ? null : t("validation.required")),
+      ean: (val) => (val ? null : t("validation.required")),
       description: (val) => (val ? null : t("validation.required")),
+      brand: (val) => (val ? null : t("validation.required")),
+      countryOfOrigin: (val) => (val ? null : t("validation.required")),
     },
   });
-
-  const [working, setWorking] = useState(false);
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
-  const [response, setResponse] = useState(null);
-
-  useEffect(() => {
-    setWorking(true);
-
-    const params = {
-      token: user.token,
-      id: rowId,
-    };
-
-    findOrganizationById(params).then((ret) => {
-      setWorking(false);
-      setData(ret);
-
-      form.setFieldValue("name", ret.name);
-      form.setFieldValue("description", ret.description);
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowId, user]);
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
-        label={t("crud.organization.label." + field)}
+        label={t("crud.product.label." + field)}
         placeholder={
-          t("crud.organization.placeholder." + field).startsWith("crud.")
-            ? ""
-            : t("crud.organization.placeholder." + field)
+          t("crud.product.placeholder." + field).startsWith("crud.") ? "" : t("crud.product.placeholder." + field)
         }
         {...form.getInputProps(field)}
       />
@@ -64,51 +109,75 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
     return ret;
   };
 
+  const createSelectField = (field, data) => {
+    const list = data?.map((c) => {
+      return { value: c.id, label: c.name };
+    });
+    const ret = (
+      <Select label={t("crud.product.label." + field)} data={list ? list : []} {...form.getInputProps(field)} />
+    );
+
+    return ret;
+  };
+
   const onUpdate = (values) => {
-    setWorking(true);
-
     const params = {
+      id: product.id,
       token: user.token,
-      data: values,
+      sku: values.sku,
+      ean: values.ean,
+      description: values.description,
+      brand: values.brand,
+      price: 0,
+      currency: "PESO",
+      status: "Activo",
+      projectId: projectSelected.id,
+      countryOfOrigin: values.countryOfOrigin,
+      measurementTypeIdForContent: "Q",
+      measurementUnitIdForContent: "UNIDADES",
+      measurementTypeIdForSale: "Q",
+      measurementUnitIdForSale: "UNIDADES",
+      measurementTypeIdForPrice: "Q",
+      measurementUnitIdForPrice: "UNIDADES",
     };
-    updateOrganization(params)
-      .then((ret) => {
-        setWorking(false);
 
-        if (ret.status) {
-          setResponse({
-            code: ret.status,
-            title: ret.status ? t("status.error") : t("status.ok"),
-            text: ret.status ? ret.message : t("message.update"),
-          });
-          setResponseModalOpen(true);
-        } else {
-          onLoadGrid();
-          navigate(back);
-        }
-      })
-      .catch((error) => {
-        setResponse({ code: error.status, title: t("status.error"), text: error.message });
-        setResponseModalOpen(true);
-      });
+    dispatch(update(params));
   };
 
   const onClose = () => {
-    setResponseModalOpen(false);
-    onLoadGrid();
-    navigate(back);
+    dispatch(clearError());
   };
+
+  const uploadFiles = (files) => {
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      uploadFile(file);
+    }
+  };
+
+  const uploadFile = (file) => {
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("type", file.type);
+
+    const params = {
+      token: user.token,
+      id: product.id,
+      data: formData,
+    };
+
+    dispatch(uploadImage(params));
+  };
+
+  const onDelete = () => {};
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
-      <ResponceNotification
-        opened={responseModalOpen}
-        onClose={onClose}
-        code={response?.code}
-        title={response?.title}
-        text={response?.text}
-      />
-      <LoadingOverlay overlayOpacity={0.5} visible={working} />
+      {error ? (
+        <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
+      ) : null}
+
+      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}
@@ -119,34 +188,90 @@ export function UpdatePage({ user, back, rowId, onLoadGrid }) {
             fontWeight: 700,
           })}
         >
-          {t("crud.organization.title.update")}
+          {t("crud.product.title.update")}
         </Title>
 
         <form
           onSubmit={form.onSubmit((values) => {
-            const toSend = { ...data };
-            toSend.name = values.name;
-            toSend.description = values.description;
-            onUpdate(toSend);
+            onUpdate(values);
           })}
         >
-          <Group grow mb={"md"}>
-            {createTextField("name")}
-          </Group>
-          <Group grow mb={"md"}>
-            {createTextField("description")}
-          </Group>
+          <ScrollArea>
+            <Group mb={"md"}>{createTextField("sku")}</Group>
+            <Group mb={"md"}>{createTextField("ean")}</Group>
+            <Group grow mb={"md"}>
+              {createTextField("description")}
+            </Group>
+            <Group mb={"md"}>{createSelectField("brand", brands)}</Group>
+            <Group mb={"md"}>{createSelectField("countryOfOrigin", countries)}</Group>
 
-          <Group position="right" mt="xl" mb="xs">
-            <Button
-              onClick={(event) => {
-                navigate(back);
-              }}
-            >
-              {t("button.cancel")}
-            </Button>
-            <Button type="submit">{t("button.accept")}</Button>
-          </Group>
+            {images ? (
+              <Group grow mb="mb">
+                <Carousel slideSize="70%" height={300} slideGap="md">
+                  {images.map((img) => {
+                    console.log(API.productImages.baseUrl + img.path);
+
+                    return (
+                      <Carousel.Slide key={img.path}>
+                        <ImageCard
+                          src={API.productImages.baseUrl + img.path}
+                          alt={img.name}
+                          name={img.name}
+                          imageId={img.id}
+                          onDelete={onDelete}
+                        />
+                      </Carousel.Slide>
+                    );
+                  })}
+                </Carousel>
+              </Group>
+            ) : null}
+
+            <Group grow mb="lg">
+              <Dropzone
+                onDrop={(files) => uploadFiles(files)}
+                onReject={(files) => console.log("rejected files", files)}
+                maxSize={3 * 1024 ** 2}
+                accept={IMAGE_MIME_TYPE}
+              >
+                <Group position="center" spacing="xl" style={{ minHeight: 220, pointerEvents: "none" }}>
+                  <Dropzone.Accept>
+                    <IconUpload
+                      size={50}
+                      stroke={1.5}
+                      color={theme.colors[theme.primaryColor][theme.colorScheme === "dark" ? 4 : 6]}
+                    />
+                  </Dropzone.Accept>
+                  <Dropzone.Reject>
+                    <IconX size={50} stroke={1.5} color={theme.colors.red[theme.colorScheme === "dark" ? 4 : 6]} />
+                  </Dropzone.Reject>
+                  <Dropzone.Idle>
+                    <IconPhoto size={50} stroke={1.5} />
+                  </Dropzone.Idle>
+
+                  <div>
+                    <Text size="xl" inline>
+                      {t("label.dropZone")}
+                    </Text>
+                    <Text size="sm" color="dimmed" inline mt={7}>
+                      {t("label.dropZoneSub")}
+                    </Text>
+                  </div>
+                </Group>
+              </Dropzone>
+            </Group>
+
+            <Group position="right" mt="xl" mb="xs">
+              <Button
+                onClick={(event) => {
+                  dispatch(setActivePage("./"));
+                }}
+              >
+                {t("button.cancel")}
+              </Button>
+              <Button type="submit">{t("button.accept")}</Button>
+            </Group>
+          </ScrollArea>
         </form>
       </Container>
     </Container>

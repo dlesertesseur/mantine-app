@@ -1,57 +1,88 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
 import DeleteConfirmation from "../../../Modal/DeleteConfirmation";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay } from "@mantine/core";
+import { TextInput, Title, Container, Button, Group, LoadingOverlay, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { deleteOrganization, findOrganizationById } from "../../../DataAccess/Organization";
+import { useDispatch, useSelector } from "react-redux";
+import { findAllBrands } from "../../../Features/Brand";
+import { clearError, findAllCountries, findProductById, remove, setActivePage } from "../../../Features/Product";
 
-export function DeletePage({ user, back, rowId, onLoadGrid }) {
-  const navigate = useNavigate();
+export function DeletePage() {
   const { t } = useTranslation();
-  const [data, setData] = useState(null);
-  const [responseModalOpen, setResponseModalOpen] = useState(false);
+  const dispatch = useDispatch();
+
+  const { user } = useSelector((state) => state.auth.value);
+  const { brands } = useSelector((state) => state.brand.value);
+  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product } = useSelector(
+    (state) => state.product.value
+  );
+
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-  const [response, setResponse] = useState(null);
-  const [working, setWorking] = useState(false);
+
+  useEffect(() => {
+    const parameters = {
+      token: user.token,
+    };
+    dispatch(findAllBrands(parameters));
+    dispatch(findAllCountries(parameters));
+  }, [dispatch, user]);
+
+  useEffect(() => {
+    if (selectedRowId) {
+      const params = {
+        token: user.token,
+        id: selectedRowId,
+      };
+      dispatch(findProductById(params));
+    }
+  }, [dispatch, selectedRowId, user]);
+
+  useEffect(() => {
+    if (product) {
+      form.setFieldValue("sku", product.sku);
+      form.setFieldValue("ean", product.ean);
+      form.setFieldValue("description", product.description);
+      form.setFieldValue("brand", product.brand.id);
+      form.setFieldValue("countryOfOrigin", product.countryOfOrigin.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
 
   const form = useForm({
     initialValues: {
-      name: "",
+      sku: "",
+      ean: "",
       description: "",
-    },
-
-    validate: {
-      name: (val) => (val ? null : t("validation.required")),
-      description: (val) => (val ? null : t("validation.required")),
+      brand: "",
+      countryOfOrigin: "",
     },
   });
-
-  useEffect(() => {
-    setWorking(true);
-
-    const params = {
-      token: user.token,
-      id: rowId,
-    };
-    findOrganizationById(params).then((ret) => {
-      setWorking(false);
-      setData(ret);
-
-      form.setFieldValue("name", ret.name);
-      form.setFieldValue("description", ret.description);
-    });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowId, user]);
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
+        disabled={true}
+        label={t("crud.product.label." + field)}
+        placeholder={
+          t("crud.product.placeholder." + field).startsWith("crud.") ? "" : t("crud.product.placeholder." + field)
+        }
+        {...form.getInputProps(field)}
+      />
+    );
+
+    return ret;
+  };
+
+  const createSelectField = (field, data) => {
+    const list = data?.map((c) => {
+      return { value: c.id, label: c.name };
+    });
+    const ret = (
+      <Select
         disabled
-        label={t("crud.organization.label." + field)}
-        placeholder={t("crud.organization.placeholder." + field)}
+        label={t("crud.product.label." + field)}
+        data={list ? list : []}
         {...form.getInputProps(field)}
       />
     );
@@ -60,55 +91,26 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
   };
 
   const onDelete = () => {
-    setWorking(true);
-
     const params = {
       token: user.token,
-      id: data.id,
+      id: product.id
     };
-    deleteOrganization(params)
-      .then((ret) => {
-        setWorking(false);
-
-        if (ret.status) {
-          setResponse({
-            code: ret.status,
-            title: ret.status ? t("status.error") : t("status.ok"),
-            text: ret.status ? ret.message : t("message.delete"),
-          });
-          setResponseModalOpen(true);
-        } else {
-          onLoadGrid();
-          navigate(back);
-        }
-      })
-      .catch((error) => {
-        setResponse({ code: error.status, title: t("status.error"), text: error.message });
-        setResponseModalOpen(true);
-      });
+    dispatch(remove(params));
   };
 
   const onClose = () => {
-    setResponseModalOpen(false);
-    onLoadGrid();
-    navigate(back);
+    dispatch(clearError());
   };
 
   const onConfirm = () => {
     onDelete();
-    navigate(back);
-    onLoadGrid();
   };
 
   return (
     <Container size={"xl"} sx={{ width: "100%" }}>
-      <ResponceNotification
-        opened={responseModalOpen}
-        onClose={onClose}
-        code={response?.code}
-        title={response?.title}
-        text={response?.text}
-      />
+      {error ? (
+        <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
+      ) : null}
 
       <DeleteConfirmation
         opened={confirmModalOpen}
@@ -118,7 +120,7 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
         text={t("notification.delete")}
       />
 
-      <LoadingOverlay overlayOpacity={0.5} visible={working} />
+      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}
@@ -129,7 +131,7 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
             fontWeight: 700,
           })}
         >
-          {t("crud.organization.title.delete")}
+          {t("crud.product.title.delete")}
         </Title>
 
         <form
@@ -137,17 +139,17 @@ export function DeletePage({ user, back, rowId, onLoadGrid }) {
             setConfirmModalOpen(true);
           })}
         >
-          <Group grow mb={"md"}>
-            {createTextField("name")}
-          </Group>
+          <Group mb={"md"}>{createTextField("sku")}</Group>
+          <Group mb={"md"}>{createTextField("ean")}</Group>
           <Group grow mb={"md"}>
             {createTextField("description")}
           </Group>
-
+          <Group mb={"md"}>{createSelectField("brand", brands)}</Group>
+          <Group mb={"md"}>{createSelectField("countryOfOrigin", countries)}</Group>
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(back);
+                dispatch(setActivePage("./"));
               }}
             >
               {t("button.cancel")}
