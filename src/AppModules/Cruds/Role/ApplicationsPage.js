@@ -8,11 +8,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   findAllApplications,
   findAllApplicationsByRoleId,
-  findRoleById,
 } from "../../../Features/Role";
+import { assignApp, unassignApp } from "../../../DataAccess/Roles";
 
-
-export function ApplicationsPage({ rowId }) {
+export function ApplicationsPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -34,33 +33,60 @@ export function ApplicationsPage({ rowId }) {
     { headerName: cols[2], fieldName: "description", align: "left" },
   ];
 
+  const [processData, setProcessData] = useState(null);
+
   const onClose = () => {
     navigate(-1);
   };
 
   useEffect(() => {
+    if (selectedRole) {
+      const params = {
+        token: user.token,
+        id: selectedRole.id,
+      };
+      dispatch(findAllApplicationsByRoleId(params));
+      dispatch(findAllApplications(params));
+    }else{
+      navigate("/");
+    }
+  }, [dispatch, navigate, selectedRole, user]);
+
+  useEffect(() => {
+    const ids = applicationsByRole?.map((app) => app.id);
+    if (ids) {
+      const list = applications?.map((app) => {
+        const ret = { ...app };
+        ret.checked = ids.includes(app.id);
+
+        return ret;
+      });
+      setProcessData(list);
+    } else {
+      setProcessData(null);
+    }
+  }, [applications, applicationsByRole]);
+
+  const onCheckRow = (rowId, check) => {
+    const ret = processData.map((p) => {
+      if (p.id === rowId) {
+        p.checked = check;
+      }
+      return p;
+    });
+    setProcessData(ret);
+
     const params = {
       token: user.token,
-      id: rowId,
+      roleId: selectedRole.id,
+      appId: rowId,
     };
-    dispatch(findRoleById(params));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowId, user]);
-
-  useEffect(() => {
-    if (selectedRole) {
-      const params = { token: user.token };
-      dispatch(findAllApplications(params));
+    if (check) {
+      assignApp(params);
+    } else {
+      unassignApp(params);
     }
-  }, [dispatch, user, selectedRole]);
-
-  useEffect(() => {
-    if (selectedRole && applications) {
-      const params = { token: user.token, roleId: selectedRole.id };
-      dispatch(findAllApplicationsByRoleId(params));
-    }
-  }, [dispatch, user, applications, selectedRole]);
+  };
 
   return (
     <Stack
@@ -84,9 +110,7 @@ export function ApplicationsPage({ rowId }) {
       />
       <LoadingOverlay
         overlayOpacity={0.5}
-        visible={
-          !(applications && selectedRole && applicationsByRole) && !error
-        }
+        visible={!(processData) && !error}
       />
 
       <Title
@@ -102,12 +126,12 @@ export function ApplicationsPage({ rowId }) {
       </Title>
 
       <CheckTable
-        data={applications}
-        checkedIds={applicationsByRole.map((role) => role.id)}
+        data={processData}
         columns={columns}
         loading={false}
         rowSelected={rowSelected}
         setRowSelected={setRowSelected}
+        onCheckRow={onCheckRow}
         height={400}
       />
 

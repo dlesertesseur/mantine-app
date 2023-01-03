@@ -5,16 +5,21 @@ import { useTranslation } from "react-i18next";
 import { CreatePage } from "./CreatePage";
 import { UpdatePage } from "./UpdatePage";
 import { DeletePage } from "./DeletePage";
-import { findAllContexts, findAllRoles } from "../../../Features/Role";
+import {
+  findAllContexts,
+  findAllRoles,
+  findRoleById,
+} from "../../../Features/Role";
 import { ApplicationsPage } from "./ApplicationsPage";
 
 const DynamicApp = (param) => {
   const { app } = param;
   const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
-  const { action, roles } = useSelector((state) => state.role.value);
+  const { action, roles, selectedRole } = useSelector(
+    (state) => state.role.value
+  );
 
-  const [rowId, setRowId] = useState(null);
   const [rows, setRows] = useState([]);
 
   const dispatch = useDispatch();
@@ -54,17 +59,24 @@ const DynamicApp = (param) => {
         app={app}
         columns={columns}
         data={rows}
-        rowSelected={rowId}
-        setRowSelected={setRowId}
+        rowSelected={selectedRole?.id}
+        setRowSelected={(id) => {
+          const params = {
+            token: user.token,
+            id:id,
+          };
+      
+          dispatch(findRoleById(params));
+        }}
         enableCreateButton={true}
         createPage={<CreatePage />}
-        updatePage={<UpdatePage rowId={rowId} />}
-        deletePage={<DeletePage rowId={rowId} />}
+        updatePage={<UpdatePage />}
+        deletePage={<DeletePage />}
         relationshipPages={[
           {
             path: "/applications",
             key: "crud.role.label.applications",
-            element: <ApplicationsPage rowId={rowId} />,
+            element: <ApplicationsPage/>,
           },
         ]}
       />

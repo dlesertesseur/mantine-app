@@ -322,9 +322,21 @@
 
     "product": {
       "name": "PRODUCTS",
-      "title": "CRUD PRODUCTS",
-      "columns": ["", "SKU", "EAN", "Description", "Brand", "Price", "Status"],
-      "align": ["center", "right", "right", "left", "left", "right", "left"],
+      "title": {
+        "create": "Create a new product",
+        "update": "Update product",
+        "delete": "Delete product"
+      },
+      "label": {
+        "sku": "SKU",
+        "ean": "EAN",
+        "description": "Description",
+        "brand": "Brand",
+        "status": "Status",
+        "countryOfOrigin":"Country of origin"
+      },
+      "columns": ["SKU", "EAN", "Description", "Brand", "Status"],
+      "align": ["center", "right", "right", "left", "left"],
       "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
       "tab1": "General information",
       "tab2": "Measurement units",

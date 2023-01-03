@@ -105,6 +105,46 @@ async function createRole(parameters) {
   }
 }
 
+async function assignApp(parameters) {
+  try {
+    const requestOptions = {
+      method: "POST",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
+
+    const url = API.applicationRole.create + parameters.appId + "/role/" + parameters.roleId;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
+async function unassignApp(parameters) {
+  try {
+    const requestOptions = {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        "Content-Type": "application/json",
+        token: parameters.token,
+      },
+    };
+
+    const url = API.applicationRole.delete + parameters.appId + "/role/" + parameters.roleId;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+    return data;
+  } catch (error) {
+    return error;
+  }
+}
+
 async function updateRole(parameters) {
   try {
     const body = JSON.stringify({
@@ -182,4 +222,6 @@ export {
   findAllRolesInContext,
   findAllRoles,
   findRoleById,
+  assignApp,
+  unassignApp
 };

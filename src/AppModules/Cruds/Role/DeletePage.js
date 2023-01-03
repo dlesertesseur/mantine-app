@@ -14,10 +14,10 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { deleteRole, findRoleById } from "../../../Features/Role";
+import { deleteRole } from "../../../Features/Role";
 import { actions } from "../../../Constants";
 
-export function DeletePage({ rowId }) {
+export function DeletePage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   
@@ -35,11 +35,6 @@ export function DeletePage({ rowId }) {
       name: "",
       context: "",
     },
-
-    validate: {
-      name: (val) => (val ? null : t("validation.required")),
-      context: (val) => (val ? null : t("validation.required")),
-    },
   });
 
   useEffect(() => {
@@ -50,22 +45,12 @@ export function DeletePage({ rowId }) {
   },[action, navigate])
 
   useEffect(() => {
-    setWorking(true);
-
-    const params = {
-      token: user.token,
-      id: rowId,
-    };
-    dispatch(findRoleById(params));
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rowId, user]);
-
-  useEffect(() => {
     if (selectedRole) {
       setWorking(false);
       form.setFieldValue("name", selectedRole.name);
       form.setFieldValue("context", selectedRole.context.id);
+    }else{
+      navigate("/");
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRole]);
@@ -166,7 +151,7 @@ export function DeletePage({ rowId }) {
             >
               {t("button.cancel")}
             </Button>
-            <Button type="submit">{t("button.accept")}</Button>
+            <Button onClick={() => {onDelete()}}>{t("button.accept")}</Button>
           </Group>
         </form>
       </Container>

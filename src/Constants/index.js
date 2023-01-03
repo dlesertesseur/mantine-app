@@ -105,8 +105,8 @@ export const API = {
   },
 
   applicationRole: {
-    create: SERVER + ":" + PORT + API_BASE + "/application-role-relations/application/{applicationId}/role/",
-    delete: SERVER + ":" + PORT + API_BASE + "/application-role-relations/application/{applicationId}/role/",
+    create: SERVER + ":" + PORT + API_BASE + "/application-role-relations/application/",
+    delete: SERVER + ":" + PORT + API_BASE + "/application-role-relations/application/",
   },
 
   site: {
@@ -142,6 +142,7 @@ export const API = {
     findAllByIdProjectId: SERVER + ":" + PORT + API_BASE + "/products/projects/",
     findAllCountries: SERVER + ":" + PORT + API_BASE + "/countries",
     findAllProductsPage: SERVER + ":" + PORT + API_BASE + "/products/",
+    findAllProducts: SERVER + ":" + PORT + API_BASE + "/products/unpaged",
   },
 
   category_product_relation: {

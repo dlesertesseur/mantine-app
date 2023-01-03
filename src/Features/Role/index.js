@@ -210,7 +210,7 @@ export const findAllApplicationsByRoleId = createAsyncThunk(
       };
 
       const res = await fetch(
-        API.role.findAllApplicationsByRole + parameters.roleId,
+        API.role.findAllApplicationsByRole + parameters.id,
         requestOptions
       );
       const data = await res.json();
@@ -228,6 +228,10 @@ export const roleSlice = createSlice({
     resetError: (state) => {
       state.value.error = false;
       state.value.errorMessage = null;
+    },
+
+    resetApplicationsData: (state) => {
+      state.value.applicationsByRole = null;
     },
   },
   extraReducers: {
@@ -380,6 +384,7 @@ export const roleSlice = createSlice({
         state.value.error = false;
         state.value.errorMessage = null;
         state.value.applications = payload;
+        state.value.action = actions.applicationsReaded;
       }
     },
 
@@ -414,6 +419,6 @@ export const roleSlice = createSlice({
   },
 });
 
-export const { resetError } = roleSlice.actions;
+export const { resetError, resetApplicationsData } = roleSlice.actions;
 
 export default roleSlice.reducer;

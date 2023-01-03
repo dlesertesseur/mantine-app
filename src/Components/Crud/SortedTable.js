@@ -14,17 +14,28 @@ import {
   Divider,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
-import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from "@tabler/icons";
+import {
+  IconSelector,
+  IconChevronDown,
+  IconChevronUp,
+  IconSearch,
+} from "@tabler/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 
 const useStyles = createStyles((theme) => ({
   selectedRow: {
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[3],
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.blue[3],
   },
   th: {
     padding: "0 !important",
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[0],
+    backgroundColor:
+      theme.colorScheme === "dark"
+        ? theme.colors.dark[6]
+        : theme.colors.blue[0],
   },
 
   control: {
@@ -32,7 +43,10 @@ const useStyles = createStyles((theme) => ({
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
 
     "&:hover": {
-      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[1],
+      backgroundColor:
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[6]
+          : theme.colors.blue[1],
     },
   },
 
@@ -45,7 +59,8 @@ const useStyles = createStyles((theme) => ({
   header: {
     position: "sticky",
     top: -1,
-    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    backgroundColor:
+      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     transition: "box-shadow 150ms ease",
 
     "&::after": {
@@ -54,7 +69,11 @@ const useStyles = createStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[2]}`,
+      borderBottom: `1px solid ${
+        theme.colorScheme === "dark"
+          ? theme.colors.dark[3]
+          : theme.colors.gray[2]
+      }`,
     },
   },
 
@@ -65,7 +84,11 @@ const useStyles = createStyles((theme) => ({
 
 function Th({ children, reversed, sorted, onSort }) {
   const { classes } = useStyles();
-  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
+  const Icon = sorted
+    ? reversed
+      ? IconChevronUp
+      : IconChevronDown
+    : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -84,7 +107,11 @@ function Th({ children, reversed, sorted, onSort }) {
 
 function filterData(data, search) {
   const query = search.toLowerCase().trim();
-  return data.filter((item) => keys(data[0]).some((key) => item[key].toString().toLowerCase().includes(query)));
+  return data.filter((item) =>
+    keys(data[0]).some((key) =>
+      item[key].toString().toLowerCase().includes(query)
+    )
+  );
 }
 
 function sortData(data, payload) {
@@ -123,6 +150,7 @@ export default function SortedTable({
   rowSelected,
   setRowSelected,
   relationship,
+  searchBox = false,
 }) {
   const { classes, cx } = useStyles();
   const { t } = useTranslation();
@@ -150,7 +178,9 @@ export default function SortedTable({
     const { value } = event.currentTarget;
     setSearch(value);
     setRowSelected(null);
-    setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
+    setSortedData(
+      sortData(data, { sortBy, reversed: reverseSortDirection, search: value })
+    );
   };
 
   const formatData = (data, format) => {
@@ -221,7 +251,7 @@ export default function SortedTable({
             {t("label.crud.delete")}
           </Button>
 
-          {relationship? <Divider orientation="vertical" /> : null}
+          {relationship ? <Divider orientation="vertical" /> : null}
           {relationship?.map((r) => (
             <Button
               key={r.path}
@@ -233,25 +263,42 @@ export default function SortedTable({
               {t(r.key)}
             </Button>
           ))}
-          {relationship? <Divider orientation="vertical" /> : null}
 
           {filterControl !== null ? filterControl : null}
         </Group>
-        <Group grow>
-          <TextInput
-            placeholder={t("placeholder.search")}
-            icon={<IconSearch size={14} stroke={1.5} />}
-            value={search}
-            onChange={handleSearchChange}
-          />
-        </Group>
+
+        {searchBox ? (
+          <>
+            <Divider orientation="vertical" />
+            <Group grow>
+              <TextInput
+                placeholder={t("placeholder.search")}
+                icon={<IconSearch size={14} stroke={1.5} />}
+                value={search}
+                onChange={handleSearchChange}
+              />
+            </Group>
+          </>
+        ) : null}
       </Group>
 
-      <ScrollArea sx={{ height: 500 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
+      <ScrollArea
+        sx={{ height: 500 }}
+        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
+      >
         <LoadingOverlay visible={loading} overlayBlur={2} />
 
-        <Table horizontalSpacing="xs" verticalSpacing="xs" striped highlightOnHover withBorder withColumnBorders>
-          <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
+        <Table
+          horizontalSpacing="xs"
+          verticalSpacing="xs"
+          striped
+          highlightOnHover
+          withBorder
+          withColumnBorders
+        >
+          <thead
+            className={cx(classes.header, { [classes.scrolled]: scrolled })}
+          >
             <tr>
               {columns.map((h, index) => (
                 <Th

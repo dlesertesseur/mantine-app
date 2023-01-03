@@ -13,10 +13,10 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { findRoleById, updateRole } from "../../../Features/Role";
+import { updateRole } from "../../../Features/Role";
 import { actions } from "../../../Constants";
 
-export function UpdatePage({ rowId }) {
+export function UpdatePage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -48,23 +48,14 @@ export function UpdatePage({ rowId }) {
   },[action, navigate])
 
   useEffect(() => {
-    setWorking(true);
-
-    const params = {
-      token: user.token,
-      id: rowId,
-    };
-
-    dispatch(findRoleById(params));
-
-  }, [dispatch, rowId, user]);
-
-  useEffect(() => {
     if (selectedRole) {
       setWorking(false);
       form.setFieldValue("name", selectedRole.name);
       form.setFieldValue("context", selectedRole.context.id);
+    }else{
+      navigate("/");
     }
+
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedRole]);
 

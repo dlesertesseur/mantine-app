@@ -319,9 +319,21 @@
 
     "product": {
       "name": "PRODUCTOS",
-      "title": "ABM DE PRODUCTOS",
-      "columns": ["", "SKU", "EAN", "Descripcion", "Marca", "Precio", "Estado"],
-      "align": ["center", "right", "right", "left", "left", "right", "left"],
+      "title": {
+        "create": "Crear un nuevo producto",
+        "update": "Modificar producto",
+        "delete": "Eliminar producto"
+      },
+      "label": {
+        "sku": "SKU",
+        "ean": "EAN",
+        "description": "Descripcion",
+        "brand": "Marca",
+        "status": "Estado",
+        "countryOfOrigin":"Pais de origen"
+      },
+      "columns": ["SKU", "EAN", "Descripcion", "Marca", "Estado"],
+      "align": ["center", "right", "right", "left", "left"],
       "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
       "tab1": "Informacion general",
       "tab2": "Unidades de medida",

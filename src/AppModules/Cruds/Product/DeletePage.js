@@ -1,31 +1,16 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
 import DeleteConfirmation from "../../../Modal/DeleteConfirmation";
-import {
-  TextInput,
-  Title,
-  Container,
-  Button,
-  Group,
-  LoadingOverlay,
-} from "@mantine/core";
+import { TextInput, Title, Container, Button, Group, LoadingOverlay } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import {
-  deleteApplication,
-  findApplicationById,
-} from "../../../DataAccess/Applications";
+import { deleteOrganization, findOrganizationById } from "../../../DataAccess/Organization";
 
-export function DeleteApplicationPage({
-  user,
-  back,
-  applicationId,
-  onLoadGrid,
-}) {
+export function DeletePage({ user, back, rowId, onLoadGrid }) {
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const [application, setApplication] = useState(null);
+  const [data, setData] = useState(null);
   const [responseModalOpen, setResponseModalOpen] = useState(false);
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
   const [response, setResponse] = useState(null);
@@ -35,11 +20,12 @@ export function DeleteApplicationPage({
     initialValues: {
       name: "",
       description: "",
-      path: "",
-      icon: "",
     },
 
-    validate: {},
+    validate: {
+      name: (val) => (val ? null : t("validation.required")),
+      description: (val) => (val ? null : t("validation.required")),
+    },
   });
 
   useEffect(() => {
@@ -47,27 +33,25 @@ export function DeleteApplicationPage({
 
     const params = {
       token: user.token,
-      id: applicationId,
+      id: rowId,
     };
-    findApplicationById(params).then((ret) => {
+    findOrganizationById(params).then((ret) => {
       setWorking(false);
-      setApplication(ret);
+      setData(ret);
 
       form.setFieldValue("name", ret.name);
       form.setFieldValue("description", ret.description);
-      form.setFieldValue("path", ret.path);
-      form.setFieldValue("icon", ret.icon);
     });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [applicationId, user]);
+  }, [rowId, user]);
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
         disabled
-        label={t("crud.application.label." + field)}
-        placeholder={t("crud.application.placeholder." + field)}
+        label={t("crud.organization.label." + field)}
+        placeholder={t("crud.organization.placeholder." + field)}
         {...form.getInputProps(field)}
       />
     );
@@ -80,9 +64,9 @@ export function DeleteApplicationPage({
 
     const params = {
       token: user.token,
-      id: application.id,
+      id: data.id,
     };
-    deleteApplication(params)
+    deleteOrganization(params)
       .then((ret) => {
         setWorking(false);
 
@@ -94,16 +78,12 @@ export function DeleteApplicationPage({
           });
           setResponseModalOpen(true);
         } else {
-          navigate(back);
           onLoadGrid();
+          navigate(back);
         }
       })
       .catch((error) => {
-        setResponse({
-          code: error.status,
-          title: t("status.error"),
-          text: error.message,
-        });
+        setResponse({ code: error.status, title: t("status.error"), text: error.message });
         setResponseModalOpen(true);
       });
   };
@@ -149,21 +129,20 @@ export function DeleteApplicationPage({
             fontWeight: 700,
           })}
         >
-          {t("crud.application.title.delete")}
+          {t("crud.organization.title.delete")}
         </Title>
 
-        <form>
+        <form
+          onSubmit={form.onSubmit((values) => {
+            setConfirmModalOpen(true);
+          })}
+        >
           <Group grow mb={"md"}>
             {createTextField("name")}
           </Group>
           <Group grow mb={"md"}>
             {createTextField("description")}
           </Group>
-          <Group grow mb={"md"}>
-            {createTextField("path")}
-          </Group>
-
-          <Group mb={"md"}>{createTextField("icon")}</Group>
 
           <Group position="right" mt="xl" mb="xs">
             <Button
@@ -173,9 +152,7 @@ export function DeleteApplicationPage({
             >
               {t("button.cancel")}
             </Button>
-            <Button onClick={() => setConfirmModalOpen(true)}>
-              {t("button.accept")}
-            </Button>
+            <Button type="submit">{t("button.accept")}</Button>
           </Group>
         </form>
       </Container>
