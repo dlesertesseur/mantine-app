@@ -1,8 +1,8 @@
-import React, { useEffect } from "react";
+import React from "react";
 import uuid from "react-uuid";
 import SortedTableStateController from "./SortedTableStateController";
 import { Divider, Stack, Text } from "@mantine/core";
-import { Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 import { findTranslatedField } from "../../Util";
 import { useTranslation } from "react-i18next";
 
@@ -19,15 +19,9 @@ const CrudFrameStateController = ({
   relationshipPages,
   filterControl = null,
   loading = false,
-  activePage,
   setActivePage,
 }) => {
   const { i18n } = useTranslation();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-      navigate(activePage);
-  }, [activePage, navigate]);
 
   return (
     <Stack

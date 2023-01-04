@@ -23,6 +23,7 @@ import {
   findAllCountries,
   findAllImagesByProductId,
   findProductById,
+  setActivePage,
   update,
   uploadImage,
 } from "../../../Features/Product";
@@ -33,20 +34,18 @@ import { IconUpload, IconX, IconPhoto } from "@tabler/icons";
 import { Carousel } from "@mantine/carousel";
 import { API } from "../../../Constants";
 import { useViewportSize } from "@mantine/hooks";
-import { useNavigate } from "react-router-dom";
 
 export function UpdatePage() {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const theme = useMantineTheme();
+
   const { user, projectSelected } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
   const { countries, error, errorCode, errorMessage, creating, selectedRowId, product, images, reloadImages } =
     useSelector((state) => state.product.value);
 
   const { height } = useViewportSize();
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
-  const theme = useMantineTheme();
 
   useEffect(() => {
     const parameters = {
@@ -158,7 +157,6 @@ export function UpdatePage() {
     };
 
     dispatch(update(params));
-    navigate(-1);
   };
 
   const onClose = () => {
@@ -306,7 +304,7 @@ export function UpdatePage() {
             <Group position="right" mt="xl" mb="xs">
               <Button
                 onClick={(event) => {
-                  navigate(-1);
+                  dispatch(setActivePage("./"));
                 }}
               >
                 {t("button.cancel")}

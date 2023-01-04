@@ -1,26 +1,23 @@
 import React from "react";
-import LanguageSelector from "./LanguageSelector";
-import { Group, ActionIcon, useMantineColorScheme, Title, Image } from "@mantine/core";
-import { IconSun, IconMoonStars } from "@tabler/icons";
 import UserButton from "./UserButton";
-import { useTranslation } from "react-i18next";
-//import logo from "/images/connexa_logo.png";
+import LanguageSelector from "./LanguageSelector";
+import { Group, ActionIcon, useMantineColorScheme, Image } from "@mantine/core";
+import { IconSun, IconMoonStars } from "@tabler/icons";
 
 export default function CustomHeader() {
   const { colorScheme, toggleColorScheme } = useMantineColorScheme();
-  const { t } = useTranslation();
   return (
     <Group position="apart" align={"center"} sx={{ width: "100%" }}>
       <Group>
-        {/* <div style={{ width: 240, marginLeft: "auto", marginRight: "auto" }}>
+        <div style={{ width: 240, marginLeft: "auto", marginRight: "auto" }}>
           <Image
             radius="xs"
-            src={logo}
+            src={process.env.PUBLIC_URL + '/images/connexa_logo.png'}
             alt="logo"
           />
-        </div> */}
+        </div>
 
-        <Title
+        {/* <Title
           align="center"
           sx={(theme) => ({
             fontFamily: `Greycliff CF, ${theme.fontFamily}`,
@@ -28,7 +25,7 @@ export default function CustomHeader() {
           })}
         >
           {t("main.title")}
-        </Title>
+        </Title> */}
 
       </Group>
       <Group>

@@ -8,6 +8,7 @@ const initialState = {
     error: null,
     errorMessage: null,
     errorCode: null,
+    created: false,
     creating: false,
     products: [],
     images: [],
@@ -31,6 +32,7 @@ const initialState = {
     activePage: null,
     selectedRowId: null,
     product: null,
+    reloadImages: Date.now(),
   },
 };
 
@@ -427,12 +429,33 @@ export const uploadImage = createAsyncThunk("product/uploadImage", async (parame
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
-    return data;  
+    return data;
   } catch (error) {
     return asyncThunk.rejectWithValue(error);
   }
 });
 
+export const deleteImage = createAsyncThunk("product/deleteImage", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "DELETE",
+      mode: "cors",
+      headers: {
+        token: parameters.token,
+      },
+      body: parameters.data,
+    };
+
+    const url = API.product.deleteImage + parameters.id;
+
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
+  }
+});
 
 export const productSlice = createSlice({
   name: "product",
@@ -478,6 +501,10 @@ export const productSlice = createSlice({
     setSelectedRowId: (state, { payload }) => {
       state.value.selectedRowId = payload;
     },
+
+    resetGlobalStates: (state, { payload }) => {
+      state.value.selectedRowId = payload;
+    },
   },
   extraReducers: {
     /*CREATE*/
@@ -487,6 +514,7 @@ export const productSlice = createSlice({
       state.value.errorMessage = null;
       state.value.errorCode = null;
       state.value.creating = true;
+      state.value.created = false;
     },
 
     [create.fulfilled]: (state, { payload }) => {
@@ -497,8 +525,8 @@ export const productSlice = createSlice({
       } else {
         state.value.id = payload.id;
         state.value.error = null;
+        state.value.created = true;
         state.value.refreshData = Date.now();
-        state.value.activePage = "./";
       }
       state.value.loadingProducts = false;
       state.value.creating = false;
@@ -783,6 +811,8 @@ export const productSlice = createSlice({
     [findProductById.pending]: (state) => {
       state.value.loadingProducts = true;
       state.value.error = null;
+      state.value.created = false;
+      state.value.creating = false;
     },
 
     [findProductById.fulfilled]: (state, { payload }) => {
@@ -798,6 +828,25 @@ export const productSlice = createSlice({
     [findProductById.rejected]: (state, { payload }) => {
       state.value.loadingProducts = false;
       state.value.error = payload;
+    },
+
+    /*DELETE IMAGE ID*/
+    [deleteImage.pending]: (state) => {
+      state.value.loadingProducts = true;
+      state.value.error = null;
+      state.value.errorMessage = null;
+    },
+
+    [deleteImage.fulfilled]: (state, { payload }) => {
+      console.log("[deleteImage.fulfilled]", payload);
+      state.value.error = null;
+      state.value.errorMessage = null;
+      state.value.reloadImages = Date.now();
+    },
+
+    [deleteImage.rejected]: (state, { payload }) => {
+      state.value.error = payload;
+      state.value.errorMessage = payload.message;
     },
   },
 });

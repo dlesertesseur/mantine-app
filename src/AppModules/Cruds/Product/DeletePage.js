@@ -6,17 +6,19 @@ import { useTranslation } from "react-i18next";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { findAllBrands } from "../../../Features/Brand";
-import { clearError, findAllCountries, findProductById, remove, setActivePage } from "../../../Features/Product";
+import { clearError, findAllCountries, findProductById, remove } from "../../../Features/Product";
+import { useNavigate } from "react-router-dom";
 
 export function DeletePage() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
   const { user } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
   const { countries, error, errorCode, errorMessage, creating, selectedRowId, product } = useSelector(
     (state) => state.product.value
   );
+
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
@@ -96,6 +98,7 @@ export function DeletePage() {
       id: product.id
     };
     dispatch(remove(params));
+    navigate(-1);
   };
 
   const onClose = () => {
@@ -149,7 +152,7 @@ export function DeletePage() {
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                dispatch(setActivePage("./"));
+                navigate(-1);
               }}
             >
               {t("button.cancel")}

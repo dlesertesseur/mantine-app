@@ -5,17 +5,15 @@ import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect } from "react";
 import { findAllBrands } from "../../../Features/Brand";
-import { clearError, create, findAllCountries } from "../../../Features/Product";
-import { useNavigate } from "react-router-dom";
+import { clearError, create, findAllCountries, setActivePage } from "../../../Features/Product";
 
 export function CreatePage({ onLoadGrid }) {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+
   const { user, projectSelected } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
   const { countries, error, errorCode, errorMessage, creating } = useSelector((state) => state.product.value);
-
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
 
   useEffect(() => {
     const parameters = {
@@ -89,7 +87,6 @@ export function CreatePage({ onLoadGrid }) {
     };
 
     dispatch(create(params));
-    navigate(-1);
   };
 
   const onClose = () => {
@@ -131,7 +128,7 @@ export function CreatePage({ onLoadGrid }) {
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(-1);
+                dispatch(setActivePage("./"));
               }}
             >
               {t("button.cancel")}

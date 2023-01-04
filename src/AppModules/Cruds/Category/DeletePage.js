@@ -1,21 +1,24 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
+import DeleteConfirmation from "../../../Modal/DeleteConfirmation";
 import { TextInput, Title, Container, Button, Group, LoadingOverlay, Select } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
+import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useEffect } from "react";
 import { findAllBrands } from "../../../Features/Brand";
-import { clearError, create, findAllCountries } from "../../../Features/Product";
-import { useNavigate } from "react-router-dom";
+import { clearError, findAllCountries, findProductById, remove, setActivePage } from "../../../Features/Product";
 
-export function CreatePage({ onLoadGrid }) {
+export function DeletePage() {
   const { t } = useTranslation();
-  const { user, projectSelected } = useSelector((state) => state.auth.value);
-  const { brands } = useSelector((state) => state.brand.value);
-  const { countries, error, errorCode, errorMessage, creating } = useSelector((state) => state.product.value);
-
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+
+  const { user } = useSelector((state) => state.auth.value);
+  const { brands } = useSelector((state) => state.brand.value);
+  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product } = useSelector(
+    (state) => state.product.value
+  );
+
+  const [confirmModalOpen, setConfirmModalOpen] = useState(false);
 
   useEffect(() => {
     const parameters = {
@@ -25,6 +28,27 @@ export function CreatePage({ onLoadGrid }) {
     dispatch(findAllCountries(parameters));
   }, [dispatch, user]);
 
+  useEffect(() => {
+    if (selectedRowId) {
+      const params = {
+        token: user.token,
+        id: selectedRowId,
+      };
+      dispatch(findProductById(params));
+    }
+  }, [dispatch, selectedRowId, user]);
+
+  useEffect(() => {
+    if (product) {
+      form.setFieldValue("sku", product.sku);
+      form.setFieldValue("ean", product.ean);
+      form.setFieldValue("description", product.description);
+      form.setFieldValue("brand", product.brand.id);
+      form.setFieldValue("countryOfOrigin", product.countryOfOrigin.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product]);
+
   const form = useForm({
     initialValues: {
       sku: "",
@@ -33,19 +57,12 @@ export function CreatePage({ onLoadGrid }) {
       brand: "",
       countryOfOrigin: "",
     },
-
-    validate: {
-      sku: (val) => (val ? null : t("validation.required")),
-      ean: (val) => (val ? null : t("validation.required")),
-      description: (val) => (val ? null : t("validation.required")),
-      brand: (val) => (val ? null : t("validation.required")),
-      countryOfOrigin: (val) => (val ? null : t("validation.required")),
-    },
   });
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
+        disabled={true}
         label={t("crud.product.label." + field)}
         placeholder={
           t("crud.product.placeholder." + field).startsWith("crud.") ? "" : t("crud.product.placeholder." + field)
@@ -62,38 +79,31 @@ export function CreatePage({ onLoadGrid }) {
       return { value: c.id, label: c.name };
     });
     const ret = (
-      <Select label={t("crud.product.label." + field)} data={list ? list : []} {...form.getInputProps(field)} />
+      <Select
+        disabled
+        label={t("crud.product.label." + field)}
+        data={list ? list : []}
+        {...form.getInputProps(field)}
+      />
     );
 
     return ret;
   };
 
-  const onCreate = (values) => {
+  const onDelete = () => {
     const params = {
       token: user.token,
-      sku: values.sku,
-      ean: values.ean,
-      description: values.description,
-      brandId: values.brand,
-      price: 0,
-      currency: "PESO",
-      status: "Activo",
-      projectId: projectSelected.id,
-      countryOfOriginId: values.countryOfOrigin,
-      measurementTypeIdForContent: "Q",
-      measurementUnitIdForContent: "UNIDADES",
-      measurementTypeIdForSale: "Q",
-      measurementUnitIdForSale: "UNIDADES",
-      measurementTypeIdForPrice: "Q",
-      measurementUnitIdForPrice: "UNIDADES",
+      id: product.id
     };
-
-    dispatch(create(params));
-    navigate(-1);
+    dispatch(remove(params));
   };
 
   const onClose = () => {
     dispatch(clearError());
+  };
+
+  const onConfirm = () => {
+    onDelete();
   };
 
   return (
@@ -101,7 +111,15 @@ export function CreatePage({ onLoadGrid }) {
       {error ? (
         <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
       ) : null}
-      
+
+      <DeleteConfirmation
+        opened={confirmModalOpen}
+        onClose={() => setConfirmModalOpen(false)}
+        onConfirm={onConfirm}
+        title={t("notification.title")}
+        text={t("notification.delete")}
+      />
+
       <LoadingOverlay overlayOpacity={0.5} visible={creating} />
       <Container size={"sm"}>
         <Title
@@ -113,12 +131,12 @@ export function CreatePage({ onLoadGrid }) {
             fontWeight: 700,
           })}
         >
-          {t("crud.product.title.create")}
+          {t("crud.product.title.delete")}
         </Title>
 
         <form
           onSubmit={form.onSubmit((values) => {
-            onCreate(values);
+            setConfirmModalOpen(true);
           })}
         >
           <Group mb={"md"}>{createTextField("sku")}</Group>
@@ -131,7 +149,7 @@ export function CreatePage({ onLoadGrid }) {
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(-1);
+                dispatch(setActivePage("./"));
               }}
             >
               {t("button.cancel")}

@@ -145,6 +145,7 @@ export const API = {
     findAllProducts: SERVER + ":" + PORT + API_BASE + "/products/unpaged",
     findProductById: SERVER + ":" + PORT + API_BASE + "/products/",
     uploadImage: SERVER + ":" + PORT + API_BASE + "/product-images/",
+    deleteImage: SERVER + ":" + PORT + API_BASE + "/product-images/",
   },
 
   category_product_relation: {

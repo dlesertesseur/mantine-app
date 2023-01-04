@@ -128,8 +128,6 @@ export default function SortedTableStateController({
   const { classes, cx } = useStyles();
   const { t } = useTranslation();
 
-  //const navigate = useNavigate();
-
   const [search, setSearch] = useState("");
   const [sortedData, setSortedData] = useState(data);
   const [sortBy, setSortBy] = useState(null);

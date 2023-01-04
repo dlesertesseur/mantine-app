@@ -1,49 +1,44 @@
 import React, { useEffect, useState } from "react";
-import CrudFrame from "../../../Components/Crud/CrudFrame";
+import CrudFrameStateController from "../../../Components/Crud/CrudFrameStateController";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CreatePage } from "./CreatePage";
 import { UpdatePage } from "./UpdatePage";
 import { DeletePage } from "./DeletePage";
-import { findAllProducts, setSelectedRowId } from "../../../Features/Product";
+import { getRootOfCategories, setActivePage, setSelectedRowId } from "../../../Features/Category";
 
 const DynamicApp = ({ app }) => {
   const { user } = useSelector((state) => state.auth.value);
-  const { products, selectedRowId, refreshData } = useSelector((state) => state.product.value);
+  const { products, activePage, selectedRowId, refreshData } = useSelector((state) => state.product.value);
 
   const { t } = useTranslation();
   const [rows, setRows] = useState([]);
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     const parameters = {
       token: user.token,
     };
-    dispatch(findAllProducts(parameters));
+    dispatch(getRootOfCategories(parameters));
   }, [dispatch, user, refreshData]);
 
-  // useEffect(() => {
-  //   setActivePage(page);
-  //   navigate(page);
-  // }, [navigate, page]);
-
-  // useEffect(() => {
-  //   console.log("Product :: navigate(" + activePage + ")");
-  //   navigate(activePage);
-  // }, [activePage, navigate]);
+  useEffect(() => {
+    console.log("activePage ->", activePage)
+  }, [activePage]);
 
   useEffect(() => {
     const ret = products?.map((p) => {
       const r = {
-        id: p.id,
-        sku: p.sku,
-        ean: p.ean,
-        description: p.description,
-        brand: p.brand.name,
-        brandId: p.brand.id,
-        countryName: p.countryOfOrigin.name,
-        countryId: p.countryOfOrigin.id,
-        status: p.status,
+        id:p.id,
+        sku:p.sku,
+        ean:p.ean,
+        description:p.description,
+        brand:p.brand.name,
+        brandId:p.brand.id,
+        countryName:p.countryOfOrigin.name,
+        countryId:p.countryOfOrigin.id,
+        status:p.status,
       };
       return r;
     });
@@ -66,15 +61,15 @@ const DynamicApp = ({ app }) => {
   ];
 
   const ret = rows ? (
-    <CrudFrame
+    <CrudFrameStateController
       app={app}
       columns={columns}
       data={rows}
       rowSelected={selectedRowId}
-      setRowSelected={(id) => {
-        dispatch(setSelectedRowId(id));
-      }}
+      setRowSelected={(id) => {dispatch(setSelectedRowId(id))}}
       enableCreateButton={true}
+      activePage={activePage}
+      setActivePage={(page) => {dispatch(setActivePage(page))}}
       createPage={<CreatePage />}
       updatePage={<UpdatePage />}
       deletePage={<DeletePage />}
