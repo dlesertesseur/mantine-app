@@ -8,12 +8,13 @@ import { useDispatch, useSelector } from "react-redux";
 import { findAllBrands } from "../../../Features/Brand";
 import { clearError, findAllCountries, findProductById, remove } from "../../../Features/Product";
 import { useNavigate } from "react-router-dom";
+import { actions } from "../../../Constants";
 
 export function DeletePage() {
   const { t } = useTranslation();
   const { user } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
-  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product } = useSelector(
+  const { countries, error, errorCode, errorMessage, processing, selectedRowId, product, appState } = useSelector(
     (state) => state.product.value
   );
 
@@ -50,6 +51,12 @@ export function DeletePage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [product]);
+
+  useEffect(() => {
+    if(appState === actions.deleted){
+      navigate(-1);
+    }
+  }, [appState, navigate]);
 
   const form = useForm({
     initialValues: {
@@ -123,7 +130,7 @@ export function DeletePage() {
         text={t("notification.delete")}
       />
 
-      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
+      <LoadingOverlay overlayOpacity={0.5} visible={processing} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}
@@ -152,7 +159,6 @@ export function DeletePage() {
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                navigate(-1);
               }}
             >
               {t("button.cancel")}

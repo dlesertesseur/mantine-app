@@ -1,9 +1,9 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API } from "../../Constants";
+import { actions, API } from "../../Constants";
 
 const initialState = {
   value: {
-    loadingProducts: false,
+    processing: false,
     loadingImages: false,
     error: null,
     errorMessage: null,
@@ -33,6 +33,7 @@ const initialState = {
     selectedRowId: null,
     product: null,
     reloadImages: Date.now(),
+    appState: null
   },
 };
 
@@ -509,7 +510,7 @@ export const productSlice = createSlice({
   extraReducers: {
     /*CREATE*/
     [create.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
       state.value.errorMessage = null;
       state.value.errorCode = null;
@@ -518,31 +519,36 @@ export const productSlice = createSlice({
     },
 
     [create.fulfilled]: (state, { payload }) => {
+
+      console.log("[create.fulfilled]", payload.error);
+
       if (payload.error) {
         state.value.error = payload.error;
         state.value.errorMessage = payload.message;
         state.value.errorCode = payload.status;
       } else {
         state.value.id = payload.id;
+        state.value.errorMessage = null;
+        state.value.errorCode = null;
         state.value.error = null;
-        state.value.created = true;
-        state.value.refreshData = Date.now();
+        state.value.appState = actions.created;
       }
-      state.value.loadingProducts = false;
-      state.value.creating = false;
+      state.value.processing = false;
     },
 
     [create.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+
+      console.log("[create.rejected]", payload);
+
+      state.value.processing = false;
       state.value.error = payload;
       state.value.errorMessage = payload.message;
       state.value.errorCode = payload.status;
-      state.value.creating = false;
     },
 
     /*UPDATE*/
     [update.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
       state.value.errorMessage = null;
       state.value.errorCode = null;
@@ -555,25 +561,24 @@ export const productSlice = createSlice({
         state.value.errorCode = payload.status;
       } else {
         state.value.id = payload.id;
+        state.value.errorMessage = null;
+        state.value.errorCode = null;
         state.value.error = null;
-        state.value.refreshData = Date.now();
-        state.value.activePage = "./";
+        state.value.appState = actions.updated;
       }
-      state.value.loadingProducts = false;
-      state.value.creating = false;
+      state.value.processing = false;
     },
 
     [update.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
       state.value.errorMessage = payload.message;
       state.value.errorCode = payload.status;
-      state.value.creating = false;
     },
 
     /*DELETE*/
     [remove.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
       state.value.errorMessage = null;
       state.value.errorCode = null;
@@ -581,19 +586,17 @@ export const productSlice = createSlice({
     },
 
     [remove.fulfilled]: (state, { payload }) => {
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
       state.value.error = null;
-      state.value.refreshData = Date.now();
-      state.value.activePage = "./";
-      state.value.loadingProducts = false;
-      state.value.creating = false;
+      state.value.appState = actions.created;
       state.value.selectedRowId = null;
       state.value.product = null;
+      state.value.processing = false;
     },
 
     [remove.rejected]: (state, { payload }) => {
-      console.log("[remove.rejected]", payload);
-
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
       state.value.errorMessage = payload.message;
       state.value.errorCode = payload.status;
@@ -665,7 +668,7 @@ export const productSlice = createSlice({
 
     /*FIND ALL PRODUCTS BY PROJECT ID BY PAGE*/
     [findAllProductsByPage.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
     },
 
@@ -684,17 +687,17 @@ export const productSlice = createSlice({
 
         console.log("[findAllProductsByPage.fulfilled]", ret);
       }
-      state.value.loadingProducts = false;
+      state.value.processing = false;
     },
 
     [findAllProductsByPage.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
     },
 
     /*FIND ALL PRODUCTS BY PROJECT ID AND CATEGORY ID - PAGE*/
     [findAllProductsByCategoryIdPage.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
     },
 
@@ -710,11 +713,11 @@ export const productSlice = createSlice({
         state.value.totalProductsInCategory = payload.totalElements;
         state.value.error = null;
       }
-      state.value.loadingProducts = false;
+      state.value.processing = false;
     },
 
     [findAllProductsByCategoryIdPage.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
     },
 
@@ -788,7 +791,7 @@ export const productSlice = createSlice({
 
     /*ALL PRODUCTS*/
     [findAllProducts.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
     },
 
@@ -798,18 +801,19 @@ export const productSlice = createSlice({
       } else {
         state.value.products = payload;
         state.value.error = null;
+        state.value.appState = actions.readed;
       }
-      state.value.loadingProducts = false;
+      state.value.processing = false;
     },
 
     [findAllProducts.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
     },
 
     /*PRODUCT BY ID*/
     [findProductById.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
       state.value.created = false;
       state.value.creating = false;
@@ -822,17 +826,17 @@ export const productSlice = createSlice({
         state.value.product = payload;
         state.value.error = null;
       }
-      state.value.loadingProducts = false;
+      state.value.processing = false;
     },
 
     [findProductById.rejected]: (state, { payload }) => {
-      state.value.loadingProducts = false;
+      state.value.processing = false;
       state.value.error = payload;
     },
 
     /*DELETE IMAGE ID*/
     [deleteImage.pending]: (state) => {
-      state.value.loadingProducts = true;
+      state.value.processing = true;
       state.value.error = null;
       state.value.errorMessage = null;
     },
@@ -841,12 +845,40 @@ export const productSlice = createSlice({
       console.log("[deleteImage.fulfilled]", payload);
       state.value.error = null;
       state.value.errorMessage = null;
-      state.value.reloadImages = Date.now();
+      state.value.processing = false;
     },
 
     [deleteImage.rejected]: (state, { payload }) => {
       state.value.error = payload;
       state.value.errorMessage = payload.message;
+      state.value.processing = false;
+    },
+
+
+    [uploadImage.pending]: (state) => {
+      state.value.loadingImages = true;
+      state.value.error = null;
+    },
+
+    [uploadImage.fulfilled]: (state, { payload }) => {
+
+      if (payload.error) {
+        state.value.error = payload.error;
+        state.value.errorMessage = payload.message;
+        state.value.errorCode = payload.status;
+      } else {
+        state.value.id = payload.id;
+        state.value.errorMessage = null;
+        state.value.errorCode = null;
+        state.value.error = null;
+        state.value.refreshImageList = Date.now();
+      }
+      state.value.loadingImages = false;
+    },
+
+    [uploadImage.rejected]: (state, { payload }) => {
+      state.value.loadingImages = false;
+      state.value.error = payload;
     },
   },
 });

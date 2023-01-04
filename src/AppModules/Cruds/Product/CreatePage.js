@@ -7,12 +7,13 @@ import { useEffect } from "react";
 import { findAllBrands } from "../../../Features/Brand";
 import { clearError, create, findAllCountries } from "../../../Features/Product";
 import { useNavigate } from "react-router-dom";
+import { actions } from "../../../Constants";
 
 export function CreatePage({ onLoadGrid }) {
   const { t } = useTranslation();
   const { user, projectSelected } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
-  const { countries, error, errorCode, errorMessage, creating } = useSelector((state) => state.product.value);
+  const { countries, error, errorCode, errorMessage, appState, processing } = useSelector((state) => state.product.value);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -24,6 +25,13 @@ export function CreatePage({ onLoadGrid }) {
     dispatch(findAllBrands(parameters));
     dispatch(findAllCountries(parameters));
   }, [dispatch, user]);
+
+
+  useEffect(() => {
+    if(appState === actions.created){
+      navigate(-1);
+    }
+  }, [appState, navigate]);
 
   const form = useForm({
     initialValues: {
@@ -89,7 +97,6 @@ export function CreatePage({ onLoadGrid }) {
     };
 
     dispatch(create(params));
-    navigate(-1);
   };
 
   const onClose = () => {
@@ -102,7 +109,7 @@ export function CreatePage({ onLoadGrid }) {
         <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
       ) : null}
       
-      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
+      <LoadingOverlay overlayOpacity={0.5} visible={processing} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}

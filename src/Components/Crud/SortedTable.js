@@ -12,6 +12,7 @@ import {
   Stack,
   LoadingOverlay,
   Divider,
+  Image,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
 import {
@@ -22,6 +23,7 @@ import {
 } from "@tabler/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { API } from "../../Constants";
 
 const useStyles = createStyles((theme) => ({
   selectedRow: {
@@ -211,11 +213,23 @@ export default function SortedTable({
         }}
         style={{ backgroundColor: row.id === rowSelected ? "#74C0FC" : "" }}
       >
-        {columns.map((f) => (
-          <td key={f.fieldName} align={f.align ? f.align : "center"}>
-            {formatData(row[f.fieldName], f.format)}
-          </td>
-        ))}
+        {columns.map((f) => {
+          
+          return (
+            <td key={f.fieldName} align={f.align ? f.align : "center"}>
+              {f.type === "image" ? (
+                <Image
+                  src={API.productImages.baseUrl + row[f.fieldName]}
+                  alt={API.productImages.baseUrl + row[f.fieldName]}
+                  height={24}
+                  fit="contain"
+                />
+              ) : (
+                formatData(row[f.fieldName], f.format)
+              )}
+            </td>
+          );
+        })}
       </tr>
     );
 

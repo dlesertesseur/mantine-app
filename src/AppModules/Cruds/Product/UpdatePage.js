@@ -31,7 +31,7 @@ import { findAllBrands } from "../../../Features/Brand";
 import { Dropzone, IMAGE_MIME_TYPE } from "@mantine/dropzone";
 import { IconUpload, IconX, IconPhoto } from "@tabler/icons";
 import { Carousel } from "@mantine/carousel";
-import { API } from "../../../Constants";
+import { actions, API } from "../../../Constants";
 import { useViewportSize } from "@mantine/hooks";
 import { useNavigate } from "react-router-dom";
 
@@ -39,7 +39,7 @@ export function UpdatePage() {
   const { t } = useTranslation();
   const { user, projectSelected } = useSelector((state) => state.auth.value);
   const { brands } = useSelector((state) => state.brand.value);
-  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product, images, reloadImages } =
+  const { countries, error, errorCode, errorMessage, processing, selectedRowId, product, images, refreshImageList, appState } =
     useSelector((state) => state.product.value);
 
   const { height } = useViewportSize();
@@ -91,7 +91,13 @@ export function UpdatePage() {
       };
       dispatch(findAllImagesByProductId(params));
     }
-  }, [dispatch, product, reloadImages, user]);
+  }, [dispatch, product, refreshImageList, user]);
+
+  useEffect(() => {
+    if(appState === actions.updated){
+      navigate(-1);
+    }
+  }, [appState, navigate]);
 
   const form = useForm({
     initialValues: {
@@ -158,7 +164,6 @@ export function UpdatePage() {
     };
 
     dispatch(update(params));
-    navigate(-1);
   };
 
   const onClose = () => {
@@ -208,7 +213,7 @@ export function UpdatePage() {
         <ResponceNotification opened={error} onClose={onClose} code={errorCode} title={error} text={errorMessage} />
       ) : null}
 
-      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
+      <LoadingOverlay overlayOpacity={0.5} visible={processing} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}
@@ -236,15 +241,15 @@ export function UpdatePage() {
             <Group mb={"md"}>{createSelectField("brand", brands)}</Group>
             <Group mb={"md"}>{createSelectField("countryOfOrigin", countries)}</Group>
 
-            {images ? (
+            {images?.length > 0 ? (
               <Box mb="lg">
                 <Carousel height={300} slideGap="md">
                   {images.map((img) => {
                     return (
-                      <Carousel.Slide key={img.path} sx={{ height: "100%", maxWidth: 400 }}>
+                      <Carousel.Slide key={img.path} sx={{ height: "100%", maxWidth: 220 }}>
                         <Card shadow="sm" p="xs">
                           <Card.Section>
-                            <Image src={API.productImages.baseUrl + img.path} alt="No way!" height={160} />
+                            <Image src={API.productImages.baseUrl + img.path} alt="No way!" height={200} fit="contain"/>
                           </Card.Section>
 
                           <Text mt="xs" color="dimmed" size="xs">
@@ -267,7 +272,7 @@ export function UpdatePage() {
                   })}
                 </Carousel>
               </Box>
-            ) : null}
+            ) : <Box mb="lg"/>}
 
             <Group grow mb="lg">
               <Dropzone

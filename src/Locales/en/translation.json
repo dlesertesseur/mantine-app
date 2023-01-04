@@ -335,7 +335,7 @@
         "status": "Status",
         "countryOfOrigin":"Country of origin"
       },
-      "columns": ["SKU", "EAN", "Description", "Brand", "Country of origin", "Status"],
+      "columns": ["Image", "SKU", "EAN", "Description", "Brand", "Country of origin", "Status"],
       "align": ["center", "right", "right", "left", "left", "left"],
       "width": ["5%", "5%", "10%", "50%", "10%", "10%", "10%"],
       "tab1": "General information",
