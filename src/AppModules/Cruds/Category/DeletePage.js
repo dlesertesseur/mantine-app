@@ -1,32 +1,30 @@
 import ResponceNotification from "../../../Modal/ResponceNotification";
 import DeleteConfirmation from "../../../Modal/DeleteConfirmation";
-import { TextInput, Title, Container, Button, Group, LoadingOverlay, Select } from "@mantine/core";
+import { TextInput, Title, Container, Button, Group, LoadingOverlay, Textarea } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { useTranslation } from "react-i18next";
-import { useEffect, useState } from "react";
+import { useEffect, useState} from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { findAllBrands } from "../../../Features/Brand";
-import { clearError, findAllCountries, findProductById, remove, setActivePage } from "../../../Features/Product";
+import { clearError, remove, findCategoryById } from "../../../Features/Category";
+import { useNavigate } from "react-router-dom";
+import { actions } from "../../../Constants";
 
 export function DeletePage() {
   const { t } = useTranslation();
-  const dispatch = useDispatch();
-
-  const { user } = useSelector((state) => state.auth.value);
-  const { brands } = useSelector((state) => state.brand.value);
-  const { countries, error, errorCode, errorMessage, creating, selectedRowId, product } = useSelector(
-    (state) => state.product.value
-  );
+  const { user,} = useSelector((state) => state.auth.value);
+  const {
+    error,
+    errorCode,
+    errorMessage,
+    processing,
+    selectedRowId,
+    appState,
+    category
+  } = useSelector((state) => state.category.value);
 
   const [confirmModalOpen, setConfirmModalOpen] = useState(false);
-
-  useEffect(() => {
-    const parameters = {
-      token: user.token,
-    };
-    dispatch(findAllBrands(parameters));
-    dispatch(findAllCountries(parameters));
-  }, [dispatch, user]);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (selectedRowId) {
@@ -34,38 +32,38 @@ export function DeletePage() {
         token: user.token,
         id: selectedRowId,
       };
-      dispatch(findProductById(params));
+      dispatch(findCategoryById(params));
     }
   }, [dispatch, selectedRowId, user]);
 
   useEffect(() => {
-    if (product) {
-      form.setFieldValue("sku", product.sku);
-      form.setFieldValue("ean", product.ean);
-      form.setFieldValue("description", product.description);
-      form.setFieldValue("brand", product.brand.id);
-      form.setFieldValue("countryOfOrigin", product.countryOfOrigin.id);
+    if (category) {
+      form.setFieldValue("name", category.name);
+      //form.setFieldValue("description", category.description);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [product]);
+  }, [category]);
+
+   useEffect(() => {
+    if (appState === actions.deleted) {
+      navigate(-1);
+    }
+  }, [appState, navigate]);
 
   const form = useForm({
     initialValues: {
-      sku: "",
-      ean: "",
+      name: "",
       description: "",
-      brand: "",
-      countryOfOrigin: "",
     },
   });
 
   const createTextField = (field) => {
     const ret = (
       <TextInput
-        disabled={true}
-        label={t("crud.product.label." + field)}
+        disabled
+        label={t("crud.category.label." + field)}
         placeholder={
-          t("crud.product.placeholder." + field).startsWith("crud.") ? "" : t("crud.product.placeholder." + field)
+          t("crud.category.placeholder." + field).startsWith("crud.") ? "" : t("crud.category.placeholder." + field)
         }
         {...form.getInputProps(field)}
       />
@@ -74,15 +72,16 @@ export function DeletePage() {
     return ret;
   };
 
-  const createSelectField = (field, data) => {
-    const list = data?.map((c) => {
-      return { value: c.id, label: c.name };
-    });
+  const createTextAreaField = (field) => {
     const ret = (
-      <Select
+      <Textarea
         disabled
-        label={t("crud.product.label." + field)}
-        data={list ? list : []}
+        minRows={3}
+        maxRows={6}
+        label={t("crud.category.label." + field)}
+        placeholder={
+          t("crud.category.placeholder." + field).startsWith("crud.") ? "" : t("crud.category.placeholder." + field)
+        }
         {...form.getInputProps(field)}
       />
     );
@@ -93,7 +92,7 @@ export function DeletePage() {
   const onDelete = () => {
     const params = {
       token: user.token,
-      id: product.id
+      id: category.id
     };
     dispatch(remove(params));
   };
@@ -120,7 +119,7 @@ export function DeletePage() {
         text={t("notification.delete")}
       />
 
-      <LoadingOverlay overlayOpacity={0.5} visible={creating} />
+      <LoadingOverlay overlayOpacity={0.5} visible={processing} />
       <Container size={"sm"}>
         <Title
           mb={"lg"}
@@ -131,7 +130,7 @@ export function DeletePage() {
             fontWeight: 700,
           })}
         >
-          {t("crud.product.title.delete")}
+          {t("crud.category.title.delete")}
         </Title>
 
         <form
@@ -139,17 +138,17 @@ export function DeletePage() {
             setConfirmModalOpen(true);
           })}
         >
-          <Group mb={"md"}>{createTextField("sku")}</Group>
-          <Group mb={"md"}>{createTextField("ean")}</Group>
-          <Group grow mb={"md"}>
-            {createTextField("description")}
+          <Group mb={"md"} grow>
+            {createTextField("name")}
           </Group>
-          <Group mb={"md"}>{createSelectField("brand", brands)}</Group>
-          <Group mb={"md"}>{createSelectField("countryOfOrigin", countries)}</Group>
+          <Group mb={"md"} grow>
+            {createTextAreaField("description")}
+          </Group>
+
           <Group position="right" mt="xl" mb="xs">
             <Button
               onClick={(event) => {
-                dispatch(setActivePage("./"));
+                navigate(-1);
               }}
             >
               {t("button.cancel")}

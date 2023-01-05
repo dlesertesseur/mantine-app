@@ -1,78 +1,109 @@
 import React, { useEffect, useState } from "react";
-import CrudFrameStateController from "../../../Components/Crud/CrudFrameStateController";
+import CrudFrame from "../../../Components/Crud/CrudFrame";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { CreatePage } from "./CreatePage";
 import { UpdatePage } from "./UpdatePage";
 import { DeletePage } from "./DeletePage";
-import { getRootOfCategories, setActivePage, setSelectedRowId } from "../../../Features/Category";
+import { getRootOfCategories, setSelectedRowId, getChildrenOfCategory } from "../../../Features/Category";
+import { actions } from "../../../Constants";
 
 const DynamicApp = ({ app }) => {
   const { user } = useSelector((state) => state.auth.value);
-  const { products, activePage, selectedRowId, refreshData } = useSelector((state) => state.product.value);
+  const { categoriesChild, selectedRowId, categoriesRoot, appState } = useSelector((state) => state.category.value);
 
   const { t } = useTranslation();
-  const [rows, setRows] = useState([]);
-
   const dispatch = useDispatch();
+  const [categoriesPath, setCategoriesPath] = useState([]);
 
   useEffect(() => {
     const parameters = {
       token: user.token,
     };
     dispatch(getRootOfCategories(parameters));
-  }, [dispatch, user, refreshData]);
+  }, [dispatch, user]);
 
   useEffect(() => {
-    console.log("activePage ->", activePage)
-  }, [activePage]);
+    if (appState !== actions.readed || categoriesRoot) {
+      if (categoriesRoot) {
+        const parameters = {
+          token: user.token,
+          nodeId: categoriesRoot.id,
+        };
+        dispatch(getChildrenOfCategory(parameters));
+      }
+    }
+  }, [appState, categoriesRoot, dispatch, user]);
 
-  useEffect(() => {
-    const ret = products?.map((p) => {
-      const r = {
-        id:p.id,
-        sku:p.sku,
-        ean:p.ean,
-        description:p.description,
-        brand:p.brand.name,
-        brandId:p.brand.id,
-        countryName:p.countryOfOrigin.name,
-        countryId:p.countryOfOrigin.id,
-        status:p.status,
-      };
-      return r;
-    });
-
-    setRows(ret);
-  }, [products]);
-
-  // const onLoadGrid = () => {
-  //   setLoadGrid(Date.now());
-  // };
-
-  const cols = t("crud.product.columns", { returnObjects: true });
+  const cols = t("crud.category.columns", { returnObjects: true });
   const columns = [
-    { headerName: cols[0], fieldName: "sku", align: "right" },
-    { headerName: cols[1], fieldName: "ean", align: "right" },
-    { headerName: cols[2], fieldName: "description", align: "left" },
-    { headerName: cols[3], fieldName: "brand", align: "left" },
-    { headerName: cols[4], fieldName: "countryName", align: "left" },
-    { headerName: cols[5], fieldName: "status", align: "left" },
+    { headerName: cols[0], fieldName: "name", align: "left" },
+    { headerName: cols[1], fieldName: "description", align: "left" },
   ];
 
-  const ret = rows ? (
-    <CrudFrameStateController
+  const changeRoot = () => {
+    const parameters = {
+      token: user.token,
+      rootId: selectedRowId,
+    };
+    const ret = [...categoriesPath, categoriesRoot];
+    setCategoriesPath(ret);
+    dispatch(getRootOfCategories(parameters));
+  };
+
+  const toParent = () => {
+    const ret = [...categoriesPath];
+    const lastCategory = ret.pop();
+
+    if (lastCategory) {
+      const parameters = {
+        token: user.token,
+        rootId: lastCategory.id,
+      };
+      dispatch(getRootOfCategories(parameters));
+    }
+
+    setCategoriesPath(ret);
+  };
+
+  const createPath = () => {
+    const ret = categoriesPath.map( c => c.name);
+    if(categoriesRoot){
+      ret.push(categoriesRoot.name);
+    }
+    return(ret);
+  }
+
+  const ret = categoriesChild ? (
+    <CrudFrame
       app={app}
       columns={columns}
-      data={rows}
+      data={categoriesChild}
       rowSelected={selectedRowId}
-      setRowSelected={(id) => {dispatch(setSelectedRowId(id))}}
+      setRowSelected={(id) => {
+        dispatch(setSelectedRowId(id));
+      }}
       enableCreateButton={true}
-      activePage={activePage}
-      setActivePage={(page) => {dispatch(setActivePage(page))}}
       createPage={<CreatePage />}
       updatePage={<UpdatePage />}
       deletePage={<DeletePage />}
+      relationshipPages={[
+        {
+          path: "/inspect",
+          key: "crud.category.label.toChildren",
+          onPress: () => changeRoot(),
+        },
+        {
+          path: "/back",
+          key: "crud.category.label.toParent",
+          onPress: () => toParent(),
+          customState: () => {
+            const ret = categoriesPath ? !(categoriesPath.length > 0) : true;
+            return ret;
+          },
+        },
+      ]}
+      breadcrumbs={createPath()}
     />
   ) : null;
 

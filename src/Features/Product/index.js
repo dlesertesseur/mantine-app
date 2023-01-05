@@ -495,10 +495,6 @@ export const productSlice = createSlice({
       state.value.creating = null;
     },
 
-    setActivePage: (state, { payload }) => {
-      state.value.activePage = payload;
-    },
-
     setSelectedRowId: (state, { payload }) => {
       state.value.selectedRowId = payload;
     },
@@ -519,9 +515,6 @@ export const productSlice = createSlice({
     },
 
     [create.fulfilled]: (state, { payload }) => {
-
-      console.log("[create.fulfilled]", payload.error);
-
       if (payload.error) {
         state.value.error = payload.error;
         state.value.errorMessage = payload.message;
@@ -891,7 +884,6 @@ export const {
   refreshCategorizeData,
   clearProductsInCategory,
   clearError,
-  setActivePage,
   setSelectedRowId,
 } = productSlice.actions;
 

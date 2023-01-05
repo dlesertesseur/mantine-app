@@ -1,4 +1,3 @@
-import { Box, Container } from "@mantine/core";
 import { useEffect, useState } from "react";
 import Viewer from "../AppModules/Views/Layout/FloorViewerMob/Viewer";
 import { PIXEL_METER_RELATION } from "../Constants";

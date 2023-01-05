@@ -15,29 +15,19 @@ import {
   Image,
 } from "@mantine/core";
 import { keys } from "@mantine/utils";
-import {
-  IconSelector,
-  IconChevronDown,
-  IconChevronUp,
-  IconSearch,
-} from "@tabler/icons";
+import { IconSelector, IconChevronDown, IconChevronUp, IconSearch } from "@tabler/icons";
 import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { API } from "../../Constants";
+import { useViewportSize } from "@mantine/hooks";
 
 const useStyles = createStyles((theme) => ({
   selectedRow: {
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.blue[3],
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[3],
   },
   th: {
     padding: "0 !important",
-    backgroundColor:
-      theme.colorScheme === "dark"
-        ? theme.colors.dark[6]
-        : theme.colors.blue[0],
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[0],
   },
 
   control: {
@@ -45,10 +35,7 @@ const useStyles = createStyles((theme) => ({
     padding: `${theme.spacing.xs}px ${theme.spacing.md}px`,
 
     "&:hover": {
-      backgroundColor:
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[6]
-          : theme.colors.blue[1],
+      backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[6] : theme.colors.blue[1],
     },
   },
 
@@ -61,8 +48,7 @@ const useStyles = createStyles((theme) => ({
   header: {
     position: "sticky",
     top: -1,
-    backgroundColor:
-      theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
+    backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[7] : theme.white,
     transition: "box-shadow 150ms ease",
 
     "&::after": {
@@ -71,11 +57,7 @@ const useStyles = createStyles((theme) => ({
       left: 0,
       right: 0,
       bottom: 0,
-      borderBottom: `1px solid ${
-        theme.colorScheme === "dark"
-          ? theme.colors.dark[3]
-          : theme.colors.gray[2]
-      }`,
+      borderBottom: `1px solid ${theme.colorScheme === "dark" ? theme.colors.dark[3] : theme.colors.gray[2]}`,
     },
   },
 
@@ -86,11 +68,7 @@ const useStyles = createStyles((theme) => ({
 
 function Th({ children, reversed, sorted, onSort }) {
   const { classes } = useStyles();
-  const Icon = sorted
-    ? reversed
-      ? IconChevronUp
-      : IconChevronDown
-    : IconSelector;
+  const Icon = sorted ? (reversed ? IconChevronUp : IconChevronDown) : IconSelector;
   return (
     <th className={classes.th}>
       <UnstyledButton onClick={onSort} className={classes.control}>
@@ -109,11 +87,7 @@ function Th({ children, reversed, sorted, onSort }) {
 
 function filterData(data, search) {
   const query = search.toLowerCase().trim();
-  return data.filter((item) =>
-    keys(data[0]).some((key) =>
-      item[key].toString().toLowerCase().includes(query)
-    )
-  );
+  return data.filter((item) => keys(data[0]).some((key) => item[key].toString().toLowerCase().includes(query)));
 }
 
 function sortData(data, payload) {
@@ -164,6 +138,7 @@ export default function SortedTable({
   const [sortBy, setSortBy] = useState(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const { height } = useViewportSize();
 
   useEffect(() => {
     setSortedData(data);
@@ -180,9 +155,7 @@ export default function SortedTable({
     const { value } = event.currentTarget;
     setSearch(value);
     setRowSelected(null);
-    setSortedData(
-      sortData(data, { sortBy, reversed: reverseSortDirection, search: value })
-    );
+    setSortedData(sortData(data, { sortBy, reversed: reverseSortDirection, search: value }));
   };
 
   const formatData = (data, format) => {
@@ -204,6 +177,15 @@ export default function SortedTable({
     return ret;
   };
 
+  const formatImage = (data) => {
+    const ret = data ? (
+      <Image src={API.productImages.baseUrl + data} alt={"Not found"} height={24} fit="contain" />
+    ) : //<Image src={process.env.PUBLIC_URL + '/images/noData.png'} alt={"Not found"} height={24} fit="contain" />
+    //<IconPhoto size={24} stroke={1} />
+    null;
+    return ret;
+  };
+
   const rows = sortedData.map((row) => {
     const ret = (
       <tr
@@ -214,19 +196,9 @@ export default function SortedTable({
         style={{ backgroundColor: row.id === rowSelected ? "#74C0FC" : "" }}
       >
         {columns.map((f) => {
-          
           return (
             <td key={f.fieldName} align={f.align ? f.align : "center"}>
-              {f.type === "image" ? (
-                <Image
-                  src={API.productImages.baseUrl + row[f.fieldName]}
-                  alt={API.productImages.baseUrl + row[f.fieldName]}
-                  height={24}
-                  fit="contain"
-                />
-              ) : (
-                formatData(row[f.fieldName], f.format)
-              )}
+              {f.type === "image" ? formatImage(row[f.fieldName]) : formatData(row[f.fieldName], f.format)}
             </td>
           );
         })}
@@ -270,9 +242,9 @@ export default function SortedTable({
             <Button
               key={r.path}
               onClick={() => {
-                navigate("." + r.path);
+                r.onPress ? r.onPress(r) : navigate("." + r.path);
               }}
-              disabled={!rowSelected ? true : false}
+              disabled={r.customState ? r.customState() : (!rowSelected ? true : false)}
             >
               {t(r.key)}
             </Button>
@@ -296,23 +268,11 @@ export default function SortedTable({
         ) : null}
       </Group>
 
-      <ScrollArea
-        sx={{ height: 500 }}
-        onScrollPositionChange={({ y }) => setScrolled(y !== 0)}
-      >
+      <ScrollArea sx={{ height: height - 250 }} onScrollPositionChange={({ y }) => setScrolled(y !== 0)}>
         <LoadingOverlay visible={loading} overlayBlur={2} />
 
-        <Table
-          horizontalSpacing="xs"
-          verticalSpacing="xs"
-          striped
-          highlightOnHover
-          withBorder
-          withColumnBorders
-        >
-          <thead
-            className={cx(classes.header, { [classes.scrolled]: scrolled })}
-          >
+        <Table horizontalSpacing="xs" verticalSpacing="xs" striped highlightOnHover withBorder withColumnBorders>
+          <thead className={cx(classes.header, { [classes.scrolled]: scrolled })}>
             <tr>
               {columns.map((h, index) => (
                 <Th

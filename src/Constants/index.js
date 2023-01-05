@@ -130,9 +130,10 @@ export const API = {
     create: SERVER + ":" + PORT + API_BASE + "/categories/",
     update: SERVER + ":" + PORT + API_BASE + "/categories",
     delete: SERVER + ":" + PORT + API_BASE + "/categories/",
-    getRootOfCategories: SERVER + ":" + PORT + API_BASE + "/categories/",
+    getRootOfCategories: SERVER + ":" + PORT + API_BASE + "/categories",
     getChildrenOfCategory: SERVER + ":" + PORT + API_BASE + "/categories/",
     getAllCategories: SERVER + ":" + PORT + API_BASE + "/categories/full/",
+    findById: SERVER + ":" + PORT + API_BASE + "/categories/",
   },
 
   product: {
@@ -261,4 +262,5 @@ export const actions = {
   updated: "UPDATED",
   deleted: "DELETED",
   readed: "READED",
+  reload: "RELOAD",
 };

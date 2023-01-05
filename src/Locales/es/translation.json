@@ -298,7 +298,17 @@
     },
 
     "category": {
-      "title": "CATEGORIAS",
+      "title": {
+        "create": "Crear una nueva categoria",
+        "update": "Modificar una categoria",
+        "delete": "Eliminar una categoria"
+      },
+      "label": {
+        "name": "Name",
+        "description": "Description",
+        "toChildren":"Inspeccionar",
+        "toParent":"Volver"
+      },
       "name": "ABM DE CATEGORIAS",
       "columns": ["Nombre", "Descripcion", ""],
       "align": ["left", "left", "center"],

@@ -249,7 +249,7 @@
         "create": "Create a new role",
         "update": "Update role",
         "delete": "Delete role",
-        "assignApps":"Assign Apps"
+        "assignApps": "Assign Apps"
       },
       "label": {
         "name": "Name",
@@ -309,11 +309,20 @@
     },
 
     "category": {
-      "title": "CATEGORIES",
-      "name": "CRUD CATEGORIES",
+      "title": {
+        "create": "Create a new category",
+        "update": "Update category",
+        "delete": "Delete category"
+      },
+      "label": {
+        "name": "Name",
+        "description": "Description",
+        "toChildren":"Inspect",
+        "toParent":"Back"
+      },
       "columns": ["Name", "Descrption", ""],
-      "align": ["left", "left", "center"],
-      "width": ["25%", "60%", "5%"],
+      "align": ["left", "left"],
+      "width": ["25%", "60%"],
       "menu": {
         "add": "Add category",
         "remove": "Remove category"
@@ -333,7 +342,7 @@
         "description": "Description",
         "brand": "Brand",
         "status": "Status",
-        "countryOfOrigin":"Country of origin"
+        "countryOfOrigin": "Country of origin"
       },
       "columns": ["Image", "SKU", "EAN", "Description", "Brand", "Country of origin", "Status"],
       "align": ["center", "right", "right", "left", "left", "left"],

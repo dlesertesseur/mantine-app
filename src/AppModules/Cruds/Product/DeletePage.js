@@ -105,7 +105,6 @@ export function DeletePage() {
       id: product.id
     };
     dispatch(remove(params));
-    navigate(-1);
   };
 
   const onClose = () => {

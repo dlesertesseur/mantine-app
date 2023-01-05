@@ -47,10 +47,6 @@ const DynamicApp = ({ app }) => {
     setRows(ret);
   }, [products]);
 
-  // const onLoadGrid = () => {
-  //   setLoadGrid(Date.now());
-  // };
-
   const cols = t("crud.product.columns", { returnObjects: true });
   const columns = [
     { headerName: cols[0], fieldName: "image", align: "center", type:"image"},

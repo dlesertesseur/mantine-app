@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { API } from "../../Constants";
+import { actions, API } from "../../Constants";
 
 const initialState = {
   value: {
@@ -13,10 +13,13 @@ const initialState = {
     selectedRowId: null,
     refreshData: null,
     activePage: null,
+    appState: null,
+    processing: false,
+    selectedRow: null,
   },
 };
 
-export const insertCategory = createAsyncThunk("category/insertCategory", async (parameters, asyncThunk) => {
+export const create = createAsyncThunk("category/create", async (parameters, asyncThunk) => {
   try {
     const body = JSON.stringify({
       name: parameters.name,
@@ -42,7 +45,7 @@ export const insertCategory = createAsyncThunk("category/insertCategory", async 
   }
 });
 
-export const removeCategory = createAsyncThunk("category/removeCategory", async (parameters, asyncThunk) => {
+export const remove = createAsyncThunk("category/remove", async (parameters, asyncThunk) => {
   try {
     const requestOptions = {
       method: "DELETE",
@@ -61,7 +64,7 @@ export const removeCategory = createAsyncThunk("category/removeCategory", async 
   }
 });
 
-export const updateCategory = createAsyncThunk("category/updateCategory", async (parameters, asyncThunk) => {
+export const update = createAsyncThunk("category/update", async (parameters, asyncThunk) => {
   try {
     const body = JSON.stringify({
       id: parameters.id,
@@ -95,7 +98,12 @@ export const getRootOfCategories = createAsyncThunk("category/getRootOfCategorie
       headers: { "Content-Type": "application/json", token: parameters.token },
     };
 
-    const url = API.category.getRootOfCategories;
+    let url = null;
+    if (parameters.rootId) {
+      url = API.category.findById + parameters.rootId;
+    } else {
+      url = API.category.getRootOfCategories;
+    }
     const res = await fetch(url, requestOptions);
     const data = await res.json();
 
@@ -133,7 +141,7 @@ export const getChildrenOfCategory = createAsyncThunk(
         headers: { "Content-Type": "application/json", token: parameters.token },
       };
 
-      const url = API.category.getChildrenOfCategory + parameters.nodeId;
+      const url = API.category.getChildrenOfCategory + parameters.nodeId + "/children";
       const res = await fetch(url, requestOptions);
       const data = await res.json();
 
@@ -153,6 +161,24 @@ function findLeafCategories(set, nodes) {
     findLeafCategories(set, child);
   }
 }
+
+export const findCategoryById = createAsyncThunk("category/findCategoryById", async (parameters, asyncThunk) => {
+  try {
+    const requestOptions = {
+      method: "GET",
+      mode: "cors",
+      headers: { "Content-Type": "application/json", token: parameters.token },
+    };
+
+    const url = API.category.findById + parameters.id;
+    const res = await fetch(url, requestOptions);
+    const data = await res.json();
+
+    return data;
+  } catch (error) {
+    return asyncThunk.rejectWithValue(error);
+  }
+});
 
 export const categorySlice = createSlice({
   name: "category",
@@ -188,70 +214,94 @@ export const categorySlice = createSlice({
       state.value.finalCategories = set;
     },
 
-    setActivePage: (state, { payload }) => {
-      state.value.activePage = payload;
+    clearError: (state) => {
+      state.value.error = null;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
+      state.value.creating = null;
     },
   },
   extraReducers: {
     /*CREATE*/
-    [insertCategory.pending]: (state) => {
-      state.value.loadingCategories = true;
+    [create.pending]: (state) => {
+      state.value.processing = true;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
       state.value.error = null;
     },
 
-    [insertCategory.fulfilled]: (state, { payload }) => {
+    [create.fulfilled]: (state, { payload }) => {
       if (payload.error) {
-        state.value.error = payload;
+        state.value.error = payload.error;
+        state.value.errorMessage = payload.message;
+        state.value.errorCode = payload.status;
       } else {
+        state.value.errorMessage = null;
+        state.value.errorCode = null;
         state.value.error = null;
-        state.value.refreshData = Date.now();
+        state.value.appState = actions.created;
       }
-      state.value.loadingCategories = false;
+      state.value.processing = false;
     },
 
-    [insertCategory.rejected]: (state, { payload }) => {
-      state.value.loadingCategories = false;
-      state.value.error = payload;
+    [create.rejected]: (state, { payload }) => {
+      state.value.error = payload.error;
+      state.value.errorMessage = payload.message;
+      state.value.errorCode = payload.status;
+      state.value.processing = false;
     },
 
     /*DELETE*/
-    [removeCategory.pending]: (state) => {
-      state.value.loadingCategories = true;
+    [remove.pending]: (state) => {
+      state.value.processing = true;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
       state.value.error = null;
     },
 
-    [removeCategory.fulfilled]: (state, { payload }) => {
-      if (payload) {
-        state.value.error = payload;
-      } else {
-        state.value.error = null;
-        state.value.selectedRow = null;
-        state.value.refreshData = Date.now();
-      }
-      state.value.loadingCategories = false;
+    [remove.fulfilled]: (state, { payload }) => {
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
+      state.value.error = null;
+      state.value.appState = actions.deleted;
+      state.value.processing = false;
+      state.value.selectedRowId = null;
     },
 
-    [removeCategory.rejected]: (state, { payload }) => {
-      state.value.loadingCategories = false;
-      state.value.error = payload;
+    [remove.rejected]: (state, { payload }) => {
+      state.value.error = payload.error;
+      state.value.errorMessage = payload.message;
+      state.value.errorCode = payload.status;
+      state.value.processing = false;
     },
 
     /*UPDATE*/
-    [updateCategory.pending]: (state) => {
-      state.value.loadingCategories = true;
+    [update.pending]: (state) => {
+      state.value.processing = true;
+      state.value.errorMessage = null;
+      state.value.errorCode = null;
       state.value.error = null;
     },
 
-    [updateCategory.fulfilled]: (state, { payload }) => {
-      state.value.error = null;
-      state.value.selectedRow = null;
-      state.value.refreshData = Date.now();
-      state.value.loadingCategories = false;
+    [update.fulfilled]: (state, { payload }) => {
+      if (payload.error) {
+        state.value.error = payload.error;
+        state.value.errorMessage = payload.message;
+        state.value.errorCode = payload.status;
+      } else {
+        state.value.errorMessage = null;
+        state.value.errorCode = null;
+        state.value.error = null;
+        state.value.appState = actions.updated;
+      }
+      state.value.processing = false;
     },
 
-    [updateCategory.rejected]: (state, { payload }) => {
-      state.value.loadingCategories = false;
-      state.value.error = payload;
+    [update.rejected]: (state, { payload }) => {
+      state.value.error = payload.error;
+      state.value.errorMessage = payload.message;
+      state.value.errorCode = payload.status;
+      state.value.processing = false;
     },
 
     /*FIND ALL BRANDS BY PROJECT ID*/
@@ -261,6 +311,8 @@ export const categorySlice = createSlice({
     },
 
     [getRootOfCategories.fulfilled]: (state, { payload }) => {
+      //console.log("[getRootOfCategories.fulfilled]", payload);
+
       if (payload.error) {
         state.value.error = payload;
       } else {
@@ -306,14 +358,16 @@ export const categorySlice = createSlice({
     },
 
     [getChildrenOfCategory.fulfilled]: (state, { payload }) => {
+      //console.log("[getChildrenOfCategory.fulfilled]", payload);
+
       if (payload.error) {
         state.value.error = payload;
       } else {
         state.value.categoriesChild = payload;
         state.value.error = null;
         state.value.selectedRow = null;
-
-        //console.log("[getChildrenOfCategory.fulfilled]", payload);
+        state.value.selectedRowId = null;
+        state.value.appState = actions.readed;
       }
       state.value.loadingCategories = false;
     },
@@ -321,6 +375,30 @@ export const categorySlice = createSlice({
     [getChildrenOfCategory.rejected]: (state, { payload }) => {
       state.value.loadingCategories = false;
       state.value.error = payload;
+    },
+
+    /*PRODUCT BY ID*/
+    [findCategoryById.pending]: (state) => {
+      state.value.processing = true;
+      state.value.error = null;
+      state.value.created = false;
+      state.value.creating = false;
+    },
+
+    [findCategoryById.fulfilled]: (state, { payload }) => {
+      if (payload.error) {
+        state.value.error = payload;
+      } else {
+        state.value.category = payload;
+        state.value.error = null;
+      }
+      state.value.processing = false;
+    },
+
+    [findCategoryById.rejected]: (state, { payload }) => {
+      state.value.processing = false;
+      state.value.error = payload;
+      state.value.category = null;
     },
   },
 });
@@ -332,7 +410,7 @@ export const {
   getAndRemoveLastItemFromPath,
   addToPath,
   calculateFinalCategries,
-  setActivePage,
+  clearError,
 } = categorySlice.actions;
 
 export default categorySlice.reducer;

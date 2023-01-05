@@ -1,7 +1,7 @@
 import React from "react";
 import SortedTable from "./SortedTable";
 import uuid from "react-uuid";
-import { Divider, Stack, Text } from "@mantine/core";
+import { Breadcrumbs, Divider, Stack, Text } from "@mantine/core";
 import { Route, Routes } from "react-router-dom";
 import { findTranslatedField } from "../../Util";
 import { useTranslation } from "react-i18next";
@@ -19,6 +19,7 @@ const CrudFrame = ({
   relationshipPages,
   filterControl = null,
   loading = false,
+  breadcrumbs = null
 }) => {
   const { i18n } = useTranslation();
 
@@ -54,6 +55,7 @@ const CrudFrame = ({
           backgroundColor: theme.colorScheme === "dark" ? theme.colors.dark[8] : theme.colors.gray[0],
         })}
       >
+        { breadcrumbs ? <Breadcrumbs>{breadcrumbs}</Breadcrumbs> : null}
         <Routes>
           <Route
             path="/"
@@ -74,9 +76,10 @@ const CrudFrame = ({
           <Route path="/update" element={updatePage} />
           <Route path="/delete" element={deletePage} />
 
-          {relationshipPages?.map((r) => (
-            <Route key={uuid()} path={r.path} element={r.element} />
-          ))}
+          {relationshipPages?.map((r) => {
+            const ret = r.element ? <Route key={uuid()} path={r.path} element={r.element} /> : null;
+            return ret;
+          })}
         </Routes>
       </Stack>
 
