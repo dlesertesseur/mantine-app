@@ -134,14 +134,16 @@ export default function SortedTable({
   const navigate = useNavigate();
 
   const [search, setSearch] = useState("");
-  const [sortedData, setSortedData] = useState(data);
+  const [sortedData, setSortedData] = useState([]);
   const [sortBy, setSortBy] = useState(null);
   const [reverseSortDirection, setReverseSortDirection] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const { height } = useViewportSize();
 
   useEffect(() => {
-    setSortedData(data);
+    if(data){
+      setSortedData(data);
+    }
   }, [data]);
 
   const setSorting = (field) => {

@@ -53,7 +53,7 @@
     "backImage": "Imagen de fondo",
     "pixelMeterRelation": "Pixel/Metro",
     "deleteImage": "Eliminar imagen",
-    "addLabel":"Agregar etiqueta"
+    "addLabel": "Agregar etiqueta"
   },
 
   "label": {
@@ -126,14 +126,14 @@
     "dropZone": "Arrastre imágenes aquí o haga clic para seleccionar archivos",
     "dropZoneSub": "Adjunte tantos archivos como desee, cada archivo no debe exceder los 5 MB",
     "measurementControl": "Controles de medicion",
-    "markerText":"Texto de marcador",
-    "fontFamily":"Tipo de fuente",
-    "fontSize":"Tamaño de fuente",
-    "textAlign":"Alinear texto",
-    "left":"Izquierda",
-    "center":"Centro",
-    "right":"Derecha",
-    "textColor":"Color de texto"
+    "markerText": "Texto de marcador",
+    "fontFamily": "Tipo de fuente",
+    "fontSize": "Tamaño de fuente",
+    "textAlign": "Alinear texto",
+    "left": "Izquierda",
+    "center": "Centro",
+    "right": "Derecha",
+    "textColor": "Color de texto"
   },
 
   "placeholder": {
@@ -189,15 +189,15 @@
     "application": {
       "name": "APLICACIONES",
       "title": {
-        "create":"Crear una nueva aplicacion",
-        "update":"Modificar una aplicacion",
-        "delete":"Eliminar una aplicacion"
+        "create": "Crear una nueva aplicacion",
+        "update": "Modificar una aplicacion",
+        "delete": "Eliminar una aplicacion"
       },
       "label": {
-        "name":"Nombre",
-        "description":"Descripcion",
-        "path":"Ruta",
-        "icon":"Icono"
+        "name": "Nombre",
+        "description": "Descripcion",
+        "path": "Ruta",
+        "icon": "Icono"
       },
       "columns": ["Icono", "Nombre", "Descripcion", "Ruta"],
       "align": ["center", "left", "left", "left"],
@@ -243,10 +243,10 @@
     "role": {
       "name": "ROLES",
       "title": {
-        "create":"Crear un nuevo rol",
-        "update":"Modificar un rol",
-        "delete":"Eliminar un rol",
-        "assignApps":"Asignar aplicaciones"
+        "create": "Crear un nuevo rol",
+        "update": "Modificar un rol",
+        "delete": "Eliminar un rol",
+        "assignApps": "Asignar aplicaciones"
       },
       "label": {
         "name": "Nombre",
@@ -306,8 +306,8 @@
       "label": {
         "name": "Name",
         "description": "Description",
-        "toChildren":"Inspeccionar",
-        "toParent":"Volver"
+        "toChildren": "Inspeccionar",
+        "toParent": "Volver"
       },
       "name": "ABM DE CATEGORIAS",
       "columns": ["Nombre", "Descripcion", ""],
@@ -340,7 +340,7 @@
         "description": "Descripcion",
         "brand": "Marca",
         "status": "Estado",
-        "countryOfOrigin":"Pais de origen"
+        "countryOfOrigin": "Pais de origen"
       },
       "columns": ["Imagen", "SKU", "EAN", "Descripcion", "Marca", "País de origen", "Estado"],
       "align": ["center", "right", "right", "left", "left", "left"],
@@ -370,6 +370,17 @@
     },
 
     "categorizer": {
+      "title": {
+        "addProducts": "Agregar productos a la categoria",
+        "categoriesTree": "Arbol de categorias"
+      },
+      "label": {
+        "addProducts": "Agregar productos",
+        "search": "Buscar",
+        "noData:": "Sin datos",
+        "assignedProducts": " Productos asignados",
+        "unassignedProducts": "Productos NO asignados"
+      },
       "columns": ["", "", "SKU", "EAN", "Descripcion", "Estado"],
       "align": ["center", "center", "right", "left", "left", "left"],
       "width": ["5%", "5%", "10%", "15%", "50%", "15%"]
@@ -507,7 +518,7 @@
     "zone": "Zona"
   },
 
-  "stageContextMenu":{
-    "addMarker":"Agregar etiqueta"
+  "stageContextMenu": {
+    "addMarker": "Agregar etiqueta"
   }
 }

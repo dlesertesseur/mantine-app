@@ -67,12 +67,14 @@ const DynamicApp = ({ app }) => {
   };
 
   const createPath = () => {
-    const ret = categoriesPath.map( c => c.name);
-    if(categoriesRoot){
+    const ret = categoriesPath.map((c) => c.name);
+
+    if (categoriesRoot && !ret?.includes(categoriesRoot.name)) {
       ret.push(categoriesRoot.name);
     }
-    return(ret);
-  }
+
+    return ret;
+  };
 
   const ret = categoriesChild ? (
     <CrudFrame

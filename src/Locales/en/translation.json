@@ -372,6 +372,17 @@
     },
 
     "categorizer": {
+      "title": {
+        "addProducts": "Add products to category",
+        "categoriesTree": "Categories tree"
+      },
+      "label": {
+        "addProducts":"Add products",
+        "search":"Search",
+        "noData:":"Nothing here",
+        "assignedProducts":"Assigned products",
+        "unassignedProducts":"Unassigned products"
+      },
       "columns": ["", "", "SKU", "EAN", "Description", "Status"],
       "align": ["center", "center", "right", "left", "left", "left"],
       "width": ["5%", "5%", "10%", "15%", "50%", "15%"]

@@ -7,7 +7,7 @@ const initialState = {
     error: "",
     categoriesRoot: null,
     categoriesChild: [],
-    categories: [],
+    categories: null,
     finalCategories: null,
     path: [],
     selectedRowId: null,

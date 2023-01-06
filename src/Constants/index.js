@@ -238,6 +238,12 @@ export const API = {
     save: SERVER + ":" + PORT + API_BASE + "/sites/",
   },
 
+  categorizer: {
+    getUncategorizeProducts: SERVER + ":" + PORT + API_BASE + "/category-product-relation",
+    getCategorizeProducts: SERVER + ":" + PORT + API_BASE + "/category-product-relation/",
+    uncategorizeProducts: SERVER + ":" + PORT + API_BASE + "/category-product-relation",
+    categorizeProducts: SERVER + ":" + PORT + API_BASE + "/category-product-relation/",
+  },
 };
 
 export const ERRORS = {

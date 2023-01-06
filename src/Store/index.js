@@ -5,6 +5,7 @@ import roleReducer from "../Features/Role";
 import productReducer from "../Features/Product";
 import brandReducer from "../Features/Brand";
 import categoryReducer from "../Features/Category";
+import categorizerReducer from "../Features/Categorizer";
 
 export default configureStore({
   reducer: {
@@ -13,6 +14,7 @@ export default configureStore({
     role: roleReducer,
     product: productReducer,
     brand: brandReducer,
-    category:categoryReducer
+    category:categoryReducer,
+    categorizer:categorizerReducer
   },
 });
